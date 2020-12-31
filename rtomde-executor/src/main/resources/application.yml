@@ -32,7 +32,6 @@ spring:
         maintainTimeStats: false
         logger: com.mysql.cj.log.Slf4JLogger
         logSlowQueries: true
-        profileSQL: true
         dumpQueriesOnException: true
 
 management:
@@ -43,3 +42,6 @@ management:
   metrics:
     tags:
       application: ${spring.application.name}
+
+mybatis:
+  mapper-locations: "mapper/**/*.xml"
