@@ -1,0 +1,83 @@
+name: Unit Test
+
+on: [push, pull_request]
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: bitnami/mysql:8.0
+        env:
+          MYSQL_ROOT_USER: root
+          MYSQL_ROOT_PASSWORD: 123
+          MYSQL_DATABASE: rtomde
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Cache Maven Repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Compile
+        run: ./mvnw -B clean compile install -Dmaven.test.skip=true
+      - name: Test
+        run: |
+          export MAVEN_OPTS='-Dmaven.repo.local=.m2/repository -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit -Xmx2g'
+          ./mvnw -B test -Plocal  -Dmaven.test.skip=false
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          files: ./target/site/jacoco/jacoco.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: false
+      - name: Run SonarCloud Analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: >
+          ./mvnw -B verify sonar:sonar
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
+          -Dsonar.core.codeCoveragePlugin=jacoco
+          -Dmaven.test.skip=true
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.organization=flowerfine
+          -Dsonar.projectKey=flowerfine_indexer
+      - name: Retry On Error
+        uses: nick-invision/retry@v1
+        with:
+          timeout_minutes: 40
+          max_attempts: 3
+          command: ./mvnw -B -ntp clean install -DskipTests=false -DskipIntegrationTests=false -Dcheckstyle.skip=false -Drat.skip=false -Dmaven.javadoc.skip=true
+
+  Checkstyle:
+    name: Check code style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Check Code Style
+        uses: nikitasavinov/checkstyle-action@master
+        with:
+          level: warning
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-check
+          tool_name: reviewdog
+          checkstyle_config: ./checkstyle.xml
+          workdir: ./
