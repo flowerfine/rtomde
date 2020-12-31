@@ -2,6 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <modules>
+        <module>rtomde-executor</module>
+    </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -11,6 +14,7 @@
     <groupId>cn.sliew</groupId>
     <artifactId>rtomde</artifactId>
     <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>rtomde</name>
     <description>Readable, Testable, Observable, Maintainable Data Engine</description>
 
@@ -18,8 +22,6 @@
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <project.groupId>cn.sliew</project.groupId>
-        <project.version>1.0.0-SNAPSHOT</project.version>
         <maven.test.skip>true</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
@@ -62,10 +64,6 @@
         </pluginManagement>
 
         <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>

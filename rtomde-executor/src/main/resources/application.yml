@@ -1,0 +1,4 @@
+spring.profiles.active: @profile.active@
+#spring.profiles.active: ${ENV:dev}
+
+spring.application.name: indexer
