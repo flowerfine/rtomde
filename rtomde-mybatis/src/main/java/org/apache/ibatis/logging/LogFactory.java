@@ -15,9 +15,6 @@
  */
 package org.apache.ibatis.logging;
 
-import org.apache.ibatis.logging.commons.JakartaCommonsLoggingImpl;
-import org.apache.ibatis.logging.jdk14.Jdk14LoggingImpl;
-import org.apache.ibatis.logging.log4j.Log4jImpl;
 import org.apache.ibatis.logging.log4j2.Log4j2Impl;
 import org.apache.ibatis.logging.nologging.NoLoggingImpl;
 import org.apache.ibatis.logging.slf4j.Slf4jImpl;
@@ -40,10 +37,7 @@ public final class LogFactory {
 
   static {
     tryImplementation(LogFactory::useSlf4jLogging);
-    tryImplementation(LogFactory::useCommonsLogging);
     tryImplementation(LogFactory::useLog4J2Logging);
-    tryImplementation(LogFactory::useLog4JLogging);
-    tryImplementation(LogFactory::useJdkLogging);
     tryImplementation(LogFactory::useNoLogging);
   }
 
@@ -71,20 +65,8 @@ public final class LogFactory {
     setImplementation(Slf4jImpl.class);
   }
 
-  public static synchronized void useCommonsLogging() {
-    setImplementation(JakartaCommonsLoggingImpl.class);
-  }
-
-  public static synchronized void useLog4JLogging() {
-    setImplementation(Log4jImpl.class);
-  }
-
   public static synchronized void useLog4J2Logging() {
     setImplementation(Log4j2Impl.class);
-  }
-
-  public static synchronized void useJdkLogging() {
-    setImplementation(Jdk14LoggingImpl.class);
   }
 
   public static synchronized void useStdOutLogging() {
