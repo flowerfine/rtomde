@@ -19,6 +19,7 @@
         <module>rtomde-executor</module>
         <module>rtomde-mybatis</module>
         <module>rtomde-mybatis-spring</module>
+        <module>rtomde-mybatis-spring-boot</module>
     </modules>
 
     <properties>
@@ -59,6 +60,11 @@
                 <artifactId>rtomde-mybatis-spring</artifactId>
                 <version>2.0.6</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>rtomde-mybatis-spring-boot-starter</artifactId>
+                <version>2.1.4</version>
+            </dependency>
 
             <dependency>
                 <groupId>io.micrometer</groupId>
@@ -66,11 +72,7 @@
                 <version>1.6.2</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>2.1.4</version>
-            </dependency>
+
 
             <dependency>
                 <groupId>mysql</groupId>
