@@ -11,16 +11,28 @@
     <artifactId>rtomde-mybatis-spring-boot</artifactId>
     <version>2.1.4</version>
     <packaging>pom</packaging>
+    <name>mybatis-spring-boot</name>
+    <description>rtomde include mybatis-spring-boot source code module</description>
+    <url>http://www.mybatis.org/spring-boot-starter/</url>
 
     <modules>
         <module>rtomde-mybatis-spring-boot-autoconfigure</module>
         <module>rtomde-mybatis-spring-boot-starter</module>
     </modules>
 
-    <properties>
-        <mybatis.version>3.5.6</mybatis.version>
-        <mybatis-spring.version>2.0.6</mybatis-spring.version>
-        <spring-boot.version>2.4.0</spring-boot.version>
-    </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>rtomde-mybatis-spring-boot-autoconfigure</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>rtomde-mybatis-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
