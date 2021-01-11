@@ -8,7 +8,9 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import java.util.Collection;
@@ -45,6 +47,11 @@ public class UserController {
         //org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping
         Collection<String> mappedStatementNames = sqlSessionFactory.getConfiguration().getMappedStatementNames();
         System.out.println(mappedStatementNames);
+        for (String mappedStatementName : mappedStatementNames) {
+            RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths(mappedStatementName).methods(RequestMethod.GET).build();
+
+        }
+
         SqlSession sqlSession = sqlSessionFactory.openSession();
 //        List<Object> objects = sqlSession.selectList("cn.sliew.rtomde.executor.mapper.SysUserMapper.selectByPrimaryKey", id);
         List<Object> objects = sqlSession.selectList("selectByPrimaryKey", id);
