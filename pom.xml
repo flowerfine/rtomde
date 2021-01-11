@@ -20,6 +20,7 @@
         <module>rtomde-mybatis</module>
         <module>rtomde-mybatis-spring</module>
         <module>rtomde-mybatis-spring-boot</module>
+        <module>rtomde-airlift</module>
     </modules>
 
     <properties>
