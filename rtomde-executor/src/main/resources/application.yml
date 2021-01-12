@@ -45,3 +45,4 @@ management:
 
 mybatis:
   mapper-locations: "mapper/**/*.xml"
+  config-location: mybatis-config.xml
