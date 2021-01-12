@@ -1,7 +1,6 @@
 package cn.sliew.rtomde.executor.controller;
 
 import cn.sliew.rtomde.executor.mapper.SysUser;
-import cn.sliew.rtomde.executor.mapper.SysUserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMap;
@@ -21,8 +20,6 @@ import java.util.List;
 @RestController
 public class UserController {
 
-    @Autowired
-    private SysUserMapper sysUserMapper;
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
 

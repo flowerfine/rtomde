@@ -22,7 +22,8 @@ public class JavassistTestCase {
         methodBody.append("public cn.sliew.rtomde.executor.mapper.SysUser selectByPrimaryKey(Long id)");
         methodBody.append("{");
         methodBody.append("SqlSession sqlSession = sqlSessionFactory.openSession();");
-        methodBody.append("List<Object> objects = sqlSession.selectList(\"selectByPrimaryKey\", $1);");
+        methodBody.append("System.out.println(\"hhhhh\");");
+//        methodBody.append("List<Object> objects = sqlSession.selectList(\"selectByPrimaryKey\", $1);");
 ////        methodBody.append("\n");
 //        methodBody.append("return ($r) objects.get(0);");
         methodBody.append("return null;");
@@ -32,6 +33,10 @@ public class JavassistTestCase {
         CtMethod selectByPrimaryKey = CtNewMethod.make(methodBody.toString(), cc);
 
         cc.addMethod(selectByPrimaryKey);
-        cc.writeFile(userDir);
+//
+//        Class<?> aClass = cc.toClass();
+//        Object object = aClass.newInstance();
+//        System.out.println(object.getClass().getCanonicalName());
+        cc.writeFile();
     }
 }

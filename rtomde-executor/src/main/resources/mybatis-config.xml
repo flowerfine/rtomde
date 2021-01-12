@@ -4,9 +4,9 @@
 		"http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 
-
 	<settings>
 		<setting name="logImpl" value="SLF4J"/>
+		<setting name="mapUnderscoreToCamelCase" value="true"/>
 	</settings>
 
 	<typeAliases>
@@ -17,13 +17,4 @@
 		<typeAlias alias="ArrayList" type="java.util.ArrayList" />
 		<typeAlias alias="LinkedList" type="java.util.LinkedList" />
 	</typeAliases>
-
-	<mappers>
-		<mapper class="cn.sliew.rtomde.executor.mapper.SysUserMapper" />
-		<mapper resource="mapper/SysUserMapper.xml" />
-		<mapper url="" />
-		<package name="cn.sliew.rtomde.executor.mapper"/>
-	</mappers>
-
-
 </configuration>
