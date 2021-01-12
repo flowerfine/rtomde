@@ -11,11 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -37,6 +40,11 @@ public class VendorDispatcher {
         for (String mappedStatementName: mappedStatementNames) {
             MapperMethod mapperMethod = new MapperMethod(configuration, mappedStatementName);
             map.putIfAbsent(mappedStatementName, new PlainMapperInvoker(mapperMethod));
+        }
+        for (Map.Entry<String, MapperInvoker> entry : map.entrySet()) {
+            String key = entry.getKey();
+            RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths(key).methods(RequestMethod.GET).build();
+            mappingRegistry.registerMapping(requestMappingInfo, null, null);
         }
     }
 
