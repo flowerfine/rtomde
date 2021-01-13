@@ -16,110 +16,18 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>rtomde-mybatis-spring-boot-starter</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
             <version>3.27.0-GA</version>
         </dependency>
-
-        <!--<dependency>
-            <groupId>org.springframework.fu</groupId>
-            <artifactId>spring-fu-jafu</artifactId>
-            <version>0.4.3</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.fu</groupId>
-            <artifactId>spring-fu-autoconfigure-adapter</artifactId>
-            <version>0.4.3</version>
-            <scope>runtime</scope>
-        </dependency>-->
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.micrometer</groupId>
-            <artifactId>micrometer-registry-prometheus</artifactId>
-        </dependency>
     </dependencies>
-
-    <build>
-        <finalName>rtomde</finalName>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>cn.sliew.rtomde.executor.Application</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
-    <profiles>
-        <profile>
-            <id>local</id>
-            <properties>
-                <profile.active>local</profile.active>
-            </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-        </profile>
-        <profile>
-            <id>dev</id>
-            <properties>
-                <profile.active>dev</profile.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>daily</id>
-            <properties>
-                <profile.active>daily</profile.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>gray</id>
-            <properties>
-                <profile.active>gray</profile.active>
-            </properties>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <profile.active>prod</profile.active>
-            </properties>
-        </profile>
-    </profiles>
 </project>

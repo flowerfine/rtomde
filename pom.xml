@@ -20,7 +20,7 @@
         <module>rtomde-mybatis</module>
         <module>rtomde-mybatis-spring</module>
         <module>rtomde-mybatis-spring-boot</module>
-        <module>rtomde-airlift</module>
+        <module>rtomde-service</module>
     </modules>
 
     <properties>
@@ -78,6 +78,8 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>8.0.22</version>
             </dependency>
+
+
         </dependencies>
     </dependencyManagement>
 
