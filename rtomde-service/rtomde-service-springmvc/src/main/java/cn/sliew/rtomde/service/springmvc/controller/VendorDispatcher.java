@@ -1,4 +1,4 @@
-package cn.sliew.rtomde.executor.controller;
+package cn.sliew.rtomde.service.springmvc.controller;
 
 import cn.sliew.rtomde.executor.mapper.MapperInvoker;
 import cn.sliew.rtomde.executor.mapper.MapperMethod;
