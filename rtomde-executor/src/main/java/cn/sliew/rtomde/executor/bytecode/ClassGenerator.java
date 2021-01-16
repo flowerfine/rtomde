@@ -17,11 +17,14 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * ClassGenerator
  */
-public final class ClassGenerator {
+public final class ClassGenerator implements AutoCloseable {
 
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
-    private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<ClassLoader, ClassPool>(); //ClassLoader - ClassPool
+    /**
+     * ClassLoader => ClassPool
+     */
+    private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<>();
     private ClassPool mPool;
     private CtClass mCtc;
     private String mClassName;
@@ -30,8 +33,14 @@ public final class ClassGenerator {
     private List<String> mFields;
     private List<String> mConstructors;
     private List<String> mMethods;
-    private Map<String, Method> mCopyMethods; // <method desc,method instance>
-    private Map<String, Constructor<?>> mCopyConstructors; // <constructor desc,constructor instance>
+    /**
+     * method desc => method instance
+     */
+    private Map<String, Method> mCopyMethods;
+    /**
+     * constructor desc => constructor instance
+     */
+    private Map<String, Constructor<?>> mCopyConstructors;
     private boolean mDefaultConstructor = false;
 
     private ClassGenerator() {
@@ -311,6 +320,11 @@ public final class ClassGenerator {
         } catch (CannotCompileException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public void close() throws Exception {
+        release();
     }
 
     public void release() {
