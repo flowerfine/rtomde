@@ -8,7 +8,6 @@ public class JavassistTestCase {
 
     @Test
     public void testGenerate() throws Exception {
-        String userDir = System.getProperty("user.dir");
         ClassPool pool = ClassPool.getDefault();
         CtClass cc = pool.makeInterface("cn.sliew.rtomde.executor.javassist.UserMapper");
 
@@ -16,27 +15,24 @@ public class JavassistTestCase {
         CtField sqlSessionFactoryMethod = CtField.make("private " + SqlSessionFactory.class.getCanonicalName() + " sqlSessionFactory;", cc);
         cc.addField(sqlSessionFactoryMethod);
 
-        CtClass returnType = pool.get("cn.sliew.rtomde.executor.mapper.SysUser");
         pool.importPackage("org.apache.ibatis.session");
+        pool.importPackage("java.util");
+
         StringBuilder methodBody = new StringBuilder();
-        methodBody.append("public cn.sliew.rtomde.executor.mapper.SysUser selectByPrimaryKey(Long id)");
+        methodBody.append("public Object selectByPrimaryKey(Long id)");
         methodBody.append("{");
-        methodBody.append("SqlSession sqlSession = sqlSessionFactory.openSession();");
+        methodBody.append("SqlSession sqlSession = this.sqlSessionFactory.openSession();");
         methodBody.append("System.out.println(\"hhhhh\");");
-//        methodBody.append("List<Object> objects = sqlSession.selectList(\"selectByPrimaryKey\", $1);");
+        methodBody.append("List objects = sqlSession.selectList(\"selectByPrimaryKey\", $1);");
 ////        methodBody.append("\n");
-//        methodBody.append("return ($r) objects.get(0);");
-        methodBody.append("return null;");
+        methodBody.append("return ($r) objects.get(0);");
+//        methodBody.append("return null;");
         methodBody.append("}");
 
 //        CtMethod selectByPrimaryKey1 = CtNewMethod.make(Modifier.PUBLIC, returnType, "selectByPrimaryKey", new CtClass[]{CtClass.longType}, null, methodBody.toString(), cc);
         CtMethod selectByPrimaryKey = CtNewMethod.make(methodBody.toString(), cc);
-
         cc.addMethod(selectByPrimaryKey);
-//
-//        Class<?> aClass = cc.toClass();
-//        Object object = aClass.newInstance();
-//        System.out.println(object.getClass().getCanonicalName());
+
         cc.writeFile();
     }
 }
