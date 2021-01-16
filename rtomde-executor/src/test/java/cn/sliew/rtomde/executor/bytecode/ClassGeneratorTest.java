@@ -33,6 +33,7 @@ public class ClassGeneratorTest {
 
         cg.addDefaultConstructor();
         Class<?> cl = cg.toClass();
+        cg.release();
         cl.getField("FNAME").set(null, fname);
 
         assertEquals("cn.sliew.rtomde.executor.bytecode.User$UserBuilder", cl.getName());
