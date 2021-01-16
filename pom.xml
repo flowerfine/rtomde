@@ -21,6 +21,7 @@
         <module>rtomde-mybatis-spring</module>
         <module>rtomde-mybatis-spring-boot</module>
         <module>rtomde-service</module>
+        <module>rtomde-common</module>
     </modules>
 
     <properties>
@@ -32,6 +33,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>cn.sliew</groupId>
+            <artifactId>rtomde-common</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -69,6 +75,11 @@
             <dependency>
                 <groupId>cn.sliew</groupId>
                 <artifactId>rtomde-executor</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.sliew</groupId>
+                <artifactId>rtomde-common</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
 
