@@ -22,25 +22,25 @@ public class ClassGeneratorTest {
                 fname = f;
         }
 
-        ClassGenerator cg = ClassGenerator.newInstance();
-        cg.setClassName(User.class.getName() + "$UserBuilder");
-        cg.addInterface(UserBuilder.class);
+        try (ClassGenerator cg = ClassGenerator.newInstance()) {
+            cg.setClassName(User.class.getName() + "$UserBuilder");
+            cg.addInterface(UserBuilder.class);
 
-        cg.addMethod("public String getUserName(" + User.class.getName() + " user){ boolean[][][] bs = new boolean[0][][]; return (String)FNAME.get($1); }");
-        cg.addMethod("public void setUserName(" + User.class.getName() + " user, String name){ FNAME.set($1, $2); }");
+            cg.addMethod("public String getUserName(" + User.class.getName() + " user){ boolean[][][] bs = new boolean[0][][]; return (String)FNAME.get($1); }");
+            cg.addMethod("public void setUserName(" + User.class.getName() + " user, String name){ FNAME.set($1, $2); }");
 
-        cg.addField("public static java.lang.reflect.Field FNAME;");
+            cg.addField("public static java.lang.reflect.Field FNAME;");
 
-        cg.addDefaultConstructor();
-        Class<?> cl = cg.toClass();
-        cg.release();
-        cl.getField("FNAME").set(null, fname);
+            cg.addDefaultConstructor();
+            Class<?> cl = cg.toClass();
+            cl.getField("FNAME").set(null, fname);
 
-        assertEquals("cn.sliew.rtomde.executor.bytecode.User$UserBuilder", cl.getName());
-        UserBuilder builder = (UserBuilder) cl.newInstance();
-        assertEquals("foo", user.getUserName());
-        builder.setUserName(user, "bar");
-        assertEquals("bar", user.getUserName());
+            assertEquals("cn.sliew.rtomde.executor.bytecode.User$UserBuilder", cl.getName());
+            UserBuilder builder = (UserBuilder) cl.newInstance();
+            assertEquals("foo", user.getUserName());
+            builder.setUserName(user, "bar");
+            assertEquals("bar", user.getUserName());
+        }
     }
 
 }
