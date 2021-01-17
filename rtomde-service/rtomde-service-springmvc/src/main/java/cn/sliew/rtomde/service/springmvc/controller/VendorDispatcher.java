@@ -4,6 +4,9 @@ import cn.sliew.rtomde.executor.bytecode.ClassGenerator;
 import cn.sliew.rtomde.executor.mapper.MapperInvoker;
 import cn.sliew.rtomde.executor.mapper.MapperMethod;
 import cn.sliew.rtomde.executor.mapper.PlainMapperInvoker;
+import org.apache.ibatis.mapping.MappedStatement;
+import org.apache.ibatis.mapping.ParameterMap;
+import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -39,6 +43,10 @@ public class VendorDispatcher {
         Collection<String> mappedStatementNames = configuration.getMappedStatementNames();
         for (String mappedStatementName : mappedStatementNames) {
             MapperMethod mapperMethod = new MapperMethod(configuration, mappedStatementName);
+            MappedStatement mappedStatement = configuration.getMappedStatement(mappedStatementName);
+            ParameterMap parameterMap = mappedStatement.getParameterMap();
+            final Class<?> type = parameterMap.getType();
+            List<ParameterMapping> parameterMappings = parameterMap.getParameterMappings();
             map.putIfAbsent(mappedStatementName, new PlainMapperInvoker(mapperMethod));
         }
         for (Map.Entry<String, MapperInvoker> entry : map.entrySet()) {
