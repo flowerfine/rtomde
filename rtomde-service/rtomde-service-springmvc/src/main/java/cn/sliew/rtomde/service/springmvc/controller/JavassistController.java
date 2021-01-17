@@ -8,6 +8,7 @@ import javassist.*;
 import javassist.bytecode.*;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.ArrayMemberValue;
+import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.mapping.*;
@@ -15,12 +16,15 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.support.GenericWebApplicationContext;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.annotation.PostConstruct;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -52,7 +56,23 @@ public class JavassistController {
             MapperMethod mapperMethod = new MapperMethod(configuration, mappedStatementName);
             map.putIfAbsent(mappedStatementName, new PlainMapperInvoker(mapperMethod));
         }
-        ac.registerBean(makeDispatcherController());
+        Class<?> controller = makeDispatcherController();
+        ac.registerBean(controller);
+        Method[] methods = controller.getMethods();
+        for (Map.Entry<String, MapperInvoker> entry : map.entrySet()) {
+            String id = entry.getKey();
+            RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths("/mapper/" + id).build();
+            String name = id;
+            if (id.contains(".")) {
+                name = id.replace(".", "_");
+            }
+            for (Method method : methods) {
+                if (method.getName().equals(name)) {
+                    mappingRegistry.registerMapping(requestMappingInfo, controller, method);
+                    break;
+                }
+            }
+        }
     }
 
     public Class<?> makeDispatcherController() {
@@ -60,10 +80,19 @@ public class JavassistController {
         ClassFile ccFile = controllerClass.getClassFile();
 
         ConstPool constpool = ccFile.getConstPool();
+
         // @RestController
         AnnotationsAttribute classAttr = new AnnotationsAttribute(constpool, AnnotationsAttribute.visibleTag);
         Annotation controller = new Annotation("org.springframework.web.bind.annotation.RestController", constpool);
         classAttr.addAnnotation(controller);
+
+        // @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
+        Annotation scope = new Annotation("org.springframework.context.annotation.Scope", constpool);
+        EnumMemberValue enumMemberValue = new EnumMemberValue(constpool);
+        enumMemberValue.setType("org.springframework.context.annotation.ScopedProxyMode");
+        enumMemberValue.setValue("TARGET_CLASS");
+        scope.addMemberValue("proxyMode", enumMemberValue);
+        classAttr.addAnnotation(scope);
 
         // @RequestMapping
         Annotation requestMapping = new Annotation("org.springframework.web.bind.annotation.RequestMapping", constpool);
@@ -156,7 +185,6 @@ public class JavassistController {
         BeanGenerator paramBeanG = BeanGenerator.newInstance(this.getClass().getClassLoader());
         paramBeanG.className(map.getType().getName());
         List<ParameterMapping> parameterMappings = map.getParameterMappings();
-        paramBeanG.addImportedPackages("java.util");
         for (ParameterMapping mapping : parameterMappings) {
             paramBeanG.setgetter(mapping.getProperty(), mapping.getJavaType());
         }
@@ -178,11 +206,16 @@ public class JavassistController {
     }
 
     private CtMethod generateMapperMethod(Class<?> resultType, Class<?> paramType, String id, CtClass declaring) throws Exception {
-        CtMethod method = new CtMethod(classPool.get(resultType.getName()), id, new CtClass[]{classPool.get(paramType.getName())}, declaring);
+        String name = id;
+        if (id.contains(".")) {
+            name = id.replace(".", "_");
+        }
+        CtMethod method = new CtMethod(classPool.get(resultType.getName()), name, new CtClass[]{classPool.get(paramType.getName())}, declaring);
         StringBuilder methodBody = new StringBuilder();
         methodBody.append("{");
-        methodBody.append("return mapperDispatcher.execute(" + id + ", $$);");
+        methodBody.append("return mapperDispatcher.execute(\"" + id + "\", $args);");
         methodBody.append("}");
+        method.setBody(methodBody.toString());
         return method;
     }
 
