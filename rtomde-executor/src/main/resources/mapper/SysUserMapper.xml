@@ -19,6 +19,23 @@
         <result column="updater" property="updater"/>
         <result column="comments" property="comments"/>
     </resultMap>
+
+    <resultMap id="BaseDetailResultMap" type="map">
+        <id column="id" property="id"/>
+        <result column="username" property="username"/>
+        <result column="password" property="password"/>
+        <result column="nickname" property="nickname"/>
+        <result column="email" property="email"/>
+        <result column="phone" property="phone"/>
+        <result column="deleted" property="deleted"/>
+        <result column="create_time" property="createTime"/>
+        <result column="creator" property="creator"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="updater" property="updater"/>
+        <result column="comments" property="comments"/>
+    </resultMap>
+
+
     <sql id="Base_Column_List">
         id, username, `password`, nickname, email, phone, deleted, create_time, creator,
         update_time, updater, comments
