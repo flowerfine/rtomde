@@ -45,7 +45,7 @@ public class VendorDispatcher {
             MapperMethod mapperMethod = new MapperMethod(configuration, mappedStatementName);
             MappedStatement mappedStatement = configuration.getMappedStatement(mappedStatementName);
             ParameterMap parameterMap = mappedStatement.getParameterMap();
-            final Class<?> type = parameterMap.getType();
+            parameterMap.getType();
             List<ParameterMapping> parameterMappings = parameterMap.getParameterMappings();
             map.putIfAbsent(mappedStatementName, new PlainMapperInvoker(mapperMethod));
         }

@@ -4,14 +4,12 @@ import cn.sliew.rtomde.common.utils.ClassUtils;
 import javassist.*;
 
 import java.security.ProtectionDomain;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 public final class BeanGenerator {
-
-    private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
 
     /**
      * ClassLoader => ClassPool
@@ -70,15 +68,32 @@ public final class BeanGenerator {
     }
 
     public BeanGenerator setgetter(String property, Class<?> clazz) {
+        if (getters == null) {
+            getters = new ArrayList<>();
+        }
+        if (setters == null) {
+            setters = new ArrayList<>();
+        }
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(property, clazz);
+        getters.add(propertyDescriptor);
+        setters.add(propertyDescriptor);
         return this;
     }
 
 
     public BeanGenerator getter(String property, Class<?> clazz) {
+        if (getters == null) {
+            getters = new ArrayList<>();
+        }
+        getters.add(new PropertyDescriptor(property, clazz));
         return this;
     }
 
     public BeanGenerator setter(String property, Class<?> clazz) {
+        if (setters == null) {
+            setters = new ArrayList<>();
+        }
+        setters.add(new PropertyDescriptor(property, clazz));
         return this;
     }
 
@@ -91,7 +106,6 @@ public final class BeanGenerator {
         if (mCtc != null) {
             mCtc.detach();
         }
-        long id = CLASS_NAME_COUNTER.getAndIncrement();
         try {
             mCtc = mPool.makeClass(className);
             if (superClass != null) {
@@ -99,14 +113,17 @@ public final class BeanGenerator {
             }
             if (getters != null) {
                 for (PropertyDescriptor getter : getters) {
-                    mCtc.addInterface(mPool.get(cl));
+                    CtNewMethod.getter(getter.getProperty(),
+                            CtField.make("private " + getter.getJavaType().getName() + getter.getProperty(), mCtc));
                 }
             }
             if (setters != null) {
                 for (PropertyDescriptor setter : setters) {
-                    mCtc.addField(CtField.make(code, mCtc));
+                    CtNewMethod.setter(setter.getProperty(),
+                            CtField.make("private " + setter.getJavaType().getName() + setter.getProperty(), mCtc));
                 }
             }
+            mCtc.writeFile();
             return mCtc.toClass(loader, pd);
         } catch (RuntimeException e) {
             throw e;
@@ -118,6 +135,5 @@ public final class BeanGenerator {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-
 
 }
