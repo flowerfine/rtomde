@@ -1,6 +1,8 @@
 package cn.sliew.rtomde.service.springmvc.controller;
 
+import cn.sliew.rtomde.common.utils.ClassUtils;
 import cn.sliew.rtomde.executor.bytecode.BeanGenerator;
+import cn.sliew.rtomde.executor.bytecode.CustomizedLoaderClassPath;
 import cn.sliew.rtomde.executor.mapper.MapperInvoker;
 import cn.sliew.rtomde.executor.mapper.MapperMethod;
 import cn.sliew.rtomde.executor.mapper.PlainMapperInvoker;
@@ -44,8 +46,7 @@ public class JavassistController {
     private SqlSessionFactory sqlSessionFactory;
 
     static {
-        ClassClassPath path = new ClassClassPath(JavassistController.class);
-        classPool.insertClassPath(path);
+        classPool.appendClassPath(new CustomizedLoaderClassPath(Thread.currentThread().getContextClassLoader()));
     }
 
     @PostConstruct
@@ -56,9 +57,9 @@ public class JavassistController {
             MapperMethod mapperMethod = new MapperMethod(configuration, mappedStatementName);
             map.putIfAbsent(mappedStatementName, new PlainMapperInvoker(mapperMethod));
         }
-        Class<?> controller = makeDispatcherController();
-        ac.registerBean(controller);
-        Method[] methods = controller.getMethods();
+        ac.registerBean("cn.sliew.rtomde.executor.MapperController", makeDispatcherController());
+        Object bean = ac.getBean("cn.sliew.rtomde.executor.MapperController");
+        Method[] methods = bean.getClass().getMethods();
         for (Map.Entry<String, MapperInvoker> entry : map.entrySet()) {
             String id = entry.getKey();
             RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths("/mapper/" + id).build();
@@ -68,7 +69,7 @@ public class JavassistController {
             }
             for (Method method : methods) {
                 if (method.getName().equals(name)) {
-                    mappingRegistry.registerMapping(requestMappingInfo, controller, method);
+                    mappingRegistry.registerMapping(requestMappingInfo, bean, method);
                     break;
                 }
             }
@@ -111,7 +112,7 @@ public class JavassistController {
                 controllerClass.addMethod(m);
             }
             controllerClass.writeFile();
-            return controllerClass.toClass();
+            return controllerClass.toClass(ClassUtils.getClassLoader(JavassistController.class), getClass().getProtectionDomain());
         } catch (CannotCompileException e) {
             log.error("create Controller:[{}] failed", controllerClass.getName(), e);
             throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
