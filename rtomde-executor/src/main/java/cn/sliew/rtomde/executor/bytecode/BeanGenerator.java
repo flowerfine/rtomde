@@ -5,29 +5,16 @@ import javassist.*;
 
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public final class BeanGenerator {
+public final class BeanGenerator extends Generator implements AutoCloseable {
 
-    /**
-     * ClassLoader => ClassPool
-     */
-    private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<>();
-    private ClassPool mPool;
-    private CtClass mCtc;
-    private String className;
-    private String superClass;
     private List<PropertyDescriptor> getters;
     private List<PropertyDescriptor> setters;
 
-    private BeanGenerator() {
-        throw new IllegalStateException("can't do this!");
-    }
-
     private BeanGenerator(ClassPool pool) {
-        mPool = pool;
+        super(pool);
     }
 
     public static BeanGenerator newInstance() {
@@ -38,32 +25,18 @@ public final class BeanGenerator {
         return new BeanGenerator(getClassPool(loader));
     }
 
-    public static ClassPool getClassPool(ClassLoader loader) {
-        if (loader == null) {
-            return ClassPool.getDefault();
-        }
-
-        ClassPool pool = POOL_MAP.get(loader);
-        if (pool == null) {
-            pool = new ClassPool(true);
-            pool.appendClassPath(new CustomizedLoaderClassPath(loader));
-            POOL_MAP.put(loader, pool);
-        }
-        return pool;
-    }
-
     public BeanGenerator superClass(String cn) {
-        superClass = cn;
+        this.mSuperClass = cn;
         return this;
     }
 
     public BeanGenerator superClass(Class<?> cl) {
-        superClass = cl.getName();
+        this.mSuperClass = cl.getName();
         return this;
     }
 
     public BeanGenerator className(String className) {
-        className = className;
+        this.mClassName = className;
         return this;
     }
 
@@ -74,7 +47,7 @@ public final class BeanGenerator {
         if (setters == null) {
             setters = new ArrayList<>();
         }
-        PropertyDescriptor propertyDescriptor = new PropertyDescriptor(property, clazz);
+        PropertyDescriptor propertyDescriptor = formatProperty(property, clazz);
         getters.add(propertyDescriptor);
         setters.add(propertyDescriptor);
         return this;
@@ -85,7 +58,7 @@ public final class BeanGenerator {
         if (getters == null) {
             getters = new ArrayList<>();
         }
-        getters.add(new PropertyDescriptor(property, clazz));
+        getters.add(formatProperty(property, clazz));
         return this;
     }
 
@@ -93,12 +66,19 @@ public final class BeanGenerator {
         if (setters == null) {
             setters = new ArrayList<>();
         }
-        setters.add(new PropertyDescriptor(property, clazz));
+        setters.add(formatProperty(property, clazz));
         return this;
     }
 
+    private PropertyDescriptor formatProperty(String property, Class<?> clazz) {
+        if ((clazz == Boolean.class || clazz == Boolean.TYPE) && property.startsWith("is")) {
+            return new PropertyDescriptor(property.substring(2, 3).toLowerCase() + property.substring(3), clazz);
+        }
+        return new PropertyDescriptor(property, clazz);
+    }
+
     public Class<?> toClass() {
-        return toClass(ClassUtils.getClassLoader(ClassGenerator.class),
+        return toClass(ClassUtils.getClassLoader(BeanGenerator.class),
                 getClass().getProtectionDomain());
     }
 
@@ -107,20 +87,25 @@ public final class BeanGenerator {
             mCtc.detach();
         }
         try {
-            mCtc = mPool.makeClass(className);
-            if (superClass != null) {
-                mCtc.setSuperclass(mPool.get(superClass));
+            mCtc = mPool.makeClass(mClassName);
+            if (mSuperClass != null) {
+                mCtc.setSuperclass(mPool.get(mSuperClass));
             }
             if (getters != null) {
                 for (PropertyDescriptor getter : getters) {
-                    CtNewMethod.getter(getter.getProperty(),
-                            CtField.make("private " + getter.getJavaType().getName() + getter.getProperty(), mCtc));
+                    CtMethod ctMethod = CtNewMethod.getter(getterMethod(getter), getField(getter));
+                    mCtc.addMethod(ctMethod);
                 }
             }
             if (setters != null) {
                 for (PropertyDescriptor setter : setters) {
-                    CtNewMethod.setter(setter.getProperty(),
-                            CtField.make("private " + setter.getJavaType().getName() + setter.getProperty(), mCtc));
+                    CtMethod ctMethod = CtNewMethod.setter(setterMethod(setter), getField(setter));
+                    mCtc.addMethod(ctMethod);
+                }
+            }
+            if (mFields != null) {
+                for (String code : mFields) {
+                    mCtc.addField(CtField.make(code, mCtc));
                 }
             }
             mCtc.writeFile();
@@ -136,4 +121,47 @@ public final class BeanGenerator {
         }
     }
 
+    private String getterMethod(PropertyDescriptor getter) {
+        String property = getter.getProperty().substring(0, 1).toUpperCase() + getter.getProperty().substring(1);
+        if (getter.getJavaType() == Boolean.class || getter.getJavaType() == Boolean.TYPE) {
+            return String.format("is%s", property);
+        }
+        return String.format("get%s", property);
+    }
+
+    private String setterMethod(PropertyDescriptor setter) {
+        String property = setter.getProperty().substring(0, 1).toUpperCase() + setter.getProperty().substring(1);
+        return String.format("set%s", property);
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        if (getters != null) {
+            getters.clear();
+        }
+        if (setters != null) {
+            setters.clear();
+        }
+    }
+
+    private CtField getField(PropertyDescriptor field) {
+        String fieldStr = String.format("private %s %s;", field.getJavaType().getName(), field.getProperty());
+        CtField ctField = null;
+        try {
+            ctField = mCtc.getField(fieldStr);
+        } catch (NotFoundException e) {
+            try {
+                ctField = CtField.make(fieldStr, mCtc);
+                if (this.mFields == null) {
+
+                    this.mFields = new HashSet<>();
+                }
+                this.mFields.add(fieldStr);
+            } catch (CannotCompileException cannotCompileException) {
+                throw new RuntimeException(cannotCompileException.getMessage(), cannotCompileException);
+            }
+        }
+        return ctField;
+    }
 }

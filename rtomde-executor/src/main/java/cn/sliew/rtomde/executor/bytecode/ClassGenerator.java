@@ -17,21 +17,13 @@ import java.util.concurrent.atomic.AtomicLong;
 /**
  * ClassGenerator
  */
-public final class ClassGenerator implements AutoCloseable {
+public final class ClassGenerator extends Generator implements AutoCloseable {
 
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
-    /**
-     * ClassLoader => ClassPool
-     */
-    private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<>();
-    private ClassPool mPool;
+
     private List<String> mImportedPackages;
-    private CtClass mCtc;
-    private String mClassName;
-    private String mSuperClass;
     private Set<String> mInterfaces;
-    private List<String> mFields;
     private List<String> mConstructors;
     private List<String> mMethods;
     /**
@@ -44,12 +36,8 @@ public final class ClassGenerator implements AutoCloseable {
     private Map<String, Constructor<?>> mCopyConstructors;
     private boolean mDefaultConstructor = false;
 
-    private ClassGenerator() {
-        throw new IllegalStateException("can't do this!");
-    }
-
     private ClassGenerator(ClassPool pool) {
-        mPool = pool;
+        super(pool);
     }
 
     public static ClassGenerator newInstance() {
@@ -58,20 +46,6 @@ public final class ClassGenerator implements AutoCloseable {
 
     public static ClassGenerator newInstance(ClassLoader loader) {
         return new ClassGenerator(getClassPool(loader));
-    }
-
-    public static ClassPool getClassPool(ClassLoader loader) {
-        if (loader == null) {
-            return ClassPool.getDefault();
-        }
-
-        ClassPool pool = POOL_MAP.get(loader);
-        if (pool == null) {
-            pool = new ClassPool(true);
-            pool.appendClassPath(new CustomizedLoaderClassPath(loader));
-            POOL_MAP.put(loader, pool);
-        }
-        return pool;
     }
 
     private static String modifier(int mod) {
@@ -135,7 +109,7 @@ public final class ClassGenerator implements AutoCloseable {
 
     public ClassGenerator addField(String code) {
         if (mFields == null) {
-            mFields = new ArrayList<String>();
+            mFields = new HashSet<>();
         }
         mFields.add(code);
         return this;
@@ -340,19 +314,10 @@ public final class ClassGenerator implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
-        release();
-    }
-
-    public void release() {
-        if (mCtc != null) {
-            mCtc.detach();
-        }
+    public void close() {
+        super.close();
         if (mInterfaces != null) {
             mInterfaces.clear();
-        }
-        if (mFields != null) {
-            mFields.clear();
         }
         if (mMethods != null) {
             mMethods.clear();
@@ -366,18 +331,5 @@ public final class ClassGenerator implements AutoCloseable {
         if (mCopyConstructors != null) {
             mCopyConstructors.clear();
         }
-    }
-
-    private CtClass getCtClass(Class<?> c) throws NotFoundException {
-        return mPool.get(c.getName());
-    }
-
-    private CtMethod getCtMethod(Method m) throws NotFoundException {
-        return getCtClass(m.getDeclaringClass())
-                .getMethod(m.getName(), ReflectUtils.getDescWithoutMethodName(m));
-    }
-
-    private CtConstructor getCtConstructor(Constructor<?> c) throws NotFoundException {
-        return getCtClass(c.getDeclaringClass()).getConstructor(ReflectUtils.getDesc(c));
     }
 }
