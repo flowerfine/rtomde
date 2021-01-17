@@ -18,9 +18,9 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -52,12 +52,10 @@ public class JavassistController {
             MapperMethod mapperMethod = new MapperMethod(configuration, mappedStatementName);
             map.putIfAbsent(mappedStatementName, new PlainMapperInvoker(mapperMethod));
         }
-        for (Map.Entry<String, MapperInvoker> entry : map.entrySet()) {
-            String key = entry.getKey();
-        }
+        ac.registerBean(makeDispatcherController());
     }
 
-    public void makeDispatcherController() {
+    public Class<?> makeDispatcherController() {
         CtClass controllerClass = classPool.makeClass("cn.sliew.rtomde.executor.MapperController");
         ClassFile ccFile = controllerClass.getClassFile();
 
@@ -77,17 +75,18 @@ public class JavassistController {
 
         ccFile.addAttribute(classAttr);
         try {
-            // mapper dispatcher
-//            CtField mapField = CtField.make(String.format("private %s map;", map.getClass().getName()), controllerClass);
-//            controllerClass.addField(mapField);
             controllerClass.addField(makeAutowiredField(controllerClass, constpool));
             // method
             CtMethod[] methods = makeRequestMapping(controllerClass, constpool);
             for (CtMethod m : methods) {
                 controllerClass.addMethod(m);
             }
-            Class<?> clazz = controllerClass.toClass();
+            controllerClass.writeFile();
+            return controllerClass.toClass();
         } catch (CannotCompileException e) {
+            log.error("create Controller:[{}] failed", controllerClass.getName(), e);
+            throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
+        } catch (Throwable e) {
             log.error("create Controller:[{}] failed", controllerClass.getName(), e);
             throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
         }
@@ -111,60 +110,53 @@ public class JavassistController {
     }
 
     private CtMethod[] makeRequestMapping(CtClass declaring, ConstPool constpool) {
-        try {
-            CtClass parentCtClass = classPool.get(declaring.getName());
+        List<CtMethod> methods = new ArrayList<>(map.keySet().size());
+        for (String id : map.keySet()) {
+            CtMethod method = makeMapperMethod(declaring, id);
+            // 方法上添加注解
+            MethodInfo info = method.getMethodInfo();
+            AnnotationsAttribute methodAttr = new AnnotationsAttribute(constpool, AnnotationsAttribute.visibleTag);
+            // @RequestMapping
+            Annotation requestMapping = new Annotation("org.springframework.web.bind.annotation.RequestMapping", constpool);
+            //Mapping路径(使用方法名)
+            ArrayMemberValue pathValue = new ArrayMemberValue(constpool);
+            pathValue.setValue(new StringMemberValue[]{new StringMemberValue("/" + id, constpool)});
+            requestMapping.addMemberValue("path", pathValue);
+            methodAttr.addAnnotation(requestMapping);
+            //@ResponseBody
+            Annotation responseBody = new Annotation("org.springframework.web.bind.annotation.ResponseBody", constpool);
+            methodAttr.addAnnotation(responseBody);
+            //参数上注解@RequestBody
+            Annotation requestBody = new Annotation("org.springframework.web.bind.annotation.RequestBody", constpool);
+            ParameterAnnotationsAttribute parameterAnnotationsAttribute = new ParameterAnnotationsAttribute(constpool, ParameterAnnotationsAttribute.visibleTag);
+            Annotation[][] anno = new Annotation[][]{{requestBody}};
+            parameterAnnotationsAttribute.setAnnotations(anno);
 
-            CtMethod[] declaredMethods = parentCtClass.getDeclaredMethods();
-            CtMethod[] methods = new CtMethod[declaredMethods.length];
-            for (Map.Entry<String, MapperInvoker> entry : map.entrySet()) {
-                String id = entry.getKey();
-                MapperInvoker invoker = entry.getValue();
-
-            }
-            for (int i = 0; i < declaredMethods.length; i++) {
-                // 生成方法体
-                CtMethod method = generatedMetaMethod(declaredMethods[i], declaring);
-                // 方法上添加注解
-                MethodInfo info = method.getMethodInfo();
-                AnnotationsAttribute methodAttr = new AnnotationsAttribute(constpool, AnnotationsAttribute.visibleTag);
-                // 添加 @RequestMapping注解
-                Annotation requestMapping = new Annotation("org.springframework.web.bind.annotation.RequestMapping", constpool);
-                //Mapping路径(使用方法名)
-                ArrayMemberValue pathValue = new ArrayMemberValue(constpool);
-                pathValue.setValue(new StringMemberValue[]{new StringMemberValue("/" + declaredMethods[i].getName(), constpool)});
-                requestMapping.addMemberValue("path", pathValue);
-                methodAttr.addAnnotation(requestMapping);
-                // 添加@ResponseBody注解
-                Annotation responseBody = new Annotation("org.springframework.web.bind.annotation.ResponseBody", constpool);
-                methodAttr.addAnnotation(responseBody);
-                //参数上注解@RequestBody
-                Annotation requestBody = new Annotation("org.springframework.web.bind.annotation.RequestBody", constpool);
-                ParameterAnnotationsAttribute parameterAnnotationsAttribute = new ParameterAnnotationsAttribute(constpool, ParameterAnnotationsAttribute.visibleTag);
-                javassist.bytecode.annotation.Annotation[][] anno = new javassist.bytecode.annotation.Annotation[][]{{requestBody}};
-                parameterAnnotationsAttribute.setAnnotations(anno);
-
-                info.addAttribute(methodAttr);
-                info.addAttribute(parameterAnnotationsAttribute);
-                methods[i] = method;
-            }
-            return methods;
-        } catch (CannotCompileException | NotFoundException e) {
-            log.error("create request mapping failed for interface:[{}]", interfaceClass.getName(), e);
-            throw new RuntimeException("create request mapping failed for interface:" + interfaceClass.getName(), e);
+            info.addAttribute(methodAttr);
+            info.addAttribute(parameterAnnotationsAttribute);
+            methods.add(method);
         }
+        return methods.toArray(new CtMethod[0]);
     }
 
-    private CtMethod makeMapperMethod(CtClass declaring, String id, MapperInvoker invoker) {
-        MappedStatement mappedStatement = sqlSessionFactory.getConfiguration().getMappedStatement(id);
-        Class<?> paramType = makeParamType(mappedStatement.getParameterMap());
-        Class<?> resultType = makeResultTypes(mappedStatement.getResultMaps());
-        return generateMapperMethod(resultType, paramType, id, declaring);
+    private CtMethod makeMapperMethod(CtClass declaring, String id) {
+        try {
+            MappedStatement mappedStatement = sqlSessionFactory.getConfiguration().getMappedStatement(id);
+//            Class<?> paramType = makeParamType(mappedStatement.getParameterMap());
+            Class<?> paramType = mappedStatement.getParameterMap().getType();
+//            Class<?> resultType = makeResultTypes(mappedStatement.getResultMaps());
+            Class<?> resultType = mappedStatement.getResultMaps().get(0).getType();
+            return generateMapperMethod(resultType, paramType, id, declaring);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     private Class<?> makeParamType(ParameterMap map) {
         BeanGenerator paramBeanG = BeanGenerator.newInstance(this.getClass().getClassLoader());
         paramBeanG.className(map.getType().getName());
         List<ParameterMapping> parameterMappings = map.getParameterMappings();
+        paramBeanG.addImportedPackages("java.util");
         for (ParameterMapping mapping : parameterMappings) {
             paramBeanG.setgetter(mapping.getProperty(), mapping.getJavaType());
         }
@@ -188,9 +180,9 @@ public class JavassistController {
     private CtMethod generateMapperMethod(Class<?> resultType, Class<?> paramType, String id, CtClass declaring) throws Exception {
         CtMethod method = new CtMethod(classPool.get(resultType.getName()), id, new CtClass[]{classPool.get(paramType.getName())}, declaring);
         StringBuilder methodBody = new StringBuilder();
-
-
-
+        methodBody.append("{");
+        methodBody.append("return mapperDispatcher.execute(" + id + ", $$);");
+        methodBody.append("}");
         return method;
     }
 

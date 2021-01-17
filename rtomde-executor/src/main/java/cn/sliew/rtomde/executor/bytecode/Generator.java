@@ -5,8 +5,7 @@ import javassist.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 abstract class Generator implements AutoCloseable {
@@ -18,6 +17,7 @@ abstract class Generator implements AutoCloseable {
     protected CtClass mCtc;
     protected String mClassName;
     protected String mSuperClass;
+    protected List<String> mImportedPackages;
     protected Set<String> mFields;
 
     protected Generator(ClassPool pool) {
@@ -36,6 +36,14 @@ abstract class Generator implements AutoCloseable {
             POOL_MAP.put(loader, pool);
         }
         return pool;
+    }
+
+    public Generator addImportedPackages(String... importedPackages) {
+        if (mImportedPackages == null) {
+            mImportedPackages = new ArrayList<>();
+        }
+        mImportedPackages.addAll(Arrays.asList(importedPackages));
+        return this;
     }
 
     protected CtClass getCtClass(Class<?> c) throws NotFoundException {

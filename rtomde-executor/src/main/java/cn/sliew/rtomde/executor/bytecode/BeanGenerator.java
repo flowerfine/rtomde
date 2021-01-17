@@ -82,12 +82,22 @@ public final class BeanGenerator extends Generator implements AutoCloseable {
                 getClass().getProtectionDomain());
     }
 
+    /**
+     * fixme 后面把get()换成makeClass
+     * @param loader
+     * @param pd
+     * @return
+     */
     public Class<?> toClass(ClassLoader loader, ProtectionDomain pd) {
         if (mCtc != null) {
             mCtc.detach();
         }
         try {
-            mCtc = mPool.makeClass(mClassName);
+//            mCtc = mPool.makeClass(mClassName);
+            mCtc = mPool.get(mClassName);
+            if (mImportedPackages != null) {
+                mImportedPackages.forEach(importedPackage -> mPool.importPackage(importedPackage));
+            }
             if (mSuperClass != null) {
                 mCtc.setSuperclass(mPool.get(mSuperClass));
             }
@@ -108,7 +118,7 @@ public final class BeanGenerator extends Generator implements AutoCloseable {
                     mCtc.addField(CtField.make(code, mCtc));
                 }
             }
-            mCtc.writeFile();
+//            mCtc.writeFile();
             return mCtc.toClass(loader, pd);
         } catch (RuntimeException e) {
             throw e;

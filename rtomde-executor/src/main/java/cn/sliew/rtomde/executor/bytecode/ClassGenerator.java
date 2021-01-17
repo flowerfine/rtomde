@@ -22,7 +22,6 @@ public final class ClassGenerator extends Generator implements AutoCloseable {
     private static final AtomicLong CLASS_NAME_COUNTER = new AtomicLong(0);
     private static final String SIMPLE_NAME_TAG = "<init>";
 
-    private List<String> mImportedPackages;
     private Set<String> mInterfaces;
     private List<String> mConstructors;
     private List<String> mMethods;
@@ -66,14 +65,6 @@ public final class ClassGenerator extends Generator implements AutoCloseable {
         }
 
         return modifier.toString();
-    }
-
-    public ClassGenerator addImportedPackages(String... importedPackages) {
-        if (mImportedPackages == null) {
-            mImportedPackages = new ArrayList<>();
-        }
-        mImportedPackages.addAll(Arrays.asList(importedPackages));
-        return this;
     }
 
     public String getClassName() {

@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.sliew.rtomde.executor.mapper.SysUserMapper">
 
-    <parameterMap id="BaseParamMap" type="map">
+    <parameterMap id="BaseParamMap" type="cn.sliew.rtomde.executor.entity.SysUserParam">
         <parameter property="id" javaType="long"/>
     </parameterMap>
-    <resultMap id="BaseResultMap" type="map">
+    <resultMap id="BaseResultMap" type="cn.sliew.rtomde.executor.entity.SysUserDTO">
         <id column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
