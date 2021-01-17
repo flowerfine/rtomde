@@ -26,6 +26,7 @@ public final class ClassGenerator implements AutoCloseable {
      */
     private static final Map<ClassLoader, ClassPool> POOL_MAP = new ConcurrentHashMap<>();
     private ClassPool mPool;
+    private List<String> mImportedPackages;
     private CtClass mCtc;
     private String mClassName;
     private String mSuperClass;
@@ -91,6 +92,14 @@ public final class ClassGenerator implements AutoCloseable {
         }
 
         return modifier.toString();
+    }
+
+    public ClassGenerator addImportedPackages(String... importedPackages) {
+        if (mImportedPackages == null) {
+            mImportedPackages = new ArrayList<>();
+        }
+        mImportedPackages.addAll(Arrays.asList(importedPackages));
+        return this;
     }
 
     public String getClassName() {
@@ -268,6 +277,11 @@ public final class ClassGenerator implements AutoCloseable {
         }
         long id = CLASS_NAME_COUNTER.getAndIncrement();
         try {
+            if (mImportedPackages != null) {
+                for (String importedPackage : mImportedPackages) {
+                    mPool.importPackage(importedPackage);
+                }
+            }
             CtClass ctcs = mSuperClass == null ? null : mPool.get(mSuperClass);
             if (mClassName == null) {
                 mClassName = (mSuperClass == null || javassist.Modifier.isPublic(ctcs.getModifiers())
@@ -312,12 +326,15 @@ public final class ClassGenerator implements AutoCloseable {
                     }
                 }
             }
+            mCtc.writeFile();
             return mCtc.toClass(loader, pd);
         } catch (RuntimeException e) {
             throw e;
         } catch (NotFoundException e) {
             throw new RuntimeException(e.getMessage(), e);
         } catch (CannotCompileException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        } catch (Throwable e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
