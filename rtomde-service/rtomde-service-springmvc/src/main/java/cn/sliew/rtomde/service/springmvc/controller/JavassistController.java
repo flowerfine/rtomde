@@ -1,5 +1,6 @@
 //package cn.sliew.rtomde.service.springmvc.controller;
 //
+//import cn.sliew.rtomde.executor.bytecode.BeanGenerator;
 //import cn.sliew.rtomde.executor.mapper.MapperInvoker;
 //import cn.sliew.rtomde.executor.mapper.MapperMethod;
 //import cn.sliew.rtomde.executor.mapper.PlainMapperInvoker;
@@ -11,6 +12,8 @@
 //import lombok.extern.slf4j.Slf4j;
 //import org.apache.ibatis.mapping.MappedStatement;
 //import org.apache.ibatis.mapping.ParameterMap;
+//import org.apache.ibatis.mapping.ParameterMapping;
+//import org.apache.ibatis.mapping.ResultMap;
 //import org.apache.ibatis.session.SqlSessionFactory;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Configuration;
@@ -19,6 +22,7 @@
 //
 //import javax.annotation.PostConstruct;
 //import java.util.Collection;
+//import java.util.List;
 //import java.util.Map;
 //import java.util.concurrent.ConcurrentHashMap;
 //import java.util.concurrent.ConcurrentMap;
@@ -39,7 +43,7 @@
 //    private SqlSessionFactory sqlSessionFactory;
 //
 //    static {
-//        ClassClassPath path = new ClassClassPath(AnotherDispatcher.class);
+//        ClassClassPath path = new ClassClassPath(JavassistController.class);
 //        classPool.insertClassPath(path);
 //    }
 //
@@ -53,7 +57,6 @@
 //        }
 //        for (Map.Entry<String, MapperInvoker> entry : map.entrySet()) {
 //            String key = entry.getKey();
-//            registerController("cn.sliew.rtomde.executor.mapper.SysUserMapper");
 //        }
 //    }
 //
@@ -62,14 +65,14 @@
 //        ClassFile ccFile = controllerClass.getClassFile();
 //
 //        ConstPool constpool = ccFile.getConstPool();
-//        // 类上添加@RestController注解
+//        // @RestController
 //        AnnotationsAttribute classAttr = new AnnotationsAttribute(constpool, AnnotationsAttribute.visibleTag);
 //        Annotation controller = new Annotation("org.springframework.web.bind.annotation.RestController", constpool);
 //        classAttr.addAnnotation(controller);
 //
-//        // 类上添加@RequestMapping注解
+//        // @RequestMapping
 //        Annotation requestMapping = new Annotation("org.springframework.web.bind.annotation.RequestMapping", constpool);
-//        //接口级Mapping路径
+//        // mapper path
 //        ArrayMemberValue memberValue = new ArrayMemberValue(constpool);
 //        memberValue.setValue(new StringMemberValue[]{new StringMemberValue("/mapper", constpool)});
 //        requestMapping.addMemberValue("path", memberValue);
@@ -77,14 +80,14 @@
 //
 //        ccFile.addAttribute(classAttr);
 //        try {
-//            // 添加成员变量:调度器
+//            // dispatcher
 //            controllerClass.addField(makeAutowiredField(controllerClass, constpool));
-//            // 添加方法
+//            // method
 //            CtMethod[] methods = makeRequestMapping(controllerClass, constpool);
 //            for (CtMethod m : methods) {
 //                controllerClass.addMethod(m);
 //            }
-//            return controllerClass.toClass();
+//            controllerClass.toClass();
 //        } catch (CannotCompileException e) {
 //            log.error("create Controller:[{}] failed", controllerClass.getName(), e);
 //            throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
@@ -96,7 +99,7 @@
 //            CtField ctField = new CtField(classPool.get(sqlSessionFactory.getClass().getName()), "sqlSessionFactory", declaring);
 //            ctField.setModifiers(Modifier.PRIVATE);
 //            FieldInfo fieldInfo = ctField.getFieldInfo();
-//            // 成员变量添加@Autowired注解
+//            // @Autowired
 //            AnnotationsAttribute fieldAttr = new AnnotationsAttribute(constpool, AnnotationsAttribute.visibleTag);
 //            Annotation autowired = new Annotation("org.springframework.beans.factory.annotation.Autowired", constpool);
 //            fieldAttr.addAnnotation(autowired);
@@ -104,13 +107,13 @@
 //            return ctField;
 //        } catch (CannotCompileException | NotFoundException e) {
 //            log.error("make dispatcher field failed.", e);
-//            throw new RuntimeException("make dispatcher field failed.", e);
+//            throw new RuntimeException("make @Autowired field failed.", e);
 //        }
 //    }
 //
 //    private CtMethod[] makeRequestMapping(CtClass declaring, ConstPool constpool) {
 //        try {
-//            CtClass parentCtClass = classPool.get(interfaceClass.getName());
+//            CtClass parentCtClass = classPool.get(declaring.getName());
 //
 //            CtMethod[] declaredMethods = parentCtClass.getDeclaredMethods();
 //            CtMethod[] methods = new CtMethod[declaredMethods.length];
@@ -154,10 +157,27 @@
 //
 //    private CtMethod makeMapperMethod(CtClass declaring, String id, MapperInvoker invoker) {
 //        MappedStatement mappedStatement = sqlSessionFactory.getConfiguration().getMappedStatement(id);
-//        ParameterMap parameterMap = mappedStatement.getParameterMap();
-//        Class<?> type = parameterMap.getType();
+//        Class<?> paramType = makeParamType(mappedStatement.getParameterMap());
+//        Class<?> resultType = makeResultTypes(mappedStatement.getResultMaps());
 //
 //    }
+//
+//    private Class<?> makeParamType(ParameterMap map) {
+//        BeanGenerator paramBeanG = BeanGenerator.newInstance(this.getClass().getClassLoader());
+//        paramBeanG.className(map.getType().getName());
+//        List<ParameterMapping> parameterMappings = map.getParameterMappings();
+//        for (ParameterMapping mapping : parameterMappings) {
+//            paramBeanG.setgetter(mapping.getProperty(), mapping.getJavaType());
+//        }
+//        return paramBeanG.toClass();
+//    }
+//
+//    private Class<?> makeResultTypes(List<ResultMap> maps) {
+//
+//
+//    }
+//
+//
 //
 //    public CtMethod generatedMetaMethod(CtMethod ctMethod, CtClass declaring) throws NotFoundException, CannotCompileException {
 //        CtMethod method = new CtMethod(ctMethod.getReturnType(), ctMethod.getName(), ctMethod.getParameterTypes(), declaring);
