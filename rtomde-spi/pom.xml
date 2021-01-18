@@ -10,5 +10,12 @@
     </parent>
     <artifactId>rtomde-spi</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.sliew</groupId>
+            <artifactId>rtomde-common</artifactId>
+        </dependency>
+    </dependencies>
+
 
 </project>
