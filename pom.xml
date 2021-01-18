@@ -22,6 +22,8 @@
         <module>rtomde-mybatis-spring-boot</module>
         <module>rtomde-service</module>
         <module>rtomde-common</module>
+        <module>rtomde-datasource</module>
+        <module>rtomde-spi</module>
     </modules>
 
     <properties>
