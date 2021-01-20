@@ -13,7 +13,7 @@ public class PluginLoaderTest {
 
     @BeforeEach
     private void beforeEach() {
-        pluginLoader = new DefaultPluginLoader();
+        pluginLoader = DefaultPluginLoader.getPluginLoader(LoadingStrategy.class);
     }
 
     @Test
