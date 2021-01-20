@@ -53,23 +53,12 @@ scale CDATA #IMPLIED
 typeHandler CDATA #IMPLIED
 >
 
-<!ELEMENT resultMap (constructor?,id*,result*,association*,collection*, discriminator?)>
+<!ELEMENT resultMap (result*,association*,collection*,discriminator?)>
 <!ATTLIST resultMap
 id CDATA #REQUIRED
 type CDATA #REQUIRED
 extends CDATA #IMPLIED
 autoMapping (true|false) #IMPLIED
->
-
-<!ELEMENT constructor (idArg*,arg*)>
-
-<!ELEMENT id EMPTY>
-<!ATTLIST id
-property CDATA #IMPLIED
-javaType CDATA #IMPLIED
-column CDATA #IMPLIED
-jdbcType CDATA #IMPLIED
-typeHandler CDATA #IMPLIED
 >
 
 <!ELEMENT result EMPTY>
@@ -81,31 +70,7 @@ jdbcType CDATA #IMPLIED
 typeHandler CDATA #IMPLIED
 >
 
-<!ELEMENT idArg EMPTY>
-<!ATTLIST idArg
-javaType CDATA #IMPLIED
-column CDATA #IMPLIED
-jdbcType CDATA #IMPLIED
-typeHandler CDATA #IMPLIED
-select CDATA #IMPLIED
-resultMap CDATA #IMPLIED
-name CDATA #IMPLIED
-columnPrefix CDATA #IMPLIED
->
-
-<!ELEMENT arg EMPTY>
-<!ATTLIST arg
-javaType CDATA #IMPLIED
-column CDATA #IMPLIED
-jdbcType CDATA #IMPLIED
-typeHandler CDATA #IMPLIED
-select CDATA #IMPLIED
-resultMap CDATA #IMPLIED
-name CDATA #IMPLIED
-columnPrefix CDATA #IMPLIED
->
-
-<!ELEMENT collection (constructor?,id*,result*,association*,collection*, discriminator?)>
+<!ELEMENT collection (result*,association*,collection*,discriminator?)>
 <!ATTLIST collection
 property CDATA #REQUIRED
 column CDATA #IMPLIED
@@ -123,7 +88,7 @@ autoMapping (true|false) #IMPLIED
 fetchType (lazy|eager) #IMPLIED
 >
 
-<!ELEMENT association (constructor?,id*,result*,association*,collection*, discriminator?)>
+<!ELEMENT association (result*,association*,collection*,discriminator?)>
 <!ATTLIST association
 property CDATA #REQUIRED
 column CDATA #IMPLIED
@@ -148,7 +113,7 @@ jdbcType CDATA #IMPLIED
 typeHandler CDATA #IMPLIED
 >
 
-<!ELEMENT case (constructor?,id*,result*,association*,collection*, discriminator?)>
+<!ELEMENT case (result*,association*,collection*,discriminator?)>
 <!ATTLIST case
 value CDATA #REQUIRED
 resultMap CDATA #IMPLIED

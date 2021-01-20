@@ -6,7 +6,7 @@
         <parameter property="id" javaType="long"/>
     </parameterMap>
     <resultMap id="BaseResultMap" type="cn.sliew.rtomde.executor.entity.SysUserDTO">
-        <id column="id" property="id"/>
+        <result column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="nickname" property="nickname"/>
@@ -21,7 +21,7 @@
     </resultMap>
 
     <resultMap id="BaseDetailResultMap" type="map">
-        <id column="id" property="id"/>
+        <result column="id" property="id"/>
         <result column="username" property="username"/>
         <result column="password" property="password"/>
         <result column="nickname" property="nickname"/>
