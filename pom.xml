@@ -24,6 +24,7 @@
         <module>rtomde-common</module>
         <module>rtomde-datasource</module>
         <module>rtomde-spi</module>
+        <module>rtomde-bind</module>
     </modules>
 
     <properties>
