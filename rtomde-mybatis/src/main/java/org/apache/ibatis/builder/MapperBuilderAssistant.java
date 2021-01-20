@@ -170,17 +170,6 @@ public class MapperBuilderAssistant extends BaseBuilder {
       ResultMap resultMap = configuration.getResultMap(extend);
       List<ResultMapping> extendedResultMappings = new ArrayList<>(resultMap.getResultMappings());
       extendedResultMappings.removeAll(resultMappings);
-      // Remove parent constructor if this resultMap declares a constructor.
-      boolean declaresConstructor = false;
-      for (ResultMapping resultMapping : resultMappings) {
-        if (resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR)) {
-          declaresConstructor = true;
-          break;
-        }
-      }
-      if (declaresConstructor) {
-        extendedResultMappings.removeIf(resultMapping -> resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR));
-      }
       resultMappings.addAll(extendedResultMappings);
     }
     ResultMap resultMap = new ResultMap.Builder(configuration, id, type, resultMappings, autoMapping)
@@ -208,7 +197,6 @@ public class MapperBuilderAssistant extends BaseBuilder {
         null,
         null,
         typeHandler,
-        new ArrayList<>(),
         null,
         null,
         false);
@@ -399,7 +387,6 @@ public class MapperBuilderAssistant extends BaseBuilder {
       String notNullColumn,
       String columnPrefix,
       Class<? extends TypeHandler<?>> typeHandler,
-      List<ResultFlag> flags,
       String resultSet,
       String foreignColumn,
       boolean lazy) {
@@ -417,7 +404,6 @@ public class MapperBuilderAssistant extends BaseBuilder {
         .nestedResultMapId(applyCurrentNamespace(nestedResultMap, true))
         .resultSet(resultSet)
         .typeHandler(typeHandlerInstance)
-        .flags(flags == null ? new ArrayList<>() : flags)
         .composites(composites)
         .notNullColumns(parseMultipleColumnNames(notNullColumn))
         .columnPrefix(columnPrefix)
@@ -449,16 +435,14 @@ public class MapperBuilderAssistant extends BaseBuilder {
    *          the column prefix
    * @param typeHandler
    *          the type handler
-   * @param flags
-   *          the flags
    * @return the result mapping
    */
   public ResultMapping buildResultMapping(Class<?> resultType, String property, String column, Class<?> javaType,
       JdbcType jdbcType, String nestedSelect, String nestedResultMap, String notNullColumn, String columnPrefix,
-      Class<? extends TypeHandler<?>> typeHandler, List<ResultFlag> flags) {
+      Class<? extends TypeHandler<?>> typeHandler) {
     return buildResultMapping(
       resultType, property, column, javaType, jdbcType, nestedSelect,
-      nestedResultMap, notNullColumn, columnPrefix, typeHandler, flags, null, null, configuration.isLazyLoadingEnabled());
+      nestedResultMap, notNullColumn, columnPrefix, typeHandler, null, null, configuration.isLazyLoadingEnabled());
   }
 
   /**

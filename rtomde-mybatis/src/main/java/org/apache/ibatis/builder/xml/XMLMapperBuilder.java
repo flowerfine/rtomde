@@ -250,16 +250,10 @@ public class XMLMapperBuilder extends BaseBuilder {
     List<ResultMapping> resultMappings = new ArrayList<>(additionalResultMappings);
     List<XNode> resultChildren = resultMapNode.getChildren();
     for (XNode resultChild : resultChildren) {
-      if ("constructor".equals(resultChild.getName())) {
-        processConstructorElement(resultChild, typeClass, resultMappings);
-      } else if ("discriminator".equals(resultChild.getName())) {
+      if ("discriminator".equals(resultChild.getName())) {
         discriminator = processDiscriminatorElement(resultChild, typeClass, resultMappings);
       } else {
-        List<ResultFlag> flags = new ArrayList<>();
-        if ("id".equals(resultChild.getName())) {
-          flags.add(ResultFlag.ID);
-        }
-        resultMappings.add(buildResultMappingFromContext(resultChild, typeClass, flags));
+        resultMappings.add(buildResultMappingFromContext(resultChild, typeClass));
       }
     }
     String id = resultMapNode.getStringAttribute("id",
@@ -286,18 +280,6 @@ public class XMLMapperBuilder extends BaseBuilder {
       return enclosingType;
     }
     return null;
-  }
-
-  private void processConstructorElement(XNode resultChild, Class<?> resultType, List<ResultMapping> resultMappings) {
-    List<XNode> argChildren = resultChild.getChildren();
-    for (XNode argChild : argChildren) {
-      List<ResultFlag> flags = new ArrayList<>();
-      flags.add(ResultFlag.CONSTRUCTOR);
-      if ("idArg".equals(argChild.getName())) {
-        flags.add(ResultFlag.ID);
-      }
-      resultMappings.add(buildResultMappingFromContext(argChild, resultType, flags));
-    }
   }
 
   private Discriminator processDiscriminatorElement(XNode context, Class<?> resultType, List<ResultMapping> resultMappings) {
@@ -350,13 +332,8 @@ public class XMLMapperBuilder extends BaseBuilder {
     return context.getStringAttribute("databaseId") == null;
   }
 
-  private ResultMapping buildResultMappingFromContext(XNode context, Class<?> resultType, List<ResultFlag> flags) {
-    String property;
-    if (flags.contains(ResultFlag.CONSTRUCTOR)) {
-      property = context.getStringAttribute("name");
-    } else {
-      property = context.getStringAttribute("property");
-    }
+  private ResultMapping buildResultMappingFromContext(XNode context, Class<?> resultType) {
+    String property = context.getStringAttribute("property");
     String column = context.getStringAttribute("column");
     String javaType = context.getStringAttribute("javaType");
     String jdbcType = context.getStringAttribute("jdbcType");
@@ -372,7 +349,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     Class<?> javaTypeClass = resolveClass(javaType);
     Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
     JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
-    return builderAssistant.buildResultMapping(resultType, property, column, javaTypeClass, jdbcTypeEnum, nestedSelect, nestedResultMap, notNullColumn, columnPrefix, typeHandlerClass, flags, resultSet, foreignColumn, lazy);
+    return builderAssistant.buildResultMapping(resultType, property, column, javaTypeClass, jdbcTypeEnum, nestedSelect, nestedResultMap, notNullColumn, columnPrefix, typeHandlerClass, resultSet, foreignColumn, lazy);
   }
 
   private String processNestedResultMappings(XNode context, List<ResultMapping> resultMappings, Class<?> enclosingType) {

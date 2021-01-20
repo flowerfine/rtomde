@@ -40,7 +40,6 @@ public class ResultMapping {
   private String nestedQueryId;
   private Set<String> notNullColumns;
   private String columnPrefix;
-  private List<ResultFlag> flags;
   private List<ResultMapping> composites;
   private String resultSet;
   private String foreignColumn;
@@ -67,7 +66,6 @@ public class ResultMapping {
     public Builder(Configuration configuration, String property) {
       resultMapping.configuration = configuration;
       resultMapping.property = property;
-      resultMapping.flags = new ArrayList<>();
       resultMapping.composites = new ArrayList<>();
       resultMapping.lazy = configuration.isLazyLoadingEnabled();
     }
@@ -112,11 +110,6 @@ public class ResultMapping {
       return this;
     }
 
-    public Builder flags(List<ResultFlag> flags) {
-      resultMapping.flags = flags;
-      return this;
-    }
-
     public Builder typeHandler(TypeHandler<?> typeHandler) {
       resultMapping.typeHandler = typeHandler;
       return this;
@@ -134,7 +127,6 @@ public class ResultMapping {
 
     public ResultMapping build() {
       // lock down collections
-      resultMapping.flags = Collections.unmodifiableList(resultMapping.flags);
       resultMapping.composites = Collections.unmodifiableList(resultMapping.composites);
       resolveTypeHandler();
       validate();
@@ -219,10 +211,6 @@ public class ResultMapping {
     return columnPrefix;
   }
 
-  public List<ResultFlag> getFlags() {
-    return flags;
-  }
-
   public List<ResultMapping> getComposites() {
     return composites;
   }
@@ -293,7 +281,6 @@ public class ResultMapping {
     sb.append(", nestedQueryId='").append(nestedQueryId).append('\'');
     sb.append(", notNullColumns=").append(notNullColumns);
     sb.append(", columnPrefix='").append(columnPrefix).append('\'');
-    sb.append(", flags=").append(flags);
     sb.append(", composites=").append(composites);
     sb.append(", resultSet='").append(resultSet).append('\'');
     sb.append(", foreignColumn='").append(foreignColumn).append('\'');

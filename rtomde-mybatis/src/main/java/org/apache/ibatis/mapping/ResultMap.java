@@ -101,17 +101,7 @@ public class ResultMap {
         if (property != null) {
           resultMap.mappedProperties.add(property);
         }
-        if (resultMapping.getFlags().contains(ResultFlag.CONSTRUCTOR)) {
-          resultMap.constructorResultMappings.add(resultMapping);
-          if (resultMapping.getProperty() != null) {
-            constructorArgNames.add(resultMapping.getProperty());
-          }
-        } else {
-          resultMap.propertyResultMappings.add(resultMapping);
-        }
-        if (resultMapping.getFlags().contains(ResultFlag.ID)) {
-          resultMap.idResultMappings.add(resultMapping);
-        }
+        resultMap.propertyResultMappings.add(resultMapping);
       }
       if (resultMap.idResultMappings.isEmpty()) {
         resultMap.idResultMappings.addAll(resultMap.resultMappings);
