@@ -15,9 +15,25 @@ public class MysqlDataSource implements DataSource {
 
     MysqlDataSource(Config config) {
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(config.getString("jdbcUrl"));
+        hikariConfig.setJdbcUrl(config.getString("jdbc-url"));
         hikariConfig.setUsername(config.getString("username"));
         hikariConfig.setPassword(config.getString("password"));
+        if (config.hasPath("driver-class-name")) {
+            hikariConfig.setDriverClassName(config.getString("driver-class-name"));
+        }
+        if (config.hasPath("dataSourceClassName")) {
+            hikariConfig.setDataSourceClassName(config.getString("dataSource-class-name"));
+        }
+        if (config.hasPath("idle-timeout")) {
+            hikariConfig.setIdleTimeout(config.getLong("idle-timeout"));
+        }
+        if (config.hasPath("minimum-idle")) {
+            hikariConfig.setMinimumIdle(config.getInt("minimum-idle"));
+        }
+        if (config.hasPath("maximum-pool-size")) {
+            hikariConfig.setMaximumPoolSize(config.getInt("maximum-pool-size"));
+        }
+
         Config datasourceConfig = config.getConfig("datasource");
         for (Map.Entry<String, ConfigValue> entry : datasourceConfig.entrySet()) {
             hikariConfig.addDataSourceProperty(entry.getKey(), entry.getValue().unwrapped());
