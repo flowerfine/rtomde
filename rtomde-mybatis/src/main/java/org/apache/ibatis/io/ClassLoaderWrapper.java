@@ -176,25 +176,17 @@ public class ClassLoaderWrapper {
    * @throws ClassNotFoundException - Remember the wisdom of Judge Smails: Well, the world needs ditch diggers, too.
    */
   Class<?> classForName(String name, ClassLoader[] classLoader) throws ClassNotFoundException {
-
     for (ClassLoader cl : classLoader) {
-
       if (null != cl) {
-
         try {
-
           return Class.forName(name, true, cl);
-
         } catch (ClassNotFoundException e) {
           // we'll ignore this until all classloaders fail to locate the class
         }
-
       }
-
     }
-
+    // todo 增加代码生成
     throw new ClassNotFoundException("Cannot find class: " + name);
-
   }
 
   ClassLoader[] getClassLoaders(ClassLoader classLoader) {

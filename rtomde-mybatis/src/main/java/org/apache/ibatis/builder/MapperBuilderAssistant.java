@@ -506,9 +506,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
 
   private Class<?> resolveParameterJavaType(Class<?> resultType, String property, Class<?> javaType, JdbcType jdbcType) {
     if (javaType == null) {
-      if (JdbcType.CURSOR.equals(jdbcType)) {
-        javaType = java.sql.ResultSet.class;
-      } else if (Map.class.isAssignableFrom(resultType)) {
+      if (Map.class.isAssignableFrom(resultType)) {
         javaType = Object.class;
       } else {
         MetaClass metaResultType = MetaClass.forClass(resultType, configuration.getReflectorFactory());
