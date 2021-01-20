@@ -16,7 +16,7 @@
        limitations under the License.
 
 -->
-<!ELEMENT mapper (cache-ref | cache | resultMap* | parameterMap* | sql* | insert* | update* | delete* | select* )+>
+<!ELEMENT mapper (cache-ref | cache | resultMap* | parameterMap* | sql* | select* )+>
 <!ATTLIST mapper
 namespace CDATA #IMPLIED
 >
@@ -184,58 +184,6 @@ databaseId CDATA #IMPLIED
 lang CDATA #IMPLIED
 resultOrdered (true|false) #IMPLIED
 resultSets CDATA #IMPLIED 
->
-
-<!ELEMENT insert (#PCDATA | selectKey | include | trim | where | set | foreach | choose | if | bind)*>
-<!ATTLIST insert
-id CDATA #REQUIRED
-parameterMap CDATA #IMPLIED
-parameterType CDATA #IMPLIED
-timeout CDATA #IMPLIED
-flushCache (true|false) #IMPLIED
-statementType (STATEMENT|PREPARED|CALLABLE) #IMPLIED
-keyProperty CDATA #IMPLIED
-useGeneratedKeys (true|false) #IMPLIED
-keyColumn CDATA #IMPLIED
-databaseId CDATA #IMPLIED
-lang CDATA #IMPLIED
->
-
-<!ELEMENT selectKey (#PCDATA | include | trim | where | set | foreach | choose | if | bind)*>
-<!ATTLIST selectKey
-resultType CDATA #IMPLIED
-statementType (STATEMENT|PREPARED|CALLABLE) #IMPLIED
-keyProperty CDATA #IMPLIED
-keyColumn CDATA #IMPLIED
-order (BEFORE|AFTER) #IMPLIED
-databaseId CDATA #IMPLIED
->
-
-<!ELEMENT update (#PCDATA | selectKey | include | trim | where | set | foreach | choose | if | bind)*>
-<!ATTLIST update
-id CDATA #REQUIRED
-parameterMap CDATA #IMPLIED
-parameterType CDATA #IMPLIED
-timeout CDATA #IMPLIED
-flushCache (true|false) #IMPLIED
-statementType (STATEMENT|PREPARED|CALLABLE) #IMPLIED
-keyProperty CDATA #IMPLIED
-useGeneratedKeys (true|false) #IMPLIED
-keyColumn CDATA #IMPLIED
-databaseId CDATA #IMPLIED
-lang CDATA #IMPLIED
->
-
-<!ELEMENT delete (#PCDATA | include | trim | where | set | foreach | choose | if | bind)*>
-<!ATTLIST delete
-id CDATA #REQUIRED
-parameterMap CDATA #IMPLIED
-parameterType CDATA #IMPLIED
-timeout CDATA #IMPLIED
-flushCache (true|false) #IMPLIED
-statementType (STATEMENT|PREPARED|CALLABLE) #IMPLIED
-databaseId CDATA #IMPLIED
-lang CDATA #IMPLIED
 >
 
 <!-- Dynamic -->

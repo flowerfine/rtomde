@@ -15,7 +15,6 @@
  */
 package org.apache.ibatis.mapping;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.LogFactory;
@@ -181,13 +180,7 @@ public class ResultMap {
       int paramCount = paramAnnotations.length;
       for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
         String name = null;
-        for (Annotation annotation : paramAnnotations[paramIndex]) {
-          if (annotation instanceof Param) {
-            name = ((Param) annotation).value();
-            break;
-          }
-        }
-        if (name == null && resultMap.configuration.isUseActualParamName()) {
+        if (resultMap.configuration.isUseActualParamName()) {
           if (actualParamNames == null) {
             actualParamNames = ParamNameUtil.getParamNames(constructor);
           }

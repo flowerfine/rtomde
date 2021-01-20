@@ -15,7 +15,6 @@
  */
 package org.mybatis.spring.boot.autoconfigure;
 
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.mapping.DatabaseIdProvider;
 import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.scripting.LanguageDriver;
@@ -228,7 +227,6 @@ public class MybatisAutoConfiguration implements InitializingBean {
 
             BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(MapperScannerConfigurer.class);
             builder.addPropertyValue("processPropertyPlaceHolders", true);
-            builder.addPropertyValue("annotationClass", Mapper.class);
             builder.addPropertyValue("basePackage", StringUtils.collectionToCommaDelimitedString(packages));
             BeanWrapper beanWrapper = new BeanWrapperImpl(MapperScannerConfigurer.class);
             Set<String> propertyNames = Stream.of(beanWrapper.getPropertyDescriptors()).map(PropertyDescriptor::getName)

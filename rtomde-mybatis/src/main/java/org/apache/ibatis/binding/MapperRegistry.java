@@ -15,7 +15,6 @@
  */
 package org.apache.ibatis.binding;
 
-import org.apache.ibatis.builder.annotation.MapperAnnotationBuilder;
 import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSession;
@@ -61,11 +60,6 @@ public class MapperRegistry {
       boolean loadCompleted = false;
       try {
         knownMappers.put(type, new MapperProxyFactory<>(type));
-        // It's important that the type is added before the parser is run
-        // otherwise the binding may automatically be attempted by the
-        // mapper parser. If the type is already known, it won't try.
-        MapperAnnotationBuilder parser = new MapperAnnotationBuilder(config, type);
-        parser.parse();
         loadCompleted = true;
       } finally {
         if (!loadCompleted) {

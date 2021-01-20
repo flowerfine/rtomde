@@ -19,7 +19,6 @@ import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.builder.CacheRefResolver;
 import org.apache.ibatis.builder.IncompleteElementException;
 import org.apache.ibatis.builder.ResultMapResolver;
-import org.apache.ibatis.builder.annotation.MethodResolver;
 import org.apache.ibatis.builder.xml.XMLStatementBuilder;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.decorators.FifoCache;
@@ -144,7 +143,6 @@ public class Configuration {
     protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
     protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<>();
     protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
-    protected final Collection<MethodResolver> incompleteMethods = new LinkedList<>();
 
     /*
      * A map holds cache-ref relationship. The key is the namespace that
@@ -220,7 +218,7 @@ public class Configuration {
     }
 
     /**
-     * Gets an applying type when omit a type on sql provider annotation(e.g. {@link org.apache.ibatis.annotations.SelectProvider}).
+     * Gets an applying type when omit a type on sql provider annotation.
      *
      * @return the default type for sql provider annotation
      * @since 3.5.6
@@ -230,7 +228,7 @@ public class Configuration {
     }
 
     /**
-     * Sets an applying type when omit a type on sql provider annotation(e.g. {@link org.apache.ibatis.annotations.SelectProvider}).
+     * Sets an applying type when omit a type on sql provider annotation.
      *
      * @param defaultSqlProviderType
      *          the default type for sql provider annotation
@@ -777,14 +775,6 @@ public class Configuration {
         incompleteResultMaps.add(resultMapResolver);
     }
 
-    public void addIncompleteMethod(MethodResolver builder) {
-        incompleteMethods.add(builder);
-    }
-
-    public Collection<MethodResolver> getIncompleteMethods() {
-        return incompleteMethods;
-    }
-
     public MappedStatement getMappedStatement(String id) {
         return this.getMappedStatement(id, true);
     }
@@ -855,14 +845,6 @@ public class Configuration {
             synchronized (incompleteStatements) {
                 incompleteStatements.removeIf(x -> {
                     x.parseStatementNode();
-                    return true;
-                });
-            }
-        }
-        if (!incompleteMethods.isEmpty()) {
-            synchronized (incompleteMethods) {
-                incompleteMethods.removeIf(x -> {
-                    x.resolve();
                     return true;
                 });
             }
