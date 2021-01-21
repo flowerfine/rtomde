@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!ELEMENT mapper (cache-ref | cache | resultMap* | parameterMap* | fragment* | query* )+>
+<!ELEMENT mapper (parameterMap* | resultMap* | fragment* | query* )+>
 <!ATTLIST mapper
 namespace CDATA #REQUIRED
->
-
-<!ELEMENT cache-ref EMPTY>
-<!ATTLIST cache-ref
-namespace CDATA #REQUIRED
->
-
-<!ELEMENT cache (property*)>
-<!ATTLIST cache
-type CDATA #IMPLIED
-size CDATA #IMPLIED
 >
 
 <!ELEMENT parameterMap (parameter+)?>
@@ -25,7 +14,7 @@ type CDATA #REQUIRED
 <!ATTLIST parameter
 property CDATA #REQUIRED
 javaType CDATA #IMPLIED
-jdbcType CDATA #IMPLIED
+columnType CDATA #IMPLIED
 typeHandler CDATA #IMPLIED
 >
 
@@ -42,7 +31,7 @@ autoMapping (true|false) #IMPLIED
 property CDATA #IMPLIED
 javaType CDATA #IMPLIED
 column CDATA #IMPLIED
-jdbcType CDATA #IMPLIED
+columnType CDATA #IMPLIED
 typeHandler CDATA #IMPLIED
 >
 

@@ -15,6 +15,12 @@
             <groupId>cn.sliew</groupId>
             <artifactId>rtomde-common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.sliew</groupId>
+            <artifactId>rtomde-datasource</artifactId>
+        </dependency>
+
+
     </dependencies>
 
 

@@ -12,9 +12,8 @@ public class XMLMapperBuilderTest {
     @Test
     public void testParse() throws Exception {
         InputStream inputStream = Resources.getResourceAsStream("PostMapper.xml");
-        XPathParser xPathParser = new XPathParser(inputStream, true, System.getProperties(), new XMLMapperEntityResolver());
-        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(xPathParser, "PostMapper.xml", Collections.emptyMap());
-
+        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(inputStream, "PostMapper.xml", Collections.emptyMap());
+        xmlMapperBuilder.parse();
     }
 
 }
