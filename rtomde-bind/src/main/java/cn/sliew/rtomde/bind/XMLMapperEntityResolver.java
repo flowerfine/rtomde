@@ -1,5 +1,6 @@
 package cn.sliew.rtomde.bind;
 
+import cn.sliew.rtomde.common.resource.Resources;
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
