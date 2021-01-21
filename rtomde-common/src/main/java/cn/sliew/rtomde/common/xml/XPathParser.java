@@ -1,6 +1,5 @@
-package cn.sliew.rtomde.parse.xml;
+package cn.sliew.rtomde.common.xml;
 
-import cn.sliew.rtomde.parse.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;

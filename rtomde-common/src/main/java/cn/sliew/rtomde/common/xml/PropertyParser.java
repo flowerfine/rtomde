@@ -1,4 +1,4 @@
-package cn.sliew.rtomde.parse.xml;
+package cn.sliew.rtomde.common.xml;
 
 import java.util.Properties;
 

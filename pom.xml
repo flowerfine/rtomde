@@ -25,7 +25,6 @@
         <module>rtomde-datasource</module>
         <module>rtomde-spi</module>
         <module>rtomde-bind</module>
-        <module>rtomde-parse</module>
     </modules>
 
     <properties>

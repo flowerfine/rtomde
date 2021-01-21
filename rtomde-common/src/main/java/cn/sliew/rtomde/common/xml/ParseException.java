@@ -1,4 +1,4 @@
-package cn.sliew.rtomde.parse;
+package cn.sliew.rtomde.common.xml;
 
 import cn.sliew.rtomde.common.exception.RtomdeException;
 

@@ -1,4 +1,4 @@
-package cn.sliew.rtomde.parse.xml;
+package cn.sliew.rtomde.common.xml;
 
 public interface TokenHandler {
     String handleToken(String content);
