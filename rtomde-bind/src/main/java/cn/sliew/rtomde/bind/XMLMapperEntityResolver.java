@@ -17,8 +17,8 @@ public class XMLMapperEntityResolver implements EntityResolver {
     private static final String RTOMDE_CONFIG_SYSTEM = "rtomde-1-config.dtd";
     private static final String RTOMDE_MAPPER_SYSTEM = "rtomde-1-mapper.dtd";
 
-    private static final String RTOMDE_CONFIG_DTD = "cn/sliew/rtomde/builder/xml/rtomde-1-config.dtd";
-    private static final String RTOMDE_MAPPER_DTD = "cn/sliew/rtomde/builder/xml/rtomde-1-mapper.dtd";
+    private static final String RTOMDE_CONFIG_DTD = "cn/sliew/rtomde/bind/rtomde-1-config.dtd";
+    private static final String RTOMDE_MAPPER_DTD = "cn/sliew/rtomde/bind/rtomde-1-mapper.dtd";
 
     /**
      * Converts a public DTD into a local one.
@@ -55,6 +55,7 @@ public class XMLMapperEntityResolver implements EntityResolver {
                 source.setSystemId(systemId);
             } catch (IOException e) {
                 // ignore, null is ok
+                e.printStackTrace();
             }
         }
         return source;
