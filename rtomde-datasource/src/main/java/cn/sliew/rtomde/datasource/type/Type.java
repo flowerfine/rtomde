@@ -1,12 +1,8 @@
 package cn.sliew.rtomde.datasource.type;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.Objects.requireNonNull;
-
+/**
+ * 表示请求参数和返回结果的类型
+ */
 public interface Type {
 
     /**
@@ -15,42 +11,11 @@ public interface Type {
      */
     TypeSignature getTypeSignature();
 
-    @JsonValue
-    default TypeId getTypeId()
-    {
-        return TypeId.of(getTypeSignature().toString());
-    }
-
-    /**
-     * Returns the base name of this type. For simple types, it is the type name.
-     * For complex types (row, array, etc), it is the type name without any parameters.
-     */
-    default String getBaseName()
-    {
-        return getTypeSignature().getBase();
-    }
-
     /**
      * Returns the name of this type that should be displayed to end-users.
      */
-    String getDisplayName();
-
-    /**
-     * True if the type supports equalTo and hash.
-     */
-    boolean isComparable();
-
-    /**
-     * True if the type supports compareTo.
-     */
-    boolean isOrderable();
-
-    /**
-     * Gets the declared type specific operators for this type.
-     */
-    default TypeOperatorDeclaration getTypeOperatorDeclaration(TypeOperators typeOperators)
-    {
-        return NO_TYPE_OPERATOR_DECLARATION;
+    default String getName() {
+        return getTypeSignature().getName();
     }
 
     /**
@@ -60,120 +25,4 @@ public interface Type {
      * Currently, this must be boolean, long, double, Slice or Block.
      */
     Class<?> getJavaType();
-
-    /**
-     * For parameterized types returns the list of parameters.
-     */
-    List<Type> getTypeParameters();
-
-    /**
-     * Creates the preferred block builder for this type. This is the builder used to
-     * store values after an expression projection within the query.
-     */
-    BlockBuilder createBlockBuilder(BlockBuilderStatus blockBuilderStatus, int expectedEntries, int expectedBytesPerEntry);
-
-    /**
-     * Creates the preferred block builder for this type. This is the builder used to
-     * store values after an expression projection within the query.
-     */
-    BlockBuilder createBlockBuilder(BlockBuilderStatus blockBuilderStatus, int expectedEntries);
-
-    /**
-     * Gets an object representation of the type value in the {@code block}
-     * {@code position}. This is the value returned to the user via the
-     * REST endpoint and therefore must be JSON serializable.
-     */
-    Object getObjectValue(ConnectorSession session, Block block, int position);
-
-    /**
-     * Gets the value at the {@code block} {@code position} as a boolean.
-     */
-    boolean getBoolean(Block block, int position);
-
-    /**
-     * Gets the value at the {@code block} {@code position} as a long.
-     */
-    long getLong(Block block, int position);
-
-    /**
-     * Gets the value at the {@code block} {@code position} as a double.
-     */
-    double getDouble(Block block, int position);
-
-    /**
-     * Gets the value at the {@code block} {@code position} as a Slice.
-     */
-    Slice getSlice(Block block, int position);
-
-    /**
-     * Gets the value at the {@code block} {@code position} as an Object.
-     */
-    Object getObject(Block block, int position);
-
-    /**
-     * Writes the boolean value into the {@code BlockBuilder}.
-     */
-    void writeBoolean(BlockBuilder blockBuilder, boolean value);
-
-    /**
-     * Writes the long value into the {@code BlockBuilder}.
-     */
-    void writeLong(BlockBuilder blockBuilder, long value);
-
-    /**
-     * Writes the double value into the {@code BlockBuilder}.
-     */
-    void writeDouble(BlockBuilder blockBuilder, double value);
-
-    /**
-     * Writes the Slice value into the {@code BlockBuilder}.
-     */
-    void writeSlice(BlockBuilder blockBuilder, Slice value);
-
-    /**
-     * Writes the Slice value into the {@code BlockBuilder}.
-     */
-    void writeSlice(BlockBuilder blockBuilder, Slice value, int offset, int length);
-
-    /**
-     * Writes the Object value into the {@code BlockBuilder}.
-     */
-    void writeObject(BlockBuilder blockBuilder, Object value);
-
-    /**
-     * Append the value at {@code position} in {@code block} to {@code blockBuilder}.
-     */
-    void appendTo(Block block, int position, BlockBuilder blockBuilder);
-
-    /**
-     * Return the range of possible values for this type, if available.
-     * <p>
-     * The type of the values must match {@link #getJavaType}
-     */
-    default Optional<Range> getRange()
-    {
-        return Optional.empty();
-    }
-
-    final class Range
-    {
-        private final Object min;
-        private final Object max;
-
-        public Range(Object min, Object max)
-        {
-            this.min = requireNonNull(min, "min is null");
-            this.max = requireNonNull(max, "max is null");
-        }
-
-        public Object getMin()
-        {
-            return min;
-        }
-
-        public Object getMax()
-        {
-            return max;
-        }
-    }
 }
