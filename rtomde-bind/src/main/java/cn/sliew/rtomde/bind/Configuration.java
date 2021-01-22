@@ -10,16 +10,16 @@ public class Configuration {
     // ============settings start============
 
     // ============settings end============
-    private final String application;
+//    private final String application;
     private Properties variables;
-    private final Properties settings;
+//    private final Properties settings;
 
-    private final List<String> typeHandlers;
+//    private final List<String> typeHandlers;
     private Environment environment;
 
-    protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
-            .conflictMessageProducer((savedValue, targetValue) ->
-                    ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
+//    protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
+//            .conflictMessageProducer((savedValue, targetValue) ->
+//                    ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
 
     protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
     protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
@@ -28,8 +28,8 @@ public class Configuration {
     protected final Map<String, XNode> fragments = new StrictMap<>("XML fragments parsed from previous mappers");
 
     protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
-    protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<>();
-    protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
+//    protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<>();
+//    protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
 
     public void addParameterMap(ParameterMap pm) {
         parameterMaps.put(pm.getId(), pm);

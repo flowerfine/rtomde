@@ -53,16 +53,15 @@ public class XMLConfigBuilder {
                 throw new ParseException("Config's application cannot be empty");
             }
             this.application = application;
-            // issue #117 read properties first
             propertiesElement(root.evalNode("properties"));
             Properties settings = settingsAsProperties(root.evalNode("settings"));
             settingsElement(settings);
             environmentsElement(root.evalNode("environments"));
-            databaseIdProviderElement(root.evalNode("databaseIdProvider"));
-            typeHandlerElement(root.evalNode("typeHandlers"));
-            mapperElement(root.evalNode("mappers"));
+//            databaseIdProviderElement(root.evalNode("databaseIdProvider"));
+//            typeHandlerElement(root.evalNode("typeHandlers"));
+//            mapperElement(root.evalNode("mappers"));
         } catch (Exception e) {
-            throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
+            throw new ParseException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
         }
     }
 
@@ -138,7 +137,7 @@ public class XMLConfigBuilder {
         if (context != null) {
             String type = context.getStringAttribute("type");
             Properties props = context.getChildrenAsProperties();
-            cn.sliew.rtomde.datasource.DataSourceFactory
+//            cn.sliew.rtomde.datasource.DataSourceFactory
             return null;
         }
         throw new ParseException("Environment declaration requires a DataSourceFactory.");

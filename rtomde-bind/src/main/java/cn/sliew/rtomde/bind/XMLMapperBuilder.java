@@ -111,13 +111,13 @@ public class XMLMapperBuilder {
         }
     }
     private void queryStatementFromContext(List<XNode> list) {
-        for (XNode context : list) {
-            final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
-            try {
-                statementParser.parseStatementNode();
-            } catch (IncompleteElementException e) {
-                configuration.addIncompleteStatement(statementParser);
-            }
-        }
+//        for (XNode context : list) {
+//            final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
+//            try {
+//                statementParser.parseStatementNode();
+//            } catch (IncompleteElementException e) {
+//                configuration.addIncompleteStatement(statementParser);
+//            }
+//        }
     }
 }

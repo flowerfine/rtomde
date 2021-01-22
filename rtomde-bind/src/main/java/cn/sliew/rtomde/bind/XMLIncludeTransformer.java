@@ -1,5 +1,8 @@
 package cn.sliew.rtomde.bind;
 
+import cn.sliew.rtomde.common.xml.ParseException;
+import cn.sliew.rtomde.common.xml.PropertyParser;
+import cn.sliew.rtomde.common.xml.XNode;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -22,46 +25,46 @@ public class XMLIncludeTransformer {
      * @param source Include node in DOM tree
      */
     private void applyIncludes(Node source, boolean included) {
-        if (INCLUDE.equals(source.getNodeName())) {
-            Node toInclude = findFragment(getStringAttribute(source, "refid"));
-            Properties toIncludeContext = getVariablesContext(source, variablesContext);
-            applyIncludes(toInclude, toIncludeContext, true);
-            if (toInclude.getOwnerDocument() != source.getOwnerDocument()) {
-                toInclude = source.getOwnerDocument().importNode(toInclude, true);
-            }
-            source.getParentNode().replaceChild(toInclude, source);
-            while (toInclude.hasChildNodes()) {
-                toInclude.getParentNode().insertBefore(toInclude.getFirstChild(), toInclude);
-            }
-            toInclude.getParentNode().removeChild(toInclude);
-        } else if (source.getNodeType() == Node.ELEMENT_NODE) {
-            if (included && !variablesContext.isEmpty()) {
-                // replace variables in attribute values
-                NamedNodeMap attributes = source.getAttributes();
-                for (int i = 0; i < attributes.getLength(); i++) {
-                    Node attr = attributes.item(i);
-                    attr.setNodeValue(PropertyParser.parse(attr.getNodeValue(), variablesContext));
-                }
-            }
-            NodeList children = source.getChildNodes();
-            for (int i = 0; i < children.getLength(); i++) {
-                applyIncludes(children.item(i), variablesContext, included);
-            }
-        } else if (included && (source.getNodeType() == Node.TEXT_NODE || source.getNodeType() == Node.CDATA_SECTION_NODE)
-                && !variablesContext.isEmpty()) {
-            // replace variables in text node
-            source.setNodeValue(PropertyParser.parse(source.getNodeValue(), variablesContext));
-        }
+//        if (INCLUDE.equals(source.getNodeName())) {
+//            Node toInclude = findFragment(getStringAttribute(source, "refid"));
+//            Properties toIncludeContext = getVariablesContext(source, variablesContext);
+//            applyIncludes(toInclude, toIncludeContext, true);
+//            if (toInclude.getOwnerDocument() != source.getOwnerDocument()) {
+//                toInclude = source.getOwnerDocument().importNode(toInclude, true);
+//            }
+//            source.getParentNode().replaceChild(toInclude, source);
+//            while (toInclude.hasChildNodes()) {
+//                toInclude.getParentNode().insertBefore(toInclude.getFirstChild(), toInclude);
+//            }
+//            toInclude.getParentNode().removeChild(toInclude);
+//        } else if (source.getNodeType() == Node.ELEMENT_NODE) {
+//            if (included && !variablesContext.isEmpty()) {
+//                // replace variables in attribute values
+//                NamedNodeMap attributes = source.getAttributes();
+//                for (int i = 0; i < attributes.getLength(); i++) {
+//                    Node attr = attributes.item(i);
+//                    attr.setNodeValue(PropertyParser.parse(attr.getNodeValue(), variablesContext));
+//                }
+//            }
+//            NodeList children = source.getChildNodes();
+//            for (int i = 0; i < children.getLength(); i++) {
+//                applyIncludes(children.item(i), variablesContext, included);
+//            }
+//        } else if (included && (source.getNodeType() == Node.TEXT_NODE || source.getNodeType() == Node.CDATA_SECTION_NODE)
+//                && !variablesContext.isEmpty()) {
+//            // replace variables in text node
+//            source.setNodeValue(PropertyParser.parse(source.getNodeValue(), variablesContext));
+//        }
     }
 
-    private Node findFragment(String refid) {
-        try {
-            XNode nodeToInclude = configuration.getSqlFragments().get(refid);
-            return nodeToInclude.getNode().cloneNode(true);
-        } catch (IllegalArgumentException e) {
-            throw new IncompleteElementException("Could not find SQL statement to include with refid '" + refid + "'", e);
-        }
-    }
+//    private Node findFragment(String refid) {
+//        try {
+//            XNode nodeToInclude = configuration.getSqlFragments().get(refid);
+//            return nodeToInclude.getNode().cloneNode(true);
+//        } catch (IllegalArgumentException e) {
+//            throw new IncompleteElementException("Could not find SQL statement to include with refid '" + refid + "'", e);
+//        }
+//    }
 
     private String getStringAttribute(Node node, String name) {
         return node.getAttributes().getNamedItem(name).getNodeValue();
@@ -87,7 +90,7 @@ public class XMLIncludeTransformer {
                     declaredProperties = new HashMap<>();
                 }
                 if (declaredProperties.put(name, value) != null) {
-                    throw new BuilderException("Variable " + name + " defined twice in the same include definition");
+                    throw new ParseException("Variable " + name + " defined twice in the same include definition");
                 }
             }
         }
