@@ -22,7 +22,6 @@ typeHandler CDATA #IMPLIED
 <!ATTLIST resultMap
 id CDATA #REQUIRED
 type CDATA #REQUIRED
-extends CDATA #IMPLIED
 autoMapping (true|false) #IMPLIED
 >
 

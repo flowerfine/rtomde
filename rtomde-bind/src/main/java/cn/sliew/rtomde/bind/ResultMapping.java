@@ -1,21 +1,17 @@
 package cn.sliew.rtomde.bind;
 
-/**
- * 参数的映射
- */
-public class ParameterMapping {
+public class ResultMapping {
 
     private final String property;
     private final String javaType;
+    private final String column;
     private final String columnType;
-    /**
-     * 将每个jdbcType和javaType进行转换
-     */
     private final String typeHandler;
 
-    private ParameterMapping(String property, String javaType, String columnType, String typeHandler) {
+    private ResultMapping(String property, String javaType, String column, String columnType, String typeHandler) {
         this.property = property;
         this.javaType = javaType;
+        this.column = column;
         this.columnType = columnType;
         this.typeHandler = typeHandler;
     }
@@ -28,6 +24,7 @@ public class ParameterMapping {
     public static class Builder {
         private String property;
         private String javaType;
+        private String column;
         private String columnType;
         private String typeHandler;
 
@@ -44,6 +41,11 @@ public class ParameterMapping {
             return this;
         }
 
+        public Builder column(String column) {
+            this.column = column;
+            return this;
+        }
+
         public Builder columnType(String columnType) {
             this.columnType = columnType;
             return this;
@@ -54,8 +56,28 @@ public class ParameterMapping {
             return this;
         }
 
-        public ParameterMapping build() {
-            return new ParameterMapping(property, javaType, columnType, typeHandler);
+        public ResultMapping build() {
+            return new ResultMapping(property, javaType, column, columnType, typeHandler);
         }
+    }
+
+    public String getProperty() {
+        return property;
+    }
+
+    public String getJavaType() {
+        return javaType;
+    }
+
+    public String getColumn() {
+        return column;
+    }
+
+    public String getColumnType() {
+        return columnType;
+    }
+
+    public String getTypeHandler() {
+        return typeHandler;
     }
 }

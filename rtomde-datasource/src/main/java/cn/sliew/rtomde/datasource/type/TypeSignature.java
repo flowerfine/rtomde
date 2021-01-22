@@ -15,8 +15,8 @@ public final class TypeSignature {
     private int hashCode;
 
     public TypeSignature(String name) {
-        checkArgument(name != null && !name.isEmpty(), "base is null or empty");
-        checkArgument(validateName(name), "Bad characters in base type: %s", name);
+        checkArgument(name != null && !name.isEmpty(), "name is null or empty");
+        checkArgument(validateName(name), "Bad characters in type name: %s", name);
         this.name = name;
     }
 

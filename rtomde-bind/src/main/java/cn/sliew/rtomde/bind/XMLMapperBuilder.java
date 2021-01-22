@@ -13,7 +13,7 @@ import java.util.Properties;
 public class XMLMapperBuilder {
 
     private final XPathParser parser;
-    private final Map<String, XNode> sqlFragments;
+    private final Map<String, XNode> fragments;
     private final String resource;
 
     private String namespace;
@@ -27,7 +27,7 @@ public class XMLMapperBuilder {
     private XMLMapperBuilder(XPathParser parser, String resource, Map<String, XNode> fragments) {
         this.parser = parser;
         this.resource = resource;
-        this.sqlFragments = fragments;
+        this.fragments = fragments;
     }
 
     public void parse() {
@@ -43,6 +43,7 @@ public class XMLMapperBuilder {
             this.namespace = namespace;
             //解析resultMap，paramterMap，解析query
             parameterMapElement(context.evalNodes("/mapper/parameterMap"));
+            resultMapElements(context.evalNodes("/mapper/resultMap"));
         } catch (Exception e) {
             throw new ParseException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
         }
@@ -57,19 +58,40 @@ public class XMLMapperBuilder {
             for (XNode parameterNode : parameterNodes) {
                 String property = parameterNode.getStringAttribute("property");
                 String javaType = parameterNode.getStringAttribute("javaType");
-                String jdbcType = parameterNode.getStringAttribute("jdbcType");
-                String resultMap = parameterNode.getStringAttribute("resultMap");
-                String mode = parameterNode.getStringAttribute("mode");
+                String columnType = parameterNode.getStringAttribute("columnType");
                 String typeHandler = parameterNode.getStringAttribute("typeHandler");
-                Integer numericScale = parameterNode.getIntAttribute("numericScale");
-                ParameterMode modeEnum = resolveParameterMode(mode);
-                Class<?> javaTypeClass = resolveClass(javaType);
-                JdbcType jdbcTypeEnum = resolveJdbcType(jdbcType);
-                Class<? extends TypeHandler<?>> typeHandlerClass = resolveClass(typeHandler);
-                ParameterMapping parameterMapping = builderAssistant.buildParameterMapping(parameterClass, property, javaTypeClass, jdbcTypeEnum, resultMap, modeEnum, typeHandlerClass, numericScale);
+                ParameterMapping parameterMapping = ParameterMapping.builder().property(property).javaType(javaType).columnType(columnType).typeHandler(typeHandler).build();
                 parameterMappings.add(parameterMapping);
             }
-            builderAssistant.addParameterMap(id, parameterClass, parameterMappings);
+            ParameterMap parameterMap = ParameterMap.builder().namespace(namespace).id(id).type(type).parameterMappings(parameterMappings).build();
         }
     }
+
+    private void resultMapElements(List<XNode> list) {
+        for (XNode resultMapNode : list) {
+            try {
+                resultMapElement(resultMapNode);
+            } catch (IncompleteElementException e) {
+                // ignore, it will be retried
+            }
+        }
+    }
+
+    private ResultMap resultMapElement(XNode resultMapNode) {
+        String id = resultMapNode.getStringAttribute("id");
+        String type = resultMapNode.getStringAttribute("type");
+        Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
+        List<ResultMapping> resultMappings = new ArrayList<>();
+        List<XNode> resultNodes = resultMapNode.getChildren();
+        for (XNode resultNode : resultNodes) {
+            String property = resultNode.getStringAttribute("property");
+            String javaType = resultNode.getStringAttribute("javaType");
+            String column = resultNode.getStringAttribute("column");
+            String columnType = resultNode.getStringAttribute("columnType");
+            String typeHandler = resultNode.getStringAttribute("typeHandler");
+            ResultMapping resultMapping = ResultMapping.builder().property(property).javaType(javaType).column(column).columnType(columnType).typeHandler(typeHandler).build();
+        }
+        return ResultMap.builder().namespace(namespace).id(id).type(type).autoMapping(autoMapping).resultMappings(resultMappings).build();
+    }
+
 }
