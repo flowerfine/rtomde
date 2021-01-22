@@ -1,7 +1,8 @@
-package cn.sliew.rtomde.datasource.mysql;
+package cn.sliew.rtomde.datasource.jdbc;
 
 import cn.sliew.rtomde.datasource.Connection;
 import cn.sliew.rtomde.datasource.DataSource;
+import cn.sliew.rtomde.datasource.DataSourceException;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigValue;
 import com.zaxxer.hikari.HikariConfig;
@@ -9,11 +10,11 @@ import com.zaxxer.hikari.HikariDataSource;
 
 import java.util.Map;
 
-public class MysqlDataSource implements DataSource {
+public class JdbcDataSource implements DataSource {
 
     private HikariDataSource hikari;
 
-    MysqlDataSource(Config config) {
+    JdbcDataSource(Config config) {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setJdbcUrl(config.getString("jdbc-url"));
         hikariConfig.setUsername(config.getString("username"));
@@ -42,7 +43,7 @@ public class MysqlDataSource implements DataSource {
     }
 
     @Override
-    public Connection openConnection() {
+    public Connection openConnection() throws DataSourceException {
         return null;
     }
 }

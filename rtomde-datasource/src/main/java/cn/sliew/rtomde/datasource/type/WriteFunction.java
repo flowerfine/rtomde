@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.datasource.type;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import cn.sliew.rtomde.datasource.DataSourceException;
+import cn.sliew.rtomde.datasource.statement.QueryStatement;
 
 public interface WriteFunction {
 
@@ -11,7 +11,7 @@ public interface WriteFunction {
         return "?";
     }
 
-    default void setNull(PreparedStatement statement, int index) throws SQLException {
-        statement.setObject(index, null);
+    default void setNull(QueryStatement statement, int index) throws DataSourceException {
+        statement.setParamter(index, null);
     }
 }

@@ -6,5 +6,5 @@ public interface DataSourceFactory<Context> {
 
     Config config();
 
-    DataSource getDataSource(Context context);
+    DataSource getDataSource(Context context) throws DataSourceException;
 }

@@ -1,20 +1,18 @@
 package cn.sliew.rtomde.datasource;
 
-import cn.sliew.rtomde.datasource.mysql.MysqlDataSourceFactory;
+import cn.sliew.rtomde.datasource.jdbc.JdbcDataSourceFactory;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class DataSourceFactoryTest {
 
     @Test
     public void testCreateDataSourceFactory() {
         Config config = ConfigFactory.load("applicaton.conf");
-        DataSourceFactory dataSourceFactory = new MysqlDataSourceFactory(config);
+        DataSourceFactory dataSourceFactory = new JdbcDataSourceFactory(config);
         DataSource dataSource = dataSourceFactory.getDataSource(null);
         assertNotNull(dataSource);
     }
