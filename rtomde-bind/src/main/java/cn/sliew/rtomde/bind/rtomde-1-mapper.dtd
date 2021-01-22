@@ -40,10 +40,11 @@ name CDATA #REQUIRED
 value CDATA #REQUIRED
 >
 
-<!ELEMENT typeAlias EMPTY>
-<!ATTLIST typeAlias
-alias CDATA #REQUIRED
-type CDATA #REQUIRED
+<!ELEMENT sql (#PCDATA | include | trim | where | set | foreach | choose | if | bind)*>
+<!ATTLIST sql
+id CDATA #REQUIRED
+lang CDATA #IMPLIED
+databaseId CDATA #IMPLIED
 >
 
 <!ELEMENT query (#PCDATA | include | trim | where | set | foreach | choose | if | bind)*>

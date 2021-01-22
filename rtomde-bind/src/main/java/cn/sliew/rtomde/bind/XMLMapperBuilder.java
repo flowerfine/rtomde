@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * todo 数据源配置相关的功能
+ */
 public class XMLMapperBuilder {
 
     private final XPathParser parser;
@@ -44,6 +47,8 @@ public class XMLMapperBuilder {
             //解析resultMap，paramterMap，解析query
             parameterMapElement(context.evalNodes("/mapper/parameterMap"));
             resultMapElements(context.evalNodes("/mapper/resultMap"));
+            fragmentElement(context.evalNodes("/mapper/fragment"));
+            queryStatementFromContext(context.evalNodes("query"));
         } catch (Exception e) {
             throw new ParseException("Error parsing Mapper XML. The XML location is '" + resource + "'. Cause: " + e, e);
         }
@@ -90,8 +95,29 @@ public class XMLMapperBuilder {
             String columnType = resultNode.getStringAttribute("columnType");
             String typeHandler = resultNode.getStringAttribute("typeHandler");
             ResultMapping resultMapping = ResultMapping.builder().property(property).javaType(javaType).column(column).columnType(columnType).typeHandler(typeHandler).build();
+            resultMappings.add(resultMapping);
         }
         return ResultMap.builder().namespace(namespace).id(id).type(type).autoMapping(autoMapping).resultMappings(resultMappings).build();
     }
 
+    /**
+     * fragment不应该有databaseId
+     */
+    private void fragmentElement(List<XNode> list) {
+        for (XNode context : list) {
+            String id = context.getStringAttribute("id");
+            String qualified = namespace + "." + id;
+            fragments.put(qualified, context);
+        }
+    }
+    private void queryStatementFromContext(List<XNode> list) {
+        for (XNode context : list) {
+            final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context, requiredDatabaseId);
+            try {
+                statementParser.parseStatementNode();
+            } catch (IncompleteElementException e) {
+                configuration.addIncompleteStatement(statementParser);
+            }
+        }
+    }
 }

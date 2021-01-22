@@ -89,4 +89,8 @@ public class ResultMap {
             return new ResultMap(namespace, id, type, resultMappings, autoMapping, mappedColumns, mappedProperties);
         }
     }
+
+    public String getId() {
+        return id;
+    }
 }

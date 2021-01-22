@@ -57,4 +57,7 @@ public class ParameterMap {
         }
     }
 
+    public String getId() {
+        return id;
+    }
 }

@@ -19,6 +19,10 @@
             <groupId>cn.sliew</groupId>
             <artifactId>rtomde-datasource</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.sliew</groupId>
+            <artifactId>rtomde-mybatis</artifactId>
+        </dependency>
 
 
     </dependencies>
