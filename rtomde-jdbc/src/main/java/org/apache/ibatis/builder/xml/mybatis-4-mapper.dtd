@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!ELEMENT mapper (resultMap* | parameterMap* | sql* | select* )+>
+<!ELEMENT mapper (cache-ref | cache | resultMap* | parameterMap* | sql* | select* )+>
 <!ATTLIST mapper
+application CDATA #REQUIRED
 namespace CDATA #IMPLIED
+>
+
+<!ELEMENT cache-ref EMPTY>
+<!ATTLIST cache-ref
+refid CDATA #REQUIRED
+>
+
+<!ELEMENT cache (property*)>
+<!ATTLIST cache
+id CDATA #REQUIRED
+type CDATA #IMPLIED
+eviction CDATA #IMPLIED
+flushInterval CDATA #IMPLIED
+size CDATA #IMPLIED
+readOnly CDATA #IMPLIED
+blocking CDATA #IMPLIED
 >
 
 <!ELEMENT parameterMap (parameter+)?>
@@ -13,11 +30,8 @@ type CDATA #REQUIRED
 <!ELEMENT parameter EMPTY>
 <!ATTLIST parameter
 property CDATA #REQUIRED
-javaType CDATA #IMPLIED
+javaType CDATA #REQUIRED
 jdbcType CDATA #IMPLIED
-mode (IN | OUT | INOUT) #IMPLIED
-resultMap CDATA #IMPLIED
-scale CDATA #IMPLIED
 typeHandler CDATA #IMPLIED
 >
 
@@ -32,7 +46,7 @@ autoMapping (true|false) #IMPLIED
 <!ELEMENT result EMPTY>
 <!ATTLIST result
 property CDATA #IMPLIED
-javaType CDATA #IMPLIED
+javaType CDATA #REQUIRED
 column CDATA #IMPLIED
 jdbcType CDATA #IMPLIED
 typeHandler CDATA #IMPLIED
@@ -53,10 +67,10 @@ type CDATA #REQUIRED
 <!ELEMENT select (#PCDATA | include | trim | where | set | foreach | choose | if | bind)*>
 <!ATTLIST select
 id CDATA #REQUIRED
-parameterMap CDATA #IMPLIED
-resultMap CDATA #IMPLIED
+parameterMap CDATA #REQUIRED
+resultMap CDATA #REQUIRED
 timeout CDATA #IMPLIED
-databaseId CDATA #IMPLIED
+dataSourceId CDATA #REQUIRED
 >
 
 <!-- Dynamic -->
@@ -75,8 +89,6 @@ refid CDATA #REQUIRED
 <!ELEMENT sql (#PCDATA | include | trim | where | set | foreach | choose | if | bind)*>
 <!ATTLIST sql
 id CDATA #REQUIRED
-lang CDATA #IMPLIED
-databaseId CDATA #IMPLIED
 >
 
 <!ELEMENT trim (#PCDATA | include | trim | where | set | foreach | choose | if | bind)*>

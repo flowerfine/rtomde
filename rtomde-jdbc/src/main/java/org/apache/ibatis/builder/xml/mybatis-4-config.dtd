@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!ELEMENT configuration (properties?, settings?, typeAliases?, typeHandlers?, objectFactory?, objectWrapperFactory?, reflectorFactory?, plugins?, environments?, databaseIdProvider?, mappers?)>
-
-<!ELEMENT databaseIdProvider (property*)>
-<!ATTLIST databaseIdProvider
-type CDATA #REQUIRED
+<!ELEMENT configuration (properties?, settings?, typeAliases?, typeHandlers?, objectFactory?, objectWrapperFactory?, reflectorFactory?, plugins?, environments?, mappers?)>
+<!ATTLIST configuration
+application CDATA #REQUIRED
 >
 
 <!ELEMENT properties (property*)>
@@ -26,7 +24,7 @@ name CDATA #REQUIRED
 value CDATA #REQUIRED
 >
 
-<!ELEMENT typeAliases (typeAlias*,package*)>
+<!ELEMENT typeAliases (typeAlias*)>
 
 <!ELEMENT typeAlias EMPTY>
 <!ATTLIST typeAlias
@@ -34,7 +32,7 @@ type CDATA #REQUIRED
 alias CDATA #IMPLIED
 >
 
-<!ELEMENT typeHandlers (typeHandler*,package*)>
+<!ELEMENT typeHandlers (typeHandler*)>
 
 <!ELEMENT typeHandler EMPTY>
 <!ATTLIST typeHandler
@@ -70,31 +68,20 @@ interceptor CDATA #REQUIRED
 default CDATA #REQUIRED
 >
 
-<!ELEMENT environment (transactionManager,dataSource)>
+<!ELEMENT environment (dataSource+)>
 <!ATTLIST environment
 id CDATA #REQUIRED
 >
 
-<!ELEMENT transactionManager (property*)>
-<!ATTLIST transactionManager
-type CDATA #REQUIRED
->
-
 <!ELEMENT dataSource (property*)>
 <!ATTLIST dataSource
+id CDATA #REQUIRED
 type CDATA #REQUIRED
 >
 
-<!ELEMENT mappers (mapper*,package*)>
+<!ELEMENT mappers (mapper*)>
 
 <!ELEMENT mapper EMPTY>
 <!ATTLIST mapper
-resource CDATA #IMPLIED
 url CDATA #IMPLIED
-class CDATA #IMPLIED
->
-
-<!ELEMENT package EMPTY>
-<!ATTLIST package
-name CDATA #REQUIRED
 >
