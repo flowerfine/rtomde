@@ -13,7 +13,7 @@ import java.util.StringJoiner;
 public class DynamicContext {
 
     public static final String PARAMETER_OBJECT_KEY = "_parameter";
-    public static final String DATABASE_ID_KEY = "_databaseId";
+//    public static final String DATASOURCE_ID_KEY = "_dataSourceId";
 
     static {
         OgnlRuntime.setPropertyAccessor(ContextMap.class, new ContextAccessor());
@@ -23,6 +23,11 @@ public class DynamicContext {
     private final StringJoiner sqlBuilder = new StringJoiner(" ");
     private int uniqueNumber = 0;
 
+    /**
+     * fixme 需要_dataSourceId
+     * @param configuration
+     * @param parameterObject
+     */
     public DynamicContext(Configuration configuration, Object parameterObject) {
         if (parameterObject != null && !(parameterObject instanceof Map)) {
             MetaObject metaObject = configuration.newMetaObject(parameterObject);
@@ -32,7 +37,7 @@ public class DynamicContext {
             bindings = new ContextMap(null, false);
         }
         bindings.put(PARAMETER_OBJECT_KEY, parameterObject);
-        bindings.put(DATABASE_ID_KEY, configuration.getDatabaseId());
+//        bindings.put(DATASOURCE_ID_KEY, configuration.getDatabaseId());
     }
 
     public Map<String, Object> getBindings() {
