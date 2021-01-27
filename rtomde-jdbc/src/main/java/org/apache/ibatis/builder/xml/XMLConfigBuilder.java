@@ -246,8 +246,8 @@ public class XMLConfigBuilder extends BaseBuilder {
                 Environment.Builder envBuilder = Environment.builder().id(envId);
                 for (XNode dataSourceNode : envNode.getChildren()) {
                     String dataSourceId = dataSourceNode.getStringAttribute("id");
-                    String type = context.getStringAttribute("type");
-                    Properties props = context.getChildrenAsProperties();
+                    String type = dataSourceNode.getStringAttribute("type");
+                    Properties props = dataSourceNode.getChildrenAsProperties();
                     DataSourceFactory factory = (DataSourceFactory) resolveClass(type).getDeclaredConstructor().newInstance();
                     factory.setProperties(props);
                     // eager construct may influence bootstrap speed
@@ -290,6 +290,7 @@ public class XMLConfigBuilder extends BaseBuilder {
                 String url = child.getStringAttribute("url");
                 if (url != null) {
                     ErrorContext.instance().resource(url);
+                    System.out.println(Resources.getResourceAsFile("/").getAbsolutePath());
                     InputStream inputStream = Resources.getUrlAsStream(url);
                     XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
                     mapperParser.parse();
