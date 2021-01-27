@@ -13,8 +13,6 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.session.SqlSession;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -27,12 +25,9 @@ public class DefaultSqlSession implements SqlSession {
     private final Configuration configuration;
     private final Executor executor;
 
-    private boolean dirty;
-
     public DefaultSqlSession(Configuration configuration, Executor executor) {
         this.configuration = configuration;
         this.executor = executor;
-        this.dirty = false;
     }
 
     @Override
@@ -124,7 +119,6 @@ public class DefaultSqlSession implements SqlSession {
     public void close() {
         try {
             executor.close();
-            dirty = false;
         } finally {
             ErrorContext.instance().reset();
         }

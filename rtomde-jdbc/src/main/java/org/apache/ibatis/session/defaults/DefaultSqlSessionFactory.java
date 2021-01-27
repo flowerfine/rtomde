@@ -31,9 +31,6 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
         return configuration;
     }
 
-    /**
-     * fixme 数据源id
-     */
     private SqlSession openSessionFromDataSource(ExecutorType execType) {
         try {
             Executor executor = configuration.newExecutor(execType);
