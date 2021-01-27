@@ -188,6 +188,9 @@ public class Configuration {
     }
 
     public Environment getEnvironment(String envId) {
+        if (envId == null) {
+            return defaultEnv;
+        }
         return this.environmentRegistry.get(envId);
     }
 

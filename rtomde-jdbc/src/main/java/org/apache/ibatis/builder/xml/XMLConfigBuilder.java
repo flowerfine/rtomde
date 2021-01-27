@@ -5,16 +5,19 @@ import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.datasource.DataSourceFactory;
 import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.io.VFS;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.parsing.XNode;
 import org.apache.ibatis.parsing.XPathParser;
+import org.apache.ibatis.plugin.Interceptor;
 import org.apache.ibatis.reflection.DefaultReflectorFactory;
 import org.apache.ibatis.reflection.MetaClass;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.wrapper.ObjectWrapperFactory;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ConfigurationRegistry;
 import org.apache.ibatis.type.JdbcType;
 
 import java.io.InputStream;
@@ -67,22 +70,20 @@ public class XMLConfigBuilder extends BaseBuilder {
         }
         parsed = true;
         parseConfiguration(parser.evalNode("/configuration"));
+        ConfigurationRegistry.registerConfiguration(configuration.getApplication(), configuration);
         return configuration;
     }
 
     private void parseConfiguration(XNode root) {
         try {
-            // application
             String application = root.getStringAttribute("application");
-            if (application == null || application.isEmpty()) {
-                throw new BuilderException("Config's application cannot be empty");
-            }
             configuration.setApplication(application);
             propertiesElement(root.evalNode("properties"));
             Properties settings = settingsAsProperties(root.evalNode("settings"));
+            loadCustomVfs(settings);
             loadCustomLogImpl(settings);
             typeAliasesElement(root.evalNode("typeAliases"));
-            // todo page
+            // fixme page
             pluginElement(root.evalNode("plugins"));
             objectFactoryElement(root.evalNode("objectFactory"));
             objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
@@ -91,6 +92,9 @@ public class XMLConfigBuilder extends BaseBuilder {
             // read it after objectFactory and objectWrapperFactory issue #631
             environmentsElement(root.evalNode("environments"));
             typeHandlerElement(root.evalNode("typeHandlers"));
+            /**
+             * fixme 远程读取一系列文件
+             */
             mapperElement(root.evalNode("mappers"));
         } catch (Exception e) {
             throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -110,6 +114,11 @@ public class XMLConfigBuilder extends BaseBuilder {
             }
         }
         return props;
+    }
+
+    private void loadCustomVfs(Properties props) {
+        Class<? extends VFS> vfsImpl = resolveClass(props.getProperty("vfsImpl"));
+        configuration.setVfsImpl(vfsImpl);
     }
 
     private void loadCustomLogImpl(Properties props) {
@@ -137,15 +146,15 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     private void pluginElement(XNode parent) throws Exception {
-//        if (parent != null) {
-//            for (XNode child : parent.getChildren()) {
-//                String interceptor = child.getStringAttribute("interceptor");
-//                Properties properties = child.getChildrenAsProperties();
-//                Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).getDeclaredConstructor().newInstance();
-//                interceptorInstance.setProperties(properties);
-//                configuration.addInterceptor(interceptorInstance);
-//            }
-//        }
+        if (parent != null) {
+            for (XNode child : parent.getChildren()) {
+                String interceptor = child.getStringAttribute("interceptor");
+                Properties properties = child.getChildrenAsProperties();
+                Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).getDeclaredConstructor().newInstance();
+                interceptorInstance.setProperties(properties);
+                configuration.addInterceptor(interceptorInstance);
+            }
+        }
     }
 
     private void objectFactoryElement(XNode context) throws Exception {

@@ -138,9 +138,9 @@ public abstract class BaseExecutor implements Executor {
             }
             cacheKey.update(value);
         }
-        if (configuration.getEnvironment("") != null) {
+        if (configuration.getEnvironment(null) != null) {
             // issue #176
-            cacheKey.update(configuration.getEnvironment("").getId());
+            cacheKey.update(configuration.getEnvironment(null).getId());
         }
         return cacheKey;
     }
