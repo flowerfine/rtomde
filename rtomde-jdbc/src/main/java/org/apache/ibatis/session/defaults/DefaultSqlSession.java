@@ -1,9 +1,7 @@
 package org.apache.ibatis.session.defaults;
 
-import org.apache.ibatis.binding.BindingException;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.exceptions.TooManyResultsException;
-import org.apache.ibatis.executor.BatchResult;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.result.DefaultMapResultHandler;
@@ -17,7 +15,6 @@ import org.apache.ibatis.session.SqlSession;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,18 +27,12 @@ public class DefaultSqlSession implements SqlSession {
     private final Configuration configuration;
     private final Executor executor;
 
-    private final boolean autoCommit;
     private boolean dirty;
 
-    public DefaultSqlSession(Configuration configuration, Executor executor, boolean autoCommit) {
+    public DefaultSqlSession(Configuration configuration, Executor executor) {
         this.configuration = configuration;
         this.executor = executor;
         this.dirty = false;
-        this.autoCommit = autoCommit;
-    }
-
-    public DefaultSqlSession(Configuration configuration, Executor executor) {
-        this(configuration, executor, false);
     }
 
     @Override
@@ -130,92 +121,9 @@ public class DefaultSqlSession implements SqlSession {
     }
 
     @Override
-    public int insert(String statement) {
-        return insert(statement, null);
-    }
-
-    @Override
-    public int insert(String statement, Object parameter) {
-        return update(statement, parameter);
-    }
-
-    @Override
-    public int update(String statement) {
-        return update(statement, null);
-    }
-
-    @Override
-    public int update(String statement, Object parameter) {
-        try {
-            dirty = true;
-            MappedStatement ms = configuration.getMappedStatement(statement);
-            return executor.update(ms, wrapCollection(parameter));
-        } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error updating database.  Cause: " + e, e);
-        } finally {
-            ErrorContext.instance().reset();
-        }
-    }
-
-    @Override
-    public int delete(String statement) {
-        return update(statement, null);
-    }
-
-    @Override
-    public int delete(String statement, Object parameter) {
-        return update(statement, parameter);
-    }
-
-    @Override
-    public void commit() {
-        commit(false);
-    }
-
-    @Override
-    public void commit(boolean force) {
-        try {
-            executor.commit(isCommitOrRollbackRequired(force));
-            dirty = false;
-        } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error committing transaction.  Cause: " + e, e);
-        } finally {
-            ErrorContext.instance().reset();
-        }
-    }
-
-    @Override
-    public void rollback() {
-        rollback(false);
-    }
-
-    @Override
-    public void rollback(boolean force) {
-        try {
-            executor.rollback(isCommitOrRollbackRequired(force));
-            dirty = false;
-        } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error rolling back transaction.  Cause: " + e, e);
-        } finally {
-            ErrorContext.instance().reset();
-        }
-    }
-
-    @Override
-    public List<BatchResult> flushStatements() {
-        try {
-            return executor.flushStatements();
-        } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error flushing statements.  Cause: " + e, e);
-        } finally {
-            ErrorContext.instance().reset();
-        }
-    }
-
-    @Override
     public void close() {
         try {
-            executor.close(isCommitOrRollbackRequired(false));
+            executor.close();
             dirty = false;
         } finally {
             ErrorContext.instance().reset();
@@ -235,7 +143,7 @@ public class DefaultSqlSession implements SqlSession {
     @Override
     public Connection getConnection() {
         try {
-            return executor.getTransaction().getConnection();
+            return executor.getDataSource().getConnection();
         } catch (SQLException e) {
             throw ExceptionFactory.wrapException("Error getting a new connection.  Cause: " + e, e);
         }
@@ -246,30 +154,8 @@ public class DefaultSqlSession implements SqlSession {
         executor.clearLocalCache();
     }
 
-    private boolean isCommitOrRollbackRequired(boolean force) {
-        return (!autoCommit && dirty) || force;
-    }
-
     private Object wrapCollection(final Object object) {
         return ParamNameResolver.wrapToMapIfCollection(object, null);
-    }
-
-    /**
-     * @deprecated Since 3.5.5
-     */
-    @Deprecated
-    public static class StrictMap<V> extends HashMap<String, V> {
-
-        private static final long serialVersionUID = -5741767162221585340L;
-
-        @Override
-        public V get(Object key) {
-            if (!super.containsKey(key)) {
-                throw new BindingException("Parameter '" + key + "' not found. Available parameters are " + this.keySet());
-            }
-            return super.get(key);
-        }
-
     }
 
 }

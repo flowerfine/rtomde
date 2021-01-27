@@ -7,6 +7,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -17,6 +18,11 @@ public class CachingExecutor implements Executor {
     public CachingExecutor(Executor delegate) {
         this.delegate = delegate;
         this.delegate.setExecutorWrapper(this);
+    }
+
+    @Override
+    public DataSource getDataSource() {
+        return delegate.getDataSource();
     }
 
     @Override

@@ -47,6 +47,11 @@ public abstract class BaseExecutor implements Executor {
     }
 
     @Override
+    public DataSource getDataSource() {
+        return this.dataSource;
+    }
+
+    @Override
     public void close() {
         deferredLoads = null;
         localCache = null;

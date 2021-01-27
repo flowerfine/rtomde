@@ -57,7 +57,7 @@ public class MapWrapper extends BaseWrapper {
   }
 
   @Override
-  public String findProperty(String name, boolean useCamelCaseMapping) {
+  public String findProperty(String name) {
     return name;
   }
 

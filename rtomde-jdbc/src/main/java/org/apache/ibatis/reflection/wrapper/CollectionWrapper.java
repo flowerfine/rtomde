@@ -44,7 +44,7 @@ public class CollectionWrapper implements ObjectWrapper {
   }
 
   @Override
-  public String findProperty(String name, boolean useCamelCaseMapping) {
+  public String findProperty(String name) {
     throw new UnsupportedOperationException();
   }
 

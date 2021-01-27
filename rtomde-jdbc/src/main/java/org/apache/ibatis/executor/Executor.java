@@ -7,12 +7,15 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
 public interface Executor {
 
     ResultHandler NO_RESULT_HANDLER = null;
+
+    DataSource getDataSource();
 
     <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException;
 

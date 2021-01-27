@@ -69,25 +69,22 @@ public class Configuration {
 
     protected boolean safeRowBoundsEnabled;
     protected boolean safeResultHandlerEnabled = true;
-    protected boolean mapUnderscoreToCamelCase;
     protected boolean aggressiveLazyLoading;
     protected boolean multipleResultSetsEnabled = true;
     protected boolean useColumnLabel = true;
-    protected boolean cacheEnabled = true;
     protected boolean callSettersOnNulls;
     protected boolean useActualParamName = true;
     protected boolean returnInstanceForEmptyRow;
     protected boolean shrinkWhitespacesInSql;
 
     protected String logPrefix;
-    protected Class<? extends Log> logImpl;
+    protected Class<? extends Log> logImpl = Slf4jImpl.class;
     protected Class<? extends VFS> vfsImpl;
     protected Class<?> defaultSqlProviderType;
     protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
     protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
     protected Integer defaultStatementTimeout;
-    protected Integer defaultFetchSize;
     protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
     protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
     protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
@@ -308,14 +305,6 @@ public class Configuration {
         this.safeRowBoundsEnabled = safeRowBoundsEnabled;
     }
 
-    public boolean isMapUnderscoreToCamelCase() {
-        return mapUnderscoreToCamelCase;
-    }
-
-    public void setMapUnderscoreToCamelCase(boolean mapUnderscoreToCamelCase) {
-        this.mapUnderscoreToCamelCase = mapUnderscoreToCamelCase;
-    }
-
     public void addLoadedResource(String resource) {
         loadedResources.add(resource);
     }
@@ -403,14 +392,6 @@ public class Configuration {
         this.defaultExecutorType = defaultExecutorType;
     }
 
-    public boolean isCacheEnabled() {
-        return cacheEnabled;
-    }
-
-    public void setCacheEnabled(boolean cacheEnabled) {
-        this.cacheEnabled = cacheEnabled;
-    }
-
     public Integer getDefaultStatementTimeout() {
         return defaultStatementTimeout;
     }
@@ -418,27 +399,6 @@ public class Configuration {
     public void setDefaultStatementTimeout(Integer defaultStatementTimeout) {
         this.defaultStatementTimeout = defaultStatementTimeout;
     }
-
-    /**
-     * Gets the default fetch size.
-     *
-     * @return the default fetch size
-     * @since 3.3.0
-     */
-    public Integer getDefaultFetchSize() {
-        return defaultFetchSize;
-    }
-
-    /**
-     * Sets the default fetch size.
-     *
-     * @param defaultFetchSize the new default fetch size
-     * @since 3.3.0
-     */
-    public void setDefaultFetchSize(Integer defaultFetchSize) {
-        this.defaultFetchSize = defaultFetchSize;
-    }
-
 
     public boolean isUseColumnLabel() {
         return useColumnLabel;
@@ -607,9 +567,7 @@ public class Configuration {
         } else {
             executor = new SimpleExecutor(this, dataSource);
         }
-        if (cacheEnabled) {
-            executor = new CachingExecutor(executor);
-        }
+        executor = new CachingExecutor(executor);
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
     }

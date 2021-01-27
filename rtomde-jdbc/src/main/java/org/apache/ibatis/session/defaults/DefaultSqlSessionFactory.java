@@ -9,9 +9,6 @@ import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
     private final Configuration configuration;
@@ -31,16 +28,6 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     }
 
     @Override
-    public SqlSession openSession(Connection connection) {
-        return openSessionFromConnection(configuration.getDefaultExecutorType(), connection);
-    }
-
-    @Override
-    public SqlSession openSession(ExecutorType execType, Connection connection) {
-        return openSessionFromConnection(execType, connection);
-    }
-
-    @Override
     public Configuration getConfiguration() {
         return configuration;
     }
@@ -48,28 +35,8 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     private SqlSession openSessionFromDataSource(ExecutorType execType) {
         try {
             final Environment environment = configuration.getDefaultEnv();
-            final Executor executor = configuration.newExecutor(environment.getDataSource(), execType);
-            return new DefaultSqlSession(configuration, executor, autoCommit);
-        } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
-        } finally {
-            ErrorContext.instance().reset();
-        }
-    }
-
-    private SqlSession openSessionFromConnection(ExecutorType execType, Connection connection) {
-        try {
-            boolean autoCommit;
-            try {
-                autoCommit = connection.getAutoCommit();
-            } catch (SQLException e) {
-                // Failover to true, as most poor drivers
-                // or databases won't support transactions
-                autoCommit = true;
-            }
-            final Environment environment = configuration.getEnvironment();
-            final Executor executor = configuration.newExecutor(tx, execType);
-            return new DefaultSqlSession(configuration, executor, autoCommit);
+            final Executor executor = configuration.newExecutor(environment.getDataSource(""), execType);
+            return new DefaultSqlSession(configuration, executor);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
         } finally {

@@ -262,7 +262,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
                         continue;
                     }
                 }
-                final String property = metaObject.findProperty(propertyName, configuration.isMapUnderscoreToCamelCase());
+                final String property = metaObject.findProperty(propertyName);
                 if (property != null && metaObject.hasSetter(property)) {
                     if (resultMap.getMappedProperties().contains(property)) {
                         continue;

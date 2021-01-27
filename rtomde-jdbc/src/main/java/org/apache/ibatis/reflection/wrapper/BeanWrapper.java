@@ -57,8 +57,8 @@ public class BeanWrapper extends BaseWrapper {
   }
 
   @Override
-  public String findProperty(String name, boolean useCamelCaseMapping) {
-    return metaClass.findProperty(name, useCamelCaseMapping);
+  public String findProperty(String name) {
+    return metaClass.findProperty(name);
   }
 
   @Override
