@@ -17,7 +17,7 @@
     </environments>
 
     <mappers>
-        <mapper url="file: org/apache/ibatis/session/SysUserMapper.xml"/>
+        <mapper url="file:///Users/wangqi/Documents/xinc/rtomde/rtomde-jdbc/target/test-classes/org/apache/ibatis/session/SysUserMapper.xml"/>
     </mappers>
 </configuration>
 

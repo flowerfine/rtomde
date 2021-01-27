@@ -97,9 +97,9 @@ public class MapperBuilderAssistant extends BaseBuilder {
         return cache;
     }
 
-    public ParameterMap addParameterMap(String id, Class<?> parameterClass, List<ParameterMapping> parameterMappings) {
+    public ParameterMap addParameterMap(String id, String type, List<ParameterMapping> parameterMappings) {
         id = applyCurrentNamespace(id, false);
-        ParameterMap parameterMap = ParameterMap.builder().id(id).type(parameterClass).parameterMappings(parameterMappings).build();
+        ParameterMap parameterMap = ParameterMap.builder().id(id).type(type).parameterMappings(parameterMappings).build();
         configuration.addParameterMap(parameterMap);
         return parameterMap;
     }
@@ -115,7 +115,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
                 .build();
     }
 
-    public ResultMap addResultMap(String id, Class<?> type, String extend, List<ResultMapping> resultMappings, Boolean autoMapping) {
+    public ResultMap addResultMap(String id, String type, String extend, List<ResultMapping> resultMappings, Boolean autoMapping) {
         id = applyCurrentNamespace(id, false);
         extend = applyCurrentNamespace(extend, true);
 

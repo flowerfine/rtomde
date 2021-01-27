@@ -8,12 +8,12 @@ import java.util.List;
 public class ResultMapResolver {
     private final MapperBuilderAssistant assistant;
     private final String id;
-    private final Class<?> type;
+    private final String type;
     private final String extend;
     private final List<ResultMapping> resultMappings;
     private final Boolean autoMapping;
 
-    public ResultMapResolver(MapperBuilderAssistant assistant, String id, Class<?> type, String extend, List<ResultMapping> resultMappings, Boolean autoMapping) {
+    public ResultMapResolver(MapperBuilderAssistant assistant, String id, String type, String extend, List<ResultMapping> resultMappings, Boolean autoMapping) {
         this.assistant = assistant;
         this.id = id;
         this.type = type;

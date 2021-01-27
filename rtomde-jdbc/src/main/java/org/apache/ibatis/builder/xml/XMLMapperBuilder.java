@@ -75,6 +75,9 @@ public class XMLMapperBuilder extends BaseBuilder {
             if (namespace == null || namespace.isEmpty()) {
                 throw new BuilderException("Mapper's namespace cannot be empty");
             }
+            /**
+             * fixme 处理application匹配
+             */
             String application = context.getStringAttribute("application");
             builderAssistant.setCurrentNamespace(namespace);
             cacheRefElement(context.evalNode("cache-ref"));
@@ -176,7 +179,7 @@ public class XMLMapperBuilder extends BaseBuilder {
         for (XNode parameterMapNode : list) {
             String id = parameterMapNode.getStringAttribute("id");
             String type = parameterMapNode.getStringAttribute("type");
-            Class<?> parameterClass = resolveClass(type);
+//            Class<?> parameterClass = resolveClass(type);
             List<XNode> parameterNodes = parameterMapNode.evalNodes("parameter");
             List<ParameterMapping> parameterMappings = new ArrayList<>();
             for (XNode parameterNode : parameterNodes) {
@@ -190,7 +193,7 @@ public class XMLMapperBuilder extends BaseBuilder {
                 ParameterMapping parameterMapping = builderAssistant.buildParameterMapping(property, javaTypeClass, jdbcTypeEnum, typeHandlerClass);
                 parameterMappings.add(parameterMapping);
             }
-            builderAssistant.addParameterMap(id, parameterClass, parameterMappings);
+            builderAssistant.addParameterMap(id, type, parameterMappings);
         }
     }
 
@@ -208,7 +211,6 @@ public class XMLMapperBuilder extends BaseBuilder {
         ErrorContext.instance().activity("processing " + resultMapNode.getValueBasedIdentifier());
         String id = resultMapNode.getStringAttribute("id");
         String type = resultMapNode.getStringAttribute("type");
-        Class<?> resultClass = resolveClass(type);
         String extend = resultMapNode.getStringAttribute("extends");
         Boolean autoMapping = resultMapNode.getBooleanAttribute("autoMapping");
         List<ResultMapping> resultMappings = new ArrayList<>(additionalResultMappings);
@@ -224,7 +226,7 @@ public class XMLMapperBuilder extends BaseBuilder {
             ResultMapping resultMapping = builderAssistant.buildResultMapping(property, javaTypeClass, column, jdbcTypeEnum, typeHandlerClass);
             resultMappings.add(resultMapping);
         }
-        ResultMapResolver resultMapResolver = new ResultMapResolver(builderAssistant, id, resultClass, extend, resultMappings, autoMapping);
+        ResultMapResolver resultMapResolver = new ResultMapResolver(builderAssistant, id, type, extend, resultMappings, autoMapping);
         try {
             return resultMapResolver.resolve();
         } catch (IncompleteElementException e) {

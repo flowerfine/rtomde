@@ -12,6 +12,7 @@ import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.ReflectorFactory;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.session.*;
+import org.apache.ibatis.type.TypeAliasRegistry;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
@@ -29,6 +30,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     private final RowBounds rowBounds;
     private final ResultHandler<?> resultHandler;
     private final TypeHandlerRegistry typeHandlerRegistry;
+    private final TypeAliasRegistry typeAliasRegistry;
     private final ObjectFactory objectFactory;
     private final ReflectorFactory reflectorFactory;
 
@@ -54,6 +56,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
         this.mappedStatement = mappedStatement;
         this.rowBounds = rowBounds;
         this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
+        this.typeAliasRegistry = configuration.getTypeAliasRegistry();
         this.objectFactory = configuration.getObjectFactory();
         this.reflectorFactory = configuration.getReflectorFactory();
         this.resultHandler = resultHandler;
@@ -191,7 +194,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     //
     private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         Object rowValue = createResultObject(rsw, resultMap, columnPrefix);
-        if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
+        if (rowValue != null && !hasTypeHandlerForResultObject(rsw, typeAliasRegistry.resolveAlias(resultMap.getType()))) {
             final MetaObject metaObject = configuration.newMetaObject(rowValue);
             boolean foundValues = false;
             if (shouldApplyAutomaticMappings(resultMap, false)) {
@@ -305,7 +308,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
 
     private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
-        final Class<?> resultType = resultMap.getType();
+        final Class<?> resultType = typeAliasRegistry.resolveAlias(resultMap.getType());
         final MetaClass metaType = MetaClass.forClass(resultType, reflectorFactory);
         if (hasTypeHandlerForResultObject(rsw, resultType)) {
             return createPrimitiveResultObject(rsw, resultMap, columnPrefix);
@@ -316,7 +319,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
 
     private Object createPrimitiveResultObject(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
-        final Class<?> resultType = resultMap.getType();
+        final Class<?> resultType = typeAliasRegistry.resolveAlias(resultMap.getType());
         final String columnName;
         if (!resultMap.getResultMappings().isEmpty()) {
             final List<ResultMapping> resultMappingList = resultMap.getResultMappings();

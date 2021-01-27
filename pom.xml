@@ -39,11 +39,6 @@
     <dependencies>
         <dependency>
             <groupId>cn.sliew</groupId>
-            <artifactId>rtomde-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>cn.sliew</groupId>
             <artifactId>milky-common</artifactId>
             <version>1.0.0</version>
         </dependency>

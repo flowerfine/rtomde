@@ -40,6 +40,11 @@ public class Resources {
         classLoaderWrapper.defaultClassLoader = defaultClassLoader;
     }
 
+//    public static InputStream getUrlAsStream(String url) throws IOException {
+//        URL resourceURL = Resources.getResourceURL(url);
+//        return resourceURL.openStream();
+//    }
+
     /**
      * Returns the URL of the resource on the classpath
      *

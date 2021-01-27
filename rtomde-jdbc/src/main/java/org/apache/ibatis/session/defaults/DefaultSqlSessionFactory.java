@@ -32,10 +32,13 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
         return configuration;
     }
 
+    /**
+     * fixme 数据源id
+     */
     private SqlSession openSessionFromDataSource(ExecutorType execType) {
         try {
             final Environment environment = configuration.getDefaultEnv();
-            final Executor executor = configuration.newExecutor(environment.getDataSource(""), execType);
+            final Executor executor = configuration.newExecutor(environment.getDataSource("rtomde"), execType);
             return new DefaultSqlSession(configuration, executor);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);

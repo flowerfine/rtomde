@@ -1,10 +1,10 @@
 package org.apache.ibatis.builder.xml;
 
-import cn.sliew.rtomde.common.resource.Resources;
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
 import org.apache.ibatis.datasource.DataSourceFactory;
 import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.io.VFS;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.mapping.Environment;
@@ -22,6 +22,7 @@ import org.apache.ibatis.type.JdbcType;
 
 import java.io.InputStream;
 import java.io.Reader;
+import java.net.URL;
 import java.util.Properties;
 
 public class XMLConfigBuilder extends BaseBuilder {
@@ -290,7 +291,6 @@ public class XMLConfigBuilder extends BaseBuilder {
                 String url = child.getStringAttribute("url");
                 if (url != null) {
                     ErrorContext.instance().resource(url);
-                    System.out.println(Resources.getResourceAsFile("/").getAbsolutePath());
                     InputStream inputStream = Resources.getUrlAsStream(url);
                     XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
                     mapperParser.parse();

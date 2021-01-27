@@ -8,13 +8,13 @@ public class ResultMap {
     private final Configuration configuration;
 
     private final String id;
-    private final Class<?> type;
+    private final String type;
     private final List<ResultMapping> resultMappings;
     private final Set<String> mappedColumns;
     private final Set<String> mappedProperties;
     private final Boolean autoMapping;
 
-    public ResultMap(Configuration configuration, String id, Class<?> type, List<ResultMapping> resultMappings, Set<String> mappedColumns, Set<String> mappedProperties, Boolean autoMapping) {
+    public ResultMap(Configuration configuration, String id, String type, List<ResultMapping> resultMappings, Set<String> mappedColumns, Set<String> mappedProperties, Boolean autoMapping) {
         this.configuration = configuration;
         this.id = id;
         this.type = type;
@@ -32,7 +32,7 @@ public class ResultMap {
         private Configuration configuration;
 
         private String id;
-        private Class<?> type;
+        private String type;
         private List<ResultMapping> resultMappings;
         private Set<String> mappedColumns;
         private Set<String> mappedProperties;
@@ -47,7 +47,7 @@ public class ResultMap {
             return this;
         }
 
-        public Builder type(Class<?> type) {
+        public Builder type(String type) {
             this.type = type;
             return this;
         }
@@ -89,7 +89,7 @@ public class ResultMap {
         return id;
     }
 
-    public Class<?> getType() {
+    public String getType() {
         return type;
     }
 

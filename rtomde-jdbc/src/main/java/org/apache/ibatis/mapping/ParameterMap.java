@@ -6,10 +6,10 @@ import java.util.List;
 public class ParameterMap {
 
     private final String id;
-    private final Class<?> type;
+    private final String type;
     private final List<ParameterMapping> parameterMappings;
 
-    private ParameterMap(String id, Class<?> type, List<ParameterMapping> parameterMappings) {
+    private ParameterMap(String id, String type, List<ParameterMapping> parameterMappings) {
         this.id = id;
         this.type = type;
         this.parameterMappings = parameterMappings;
@@ -22,7 +22,7 @@ public class ParameterMap {
     public static class Builder {
 
         private String id;
-        private Class<?> type;
+        private String type;
         private List<ParameterMapping> parameterMappings;
 
         private Builder() {
@@ -34,7 +34,7 @@ public class ParameterMap {
             return this;
         }
 
-        public Builder type(Class<?> type) {
+        public Builder type(String type) {
             this.type = type;
             return this;
         }
@@ -56,7 +56,7 @@ public class ParameterMap {
         return id;
     }
 
-    public Class<?> getType() {
+    public String getType() {
         return type;
     }
 
