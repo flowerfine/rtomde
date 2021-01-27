@@ -141,15 +141,6 @@ public class DefaultSqlSession implements SqlSession {
     }
 
     @Override
-    public Connection getConnection() {
-        try {
-            return executor.getDataSource().getConnection();
-        } catch (SQLException e) {
-            throw ExceptionFactory.wrapException("Error getting a new connection.  Cause: " + e, e);
-        }
-    }
-
-    @Override
     public void clearCache() {
         executor.clearLocalCache();
     }

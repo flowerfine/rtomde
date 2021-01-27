@@ -257,7 +257,7 @@ public class ResultLoaderMap {
     private static final class ClosedExecutor extends BaseExecutor {
 
         public ClosedExecutor() {
-            super(null, null);
+            super(null);
         }
 
         @Override

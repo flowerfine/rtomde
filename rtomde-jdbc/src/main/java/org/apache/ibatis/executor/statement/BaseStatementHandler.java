@@ -77,6 +77,11 @@ public abstract class BaseStatementHandler implements StatementHandler {
         }
     }
 
+    @Override
+    public String getDataSourceId() {
+        return mappedStatement.getDataSourceId();
+    }
+
     protected abstract Statement instantiateStatement(Connection connection) throws SQLException;
 
     protected void setStatementTimeout(Statement stmt) throws SQLException {

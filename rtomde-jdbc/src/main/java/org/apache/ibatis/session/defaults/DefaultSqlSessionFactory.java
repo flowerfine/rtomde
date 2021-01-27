@@ -3,7 +3,6 @@ package org.apache.ibatis.session.defaults;
 import org.apache.ibatis.exceptions.ExceptionFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSession;
@@ -37,8 +36,7 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
      */
     private SqlSession openSessionFromDataSource(ExecutorType execType) {
         try {
-            final Environment environment = configuration.getDefaultEnv();
-            final Executor executor = configuration.newExecutor(environment.getDataSource("rtomde"), execType);
+            Executor executor = configuration.newExecutor(execType);
             return new DefaultSqlSession(configuration, executor);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);

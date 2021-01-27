@@ -2,16 +2,13 @@ package org.apache.ibatis.executor.loader;
 
 import org.apache.ibatis.cache.CacheKey;
 import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.executor.ExecutorException;
 import org.apache.ibatis.executor.ResultExtractor;
 import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.RowBounds;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -65,15 +62,7 @@ public class ResultLoader {
     }
 
     private Executor newExecutor() {
-        final Environment environment = configuration.getDefaultEnv();
-        if (environment == null) {
-            throw new ExecutorException("ResultLoader could not load lazily.  Environment was not configured.");
-        }
-        final DataSource ds = environment.getDataSource("");
-        if (ds == null) {
-            throw new ExecutorException("ResultLoader could not load lazily.  DataSource was not configured.");
-        }
-        return configuration.newExecutor(ds);
+        return configuration.newExecutor();
     }
 
     public boolean wasNull() {

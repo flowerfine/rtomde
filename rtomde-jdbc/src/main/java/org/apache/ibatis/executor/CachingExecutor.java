@@ -21,8 +21,8 @@ public class CachingExecutor implements Executor {
     }
 
     @Override
-    public DataSource getDataSource() {
-        return delegate.getDataSource();
+    public DataSource getDataSource(String dataSourceId) {
+        return delegate.getDataSource(dataSourceId);
     }
 
     @Override

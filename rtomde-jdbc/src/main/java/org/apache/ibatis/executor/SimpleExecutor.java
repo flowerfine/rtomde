@@ -8,7 +8,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -16,8 +15,8 @@ import java.util.List;
 
 public class SimpleExecutor extends BaseExecutor {
 
-    public SimpleExecutor(Configuration configuration, DataSource dataSource) {
-        super(configuration, dataSource);
+    public SimpleExecutor(Configuration configuration) {
+        super(configuration);
     }
 
 
@@ -35,9 +34,8 @@ public class SimpleExecutor extends BaseExecutor {
     }
 
     private Statement prepareStatement(StatementHandler handler, Log statementLog) throws SQLException {
-        Statement stmt;
-        Connection connection = getConnection(statementLog);
-        stmt = handler.prepare(connection);
+        Connection connection = getConnection(handler.getDataSourceId(), statementLog);
+        Statement stmt = handler.prepare(connection);
         handler.parameterize(stmt);
         return stmt;
     }

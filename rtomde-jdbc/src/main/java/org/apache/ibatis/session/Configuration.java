@@ -53,7 +53,6 @@ import org.apache.ibatis.type.TypeAliasRegistry;
 import org.apache.ibatis.type.TypeHandler;
 import org.apache.ibatis.type.TypeHandlerRegistry;
 
-import javax.sql.DataSource;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
@@ -557,18 +556,18 @@ public class Configuration {
         return statementHandler;
     }
 
-    public Executor newExecutor(DataSource dataSource) {
-        return newExecutor(dataSource, defaultExecutorType);
+    public Executor newExecutor() {
+        return newExecutor(defaultExecutorType);
     }
 
-    public Executor newExecutor(DataSource dataSource, ExecutorType executorType) {
+    public Executor newExecutor(ExecutorType executorType) {
         executorType = executorType == null ? defaultExecutorType : executorType;
         executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
         Executor executor;
         if (ExecutorType.REUSE == executorType) {
-            executor = new ReuseExecutor(this, dataSource);
+            executor = new ReuseExecutor(this);
         } else {
-            executor = new SimpleExecutor(this, dataSource);
+            executor = new SimpleExecutor(this);
         }
         executor = new CachingExecutor(executor);
         executor = (Executor) interceptorChain.pluginAll(executor);

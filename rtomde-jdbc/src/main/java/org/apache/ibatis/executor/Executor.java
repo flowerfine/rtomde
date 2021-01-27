@@ -15,7 +15,7 @@ public interface Executor {
 
     ResultHandler NO_RESULT_HANDLER = null;
 
-    DataSource getDataSource();
+    DataSource getDataSource(String dataSourceId);
 
     <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException;
 

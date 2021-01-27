@@ -19,6 +19,8 @@ public interface StatementHandler {
 
     BoundSql getBoundSql();
 
+    String getDataSourceId();
+
     ParameterHandler getParameterHandler();
 
 }

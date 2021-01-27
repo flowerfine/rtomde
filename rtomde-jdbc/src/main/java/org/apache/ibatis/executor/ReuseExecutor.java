@@ -8,7 +8,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
 
-import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -20,8 +19,8 @@ public class ReuseExecutor extends BaseExecutor {
 
     private final Map<String, Statement> statementMap = new HashMap<>();
 
-    public ReuseExecutor(Configuration configuration, DataSource dataSource) {
-        super(configuration, dataSource);
+    public ReuseExecutor(Configuration configuration) {
+        super(configuration);
     }
 
     @Override
@@ -38,7 +37,7 @@ public class ReuseExecutor extends BaseExecutor {
         if (hasStatementFor(sql)) {
             stmt = getStatement(sql);
         } else {
-            Connection connection = getConnection(statementLog);
+            Connection connection = getConnection(handler.getDataSourceId(), statementLog);
             stmt = handler.prepare(connection);
             putStatement(sql, stmt);
         }

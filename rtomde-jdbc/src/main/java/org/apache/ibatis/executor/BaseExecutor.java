@@ -5,6 +5,7 @@ import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.logging.Log;
 import org.apache.ibatis.logging.jdbc.ConnectionLogger;
 import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.Environment;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.reflection.MetaObject;
@@ -25,7 +26,7 @@ import static org.apache.ibatis.executor.ExecutionPlaceholder.EXECUTION_PLACEHOL
 
 public abstract class BaseExecutor implements Executor {
 
-    private DataSource dataSource;
+    private Environment environment;
     protected Executor wrapper;
 
     protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
@@ -36,19 +37,19 @@ public abstract class BaseExecutor implements Executor {
     protected int queryStack;
     private boolean closed;
 
-    protected BaseExecutor(Configuration configuration, DataSource dataSource) {
-        this.dataSource = dataSource;
+    protected BaseExecutor(Configuration configuration) {
         this.deferredLoads = new ConcurrentLinkedQueue<>();
         this.localCache = new PerpetualCache("LocalCache");
         this.localOutputParameterCache = new PerpetualCache("LocalOutputParameterCache");
         this.closed = false;
         this.configuration = configuration;
+        this.environment = configuration.getDefaultEnv();
         this.wrapper = this;
     }
 
     @Override
-    public DataSource getDataSource() {
-        return this.dataSource;
+    public DataSource getDataSource(String dataSourceId) {
+        return this.environment.getDataSource(dataSourceId);
     }
 
     @Override
@@ -183,8 +184,8 @@ public abstract class BaseExecutor implements Executor {
         return list;
     }
 
-    protected Connection getConnection(Log statementLog) throws SQLException {
-        Connection connection = dataSource.getConnection();
+    protected Connection getConnection(String dataSourceId, Log statementLog) throws SQLException {
+        Connection connection = getDataSource(dataSourceId).getConnection();
         if (statementLog.isDebugEnabled()) {
             return ConnectionLogger.newInstance(connection, statementLog, queryStack);
         } else {

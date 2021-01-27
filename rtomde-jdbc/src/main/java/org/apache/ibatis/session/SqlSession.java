@@ -160,11 +160,4 @@ public interface SqlSession extends Closeable {
      * @return a mapper bound to this SqlSession
      */
     <T> T getMapper(Class<T> type);
-
-    /**
-     * Retrieves inner database connection.
-     *
-     * @return Connection
-     */
-    Connection getConnection();
 }
