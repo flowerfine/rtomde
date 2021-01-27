@@ -24,23 +24,6 @@ public class XMLMapperBuilder extends BaseBuilder {
     private final Map<String, XNode> sqlFragments;
     private final String resource;
 
-    @Deprecated
-    public XMLMapperBuilder(Reader reader, Configuration configuration, String resource, Map<String, XNode> sqlFragments, String namespace) {
-        this(reader, configuration, resource, sqlFragments);
-        this.builderAssistant.setCurrentNamespace(namespace);
-    }
-
-    @Deprecated
-    public XMLMapperBuilder(Reader reader, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
-        this(new XPathParser(reader, true, configuration.getVariables(), new XMLMapperEntityResolver()),
-                configuration, resource, sqlFragments);
-    }
-
-    public XMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource, Map<String, XNode> sqlFragments, String namespace) {
-        this(inputStream, configuration, resource, sqlFragments);
-        this.builderAssistant.setCurrentNamespace(namespace);
-    }
-
     public XMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
         this(new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()),
                 configuration, resource, sqlFragments);
@@ -75,10 +58,10 @@ public class XMLMapperBuilder extends BaseBuilder {
             if (namespace == null || namespace.isEmpty()) {
                 throw new BuilderException("Mapper's namespace cannot be empty");
             }
-            /**
-             * fixme 处理application匹配
-             */
             String application = context.getStringAttribute("application");
+            if (!configuration.getApplication().equals(application)) {
+                throw new BuilderException("Mapper's application '" + application + "' cannot match Config's application '" + configuration.getApplication() + "'");
+            }
             builderAssistant.setCurrentNamespace(namespace);
             cacheRefElement(context.evalNode("cache-ref"));
             cacheElement(context.evalNode("cache"));
