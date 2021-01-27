@@ -58,9 +58,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
-/**
- * @author Clinton Begin
- */
 public class Configuration {
 
     private String application;
@@ -84,6 +81,7 @@ public class Configuration {
 
     protected String logPrefix;
     protected Class<? extends Log> logImpl;
+    protected Class<? extends VFS> vfsImpl;
     protected Class<?> defaultSqlProviderType;
     protected LocalCacheScope localCacheScope = LocalCacheScope.SESSION;
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
@@ -138,9 +136,9 @@ public class Configuration {
      */
     protected final Map<String, String> cacheRefMap = new HashMap<>();
 
-    public Configuration(Environment environment) {
+    public Configuration(Environment defaultEnv) {
         this();
-        this.environment = environment;
+        this.defaultEnv = defaultEnv;
     }
 
     public Configuration() {
@@ -584,9 +582,8 @@ public class Configuration {
         return parameterHandler;
     }
 
-    public ResultSetHandler newResultSetHandler(Executor executor, MappedStatement mappedStatement, RowBounds rowBounds, ParameterHandler parameterHandler,
-                                                ResultHandler resultHandler, BoundSql boundSql) {
-        ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, mappedStatement, resultHandler, rowBounds);
+    public ResultSetHandler newResultSetHandler(MappedStatement mappedStatement, RowBounds rowBounds, ResultHandler resultHandler) {
+        ResultSetHandler resultSetHandler = new DefaultResultSetHandler(mappedStatement, resultHandler, rowBounds);
         resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
         return resultSetHandler;
     }

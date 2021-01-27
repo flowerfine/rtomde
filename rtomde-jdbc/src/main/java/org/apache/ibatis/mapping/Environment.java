@@ -29,7 +29,7 @@ public final class Environment {
 
     public static class Builder {
         private String id;
-        private Map<String, DataSource> dataSources;
+        private ConcurrentMap<String, DataSource> dataSources = new ConcurrentHashMap<>(2);
 
         private Builder() {
         }
