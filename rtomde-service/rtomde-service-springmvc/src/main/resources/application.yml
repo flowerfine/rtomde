@@ -1,10 +1,10 @@
-spring.profiles.active: @profile.active@
+spring.profiles.active: local
 #spring.profiles.active: ${ENV:dev}
 
 spring.application.name: rtomde
 spring.main.banner-mode: log
 server:
-  port: 80
+  port: 8080
   servlet.context-path: /${spring.application.name}
 
 spring:
