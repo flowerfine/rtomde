@@ -13,6 +13,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>cn.sliew</groupId>
+            <artifactId>rtomde-common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>rtomde-mybatis-spring-boot-starter</artifactId>
         </dependency>

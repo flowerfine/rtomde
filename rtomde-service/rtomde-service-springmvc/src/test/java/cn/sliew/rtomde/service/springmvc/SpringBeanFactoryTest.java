@@ -1,6 +1,6 @@
 package cn.sliew.rtomde.service.springmvc;
 
-import cn.sliew.rtomde.executor.bytecode.ClassGenerator;
+import cn.sliew.rtomde.common.bytecode.ClassGenerator;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

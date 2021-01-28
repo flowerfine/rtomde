@@ -1,5 +1,6 @@
 package cn.sliew.rtomde.executor.bytecode;
 
+import cn.sliew.rtomde.common.bytecode.ClassGenerator;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
