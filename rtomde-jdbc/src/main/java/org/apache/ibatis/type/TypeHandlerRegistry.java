@@ -1,6 +1,5 @@
 package org.apache.ibatis.type;
 
-import org.apache.ibatis.binding.MapperMethod.ParamMap;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
 

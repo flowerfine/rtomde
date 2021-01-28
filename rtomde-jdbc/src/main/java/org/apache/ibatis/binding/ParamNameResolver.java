@@ -1,26 +1,13 @@
-/**
- * Copyright 2009-2020 the original author or authors.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-package org.apache.ibatis.reflection;
+package org.apache.ibatis.binding;
 
+import org.apache.ibatis.mapping.ParameterMap;
+import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.ibatis.binding.MapperMethod.ParamMap;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
+
 import java.util.*;
 
 public class ParamNameResolver {
@@ -44,48 +31,26 @@ public class ParamNameResolver {
      */
     private final SortedMap<Integer, String> names;
 
-    public ParamNameResolver(Configuration config, Method method) {
+    public ParamNameResolver(Configuration config, String id) {
         this.useActualParamName = config.isUseActualParamName();
-        final Class<?>[] paramTypes = method.getParameterTypes();
-        final Annotation[][] paramAnnotations = method.getParameterAnnotations();
+        ParameterMap parameterMap = config.getMappedStatement(id).getParameterMap();
+        List<ParameterMapping> parameterMappings = parameterMap.getParameterMappings();
         final SortedMap<Integer, String> map = new TreeMap<>();
-        int paramCount = paramAnnotations.length;
+        int paramCount = parameterMappings.size();
         // get names from @Param annotations
         for (int paramIndex = 0; paramIndex < paramCount; paramIndex++) {
-            if (isSpecialParameter(paramTypes[paramIndex])) {
+            ParameterMapping parameterMapping = parameterMappings.get(paramIndex);
+            if (isSpecialParameter(parameterMapping.getJavaType())) {
                 // skip special parameters
                 continue;
             }
-            String name = null;
-            // @Param was not specified.
-            if (useActualParamName) {
-                name = getActualParamName(method, paramIndex);
-            }
-            if (name == null) {
-                // use the parameter index as the name ("0", "1", ...)
-                // gcode issue #71
-                name = String.valueOf(map.size());
-            }
-            map.put(paramIndex, name);
+            map.put(paramIndex, parameterMapping.getProperty());
         }
         names = Collections.unmodifiableSortedMap(map);
     }
 
-    private String getActualParamName(Method method, int paramIndex) {
-        return ParamNameUtil.getParamNames(method).get(paramIndex);
-    }
-
     private static boolean isSpecialParameter(Class<?> clazz) {
         return RowBounds.class.isAssignableFrom(clazz) || ResultHandler.class.isAssignableFrom(clazz);
-    }
-
-    /**
-     * Returns parameter names referenced by SQL providers.
-     *
-     * @return the names
-     */
-    public String[] getNames() {
-        return names.values().toArray(new String[0]);
     }
 
     /**
