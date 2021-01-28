@@ -1,9 +1,15 @@
 package org.apache.ibatis.exceptions;
 
+import org.apache.ibatis.mapping.MappedStatement;
+
+import java.util.Optional;
+
 @SuppressWarnings("deprecation")
 public class PersistenceException extends IbatisException {
 
     private static final long serialVersionUID = -7537395265357977271L;
+
+    private MappedStatement mappedStatement;
 
     public PersistenceException() {
         super();
@@ -19,5 +25,13 @@ public class PersistenceException extends IbatisException {
 
     public PersistenceException(Throwable cause) {
         super(cause);
+    }
+
+    public Optional<MappedStatement> getMappedStatement() {
+        return Optional.ofNullable(mappedStatement);
+    }
+
+    public void setMappedStatement(MappedStatement mappedStatement) {
+        this.mappedStatement = mappedStatement;
     }
 }

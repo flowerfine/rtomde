@@ -96,7 +96,6 @@ public class Configuration {
     protected boolean lazyLoadingEnabled = false;
     protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
-    protected String databaseId;
     /**
      * Configuration factory class.
      * Used to create Configuration for loading deserialized unread properties.
@@ -282,14 +281,6 @@ public class Configuration {
 
     public void setShrinkWhitespacesInSql(boolean shrinkWhitespacesInSql) {
         this.shrinkWhitespacesInSql = shrinkWhitespacesInSql;
-    }
-
-    public String getDatabaseId() {
-        return databaseId;
-    }
-
-    public void setDatabaseId(String databaseId) {
-        this.databaseId = databaseId;
     }
 
     public Class<?> getConfigurationFactory() {

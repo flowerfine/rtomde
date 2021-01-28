@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.sliew</groupId>
-            <artifactId>rtomde-executor</artifactId>
+            <artifactId>rtomde-jdbc</artifactId>
         </dependency>
 
         <dependency>

@@ -1,6 +1,7 @@
 package org.apache.ibatis.mapping;
 
 import javax.sql.DataSource;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -56,6 +57,10 @@ public final class Environment {
 
     public DataSource getDataSource(String id) {
         return this.dataSourceRegistry.get(id);
+    }
+
+    public Map<String, DataSource> getDataSources() {
+        return Collections.unmodifiableMap(dataSourceRegistry);
     }
 
 }
