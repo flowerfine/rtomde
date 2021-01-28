@@ -84,6 +84,7 @@ public final class BeanGenerator extends Generator implements AutoCloseable {
 
     /**
      * fixme 后面把get()换成makeClass
+     *
      * @param loader
      * @param pd
      * @return
@@ -93,8 +94,7 @@ public final class BeanGenerator extends Generator implements AutoCloseable {
             mCtc.detach();
         }
         try {
-//            mCtc = mPool.makeClass(mClassName);
-            mCtc = mPool.get(mClassName);
+            mCtc = mPool.makeClass(mClassName);
             if (mImportedPackages != null) {
                 mImportedPackages.forEach(importedPackage -> mPool.importPackage(importedPackage));
             }
@@ -118,15 +118,12 @@ public final class BeanGenerator extends Generator implements AutoCloseable {
                     mCtc.addField(CtField.make(code, mCtc));
                 }
             }
-//            mCtc.writeFile();
             return mCtc.toClass(loader, pd);
         } catch (RuntimeException e) {
             throw e;
         } catch (NotFoundException e) {
             throw new RuntimeException(e.getMessage(), e);
         } catch (CannotCompileException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        } catch (Throwable e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }

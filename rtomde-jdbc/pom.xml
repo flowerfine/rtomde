@@ -13,15 +13,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>cn.sliew</groupId>
+            <artifactId>rtomde-common</artifactId>
+        </dependency>
+        <dependency>
             <groupId>ognl</groupId>
             <artifactId>ognl</artifactId>
             <version>3.2.15</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.27.0-GA</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

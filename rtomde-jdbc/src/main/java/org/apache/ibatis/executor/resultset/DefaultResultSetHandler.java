@@ -194,7 +194,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     //
     private Object getRowValue(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
         Object rowValue = createResultObject(rsw, resultMap, columnPrefix);
-        if (rowValue != null && !hasTypeHandlerForResultObject(rsw, typeAliasRegistry.resolveAlias(resultMap.getType()))) {
+        if (rowValue != null && !hasTypeHandlerForResultObject(rsw, resultMap.getType())) {
             final MetaObject metaObject = configuration.newMetaObject(rowValue);
             boolean foundValues = false;
             if (shouldApplyAutomaticMappings(resultMap, false)) {
@@ -308,7 +308,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
 
 
     private Object createResultObject(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
-        final Class<?> resultType = typeAliasRegistry.resolveAlias(resultMap.getType());
+        final Class<?> resultType = resultMap.getType();
         final MetaClass metaType = MetaClass.forClass(resultType, reflectorFactory);
         if (hasTypeHandlerForResultObject(rsw, resultType)) {
             return createPrimitiveResultObject(rsw, resultMap, columnPrefix);
@@ -319,7 +319,7 @@ public class DefaultResultSetHandler implements ResultSetHandler {
     }
 
     private Object createPrimitiveResultObject(ResultSetWrapper rsw, ResultMap resultMap, String columnPrefix) throws SQLException {
-        final Class<?> resultType = typeAliasRegistry.resolveAlias(resultMap.getType());
+        final Class<?> resultType = resultMap.getType();
         final String columnName;
         if (!resultMap.getResultMappings().isEmpty()) {
             final List<ResultMapping> resultMappingList = resultMap.getResultMappings();

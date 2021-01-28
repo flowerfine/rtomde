@@ -4,11 +4,11 @@
         "http://mybatis.org/dtd/mybatis-4-mapper.dtd">
 <mapper namespace="cn.sliew.rtomde.dao.SysUserMapper" application="minimal">
 
-    <parameterMap id="UserParamMap" type="org.apache.ibatis.session.UserParam">
+    <parameterMap id="UserParamMap" type="cn.sliew.rtomde.dao.UserParam">
         <parameter property="id" javaType="long"/>
     </parameterMap>
 
-    <resultMap id="UserResultMap" type="org.apache.ibatis.session.UserDTO">
+    <resultMap id="UserResultMap" type="cn.sliew.rtomde.dao.UserDTO">
         <result column="id" property="id" javaType="long"/>
         <result column="username" property="username" javaType="string"/>
         <result column="password" property="password" javaType="string"/>

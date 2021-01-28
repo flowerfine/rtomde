@@ -1,5 +1,6 @@
 package org.apache.ibatis.mapping;
 
+import cn.sliew.rtomde.common.bytecode.BeanGenerator;
 import org.apache.ibatis.session.Configuration;
 
 import java.util.*;
@@ -8,13 +9,13 @@ public class ResultMap {
     private final Configuration configuration;
 
     private final String id;
-    private final String type;
+    private final Class<?> type;
     private final List<ResultMapping> resultMappings;
     private final Set<String> mappedColumns;
     private final Set<String> mappedProperties;
     private final Boolean autoMapping;
 
-    public ResultMap(Configuration configuration, String id, String type, List<ResultMapping> resultMappings, Set<String> mappedColumns, Set<String> mappedProperties, Boolean autoMapping) {
+    public ResultMap(Configuration configuration, String id, Class<?> type, List<ResultMapping> resultMappings, Set<String> mappedColumns, Set<String> mappedProperties, Boolean autoMapping) {
         this.configuration = configuration;
         this.id = id;
         this.type = type;
@@ -81,7 +82,16 @@ public class ResultMap {
             // lock down collections
             this.resultMappings = Collections.unmodifiableList(resultMappings);
             this.mappedColumns = Collections.unmodifiableSet(mappedColumns);
-            return new ResultMap(configuration, id, type, resultMappings, mappedColumns, mappedProperties, autoMapping);
+
+            try(BeanGenerator resultBeanG = BeanGenerator.newInstance(this.getClass().getClassLoader())) {
+                resultBeanG.className(this.type);
+                for (ResultMapping mapping : resultMappings) {
+                    resultBeanG.setgetter(mapping.getProperty(), mapping.getJavaType());
+                }
+                Class<?> typeClass = resultBeanG.toClass();
+                configuration.getTypeAliasRegistry().registerAlias(typeClass);
+                return new ResultMap(configuration, id, typeClass, resultMappings, mappedColumns, mappedProperties, autoMapping);
+            }
         }
     }
 
@@ -89,7 +99,7 @@ public class ResultMap {
         return id;
     }
 
-    public String getType() {
+    public Class<?> getType() {
         return type;
     }
 

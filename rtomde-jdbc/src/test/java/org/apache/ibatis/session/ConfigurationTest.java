@@ -14,9 +14,7 @@ public class ConfigurationTest {
         try (InputStream inputStream = Resources.getResourceAsStream(resource)) {
             SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
             try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
-                UserParam param = new UserParam();
-                param.setId(1L);
-                List<Object> objects = sqlSession.selectList("cn.sliew.rtomde.dao.SysUserMapper.selectByPrimaryKey", param);
+                List<Object> objects = sqlSession.selectList("cn.sliew.rtomde.dao.SysUserMapper.selectByPrimaryKey", 1);
                 System.out.println(objects);
             }
         }
