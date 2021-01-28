@@ -4,7 +4,6 @@ import org.apache.ibatis.io.Resources;
 import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
-import java.util.Collection;
 import java.util.List;
 
 public class ConfigurationTest {
@@ -17,10 +16,9 @@ public class ConfigurationTest {
             try (SqlSession sqlSession = sqlSessionFactory.openSession()) {
                 UserParam param = new UserParam();
                 param.setId(1L);
-                List<Object> objects = sqlSession.selectList("selectByPrimaryKey", param);
+                List<Object> objects = sqlSession.selectList("cn.sliew.rtomde.dao.SysUserMapper.selectByPrimaryKey", param);
                 System.out.println(objects);
             }
-
         }
     }
 }

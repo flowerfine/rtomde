@@ -153,7 +153,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         ParameterMap statementParameterMap = getStatementParameterMap(parameterMap);
         ResultMap statementResultMap = getStatementResultMap(resultMap);
         MappedStatement statement = MappedStatement.builder(configuration)
-                .id(resource)
+                .resource(resource)
                 .id(id)
                 .dataSourceId(dataSourceId)
                 .parameterMap(statementParameterMap)

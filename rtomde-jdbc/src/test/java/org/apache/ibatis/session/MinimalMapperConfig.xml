@@ -6,7 +6,7 @@
 <configuration application="minimal">
 
     <environments default="dev">
-        <environment id="dev">
+        <environment id="local">
             <dataSource id="rtomde" type="UNPOOLED">
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
                 <property name="url" value="jdbc:mysql://localhost:3306/rtomde"/>
@@ -14,10 +14,18 @@
                 <property name="password" value="123"/>
             </dataSource>
         </environment>
+        <environment id="dev">
+            <dataSource id="rtomde" type="UNPOOLED">
+                <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://test-xc-dev.mysql.rds.aliyuncs.com:3331/data_service"/>
+                <property name="username" value="test_xc_dev"/>
+                <property name="password" value="x!c@_d#ev$xcD_SdeAvM"/>
+            </dataSource>
+        </environment>
     </environments>
 
     <mappers>
-        <mapper url="file:///Users/wangqi/Documents/xinc/rtomde/rtomde-jdbc/target/test-classes/org/apache/ibatis/session/SysUserMapper.xml"/>
+        <mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-jdbc/src/test/java/org/apache/ibatis/session/SysUserMapper.xml"/>
     </mappers>
 </configuration>
 

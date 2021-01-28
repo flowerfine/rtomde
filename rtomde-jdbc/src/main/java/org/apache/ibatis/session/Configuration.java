@@ -111,15 +111,24 @@ public class Configuration {
     protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
     protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
-    protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
-            .conflictMessageProducer((savedValue, targetValue) ->
-                    ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
-    protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
-    protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
-    protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
+    /**
+     * 这里的id，都会存两份。。。
+     * 功能属于StrictMap本身的功能
+     */
+//    protected final Map<String, MappedStatement> mappedStatements = new StrictMap<MappedStatement>("Mapped Statements collection")
+//            .conflictMessageProducer((savedValue, targetValue) ->
+//                    ". please check " + savedValue.getResource() + " and " + targetValue.getResource());
+//    protected final Map<String, Cache> caches = new StrictMap<>("Caches collection");
+//    protected final Map<String, ResultMap> resultMaps = new StrictMap<>("Result Maps collection");
+//    protected final Map<String, ParameterMap> parameterMaps = new StrictMap<>("Parameter Maps collection");
+
+    protected final Map<String, MappedStatement> mappedStatements = new HashMap<>();
+    protected final Map<String, Cache> caches = new HashMap<>();
+    protected final Map<String, ResultMap> resultMaps = new HashMap<>();
+    protected final Map<String, ParameterMap> parameterMaps = new HashMap<>();
 
     protected final Set<String> loadedResources = new HashSet<>();
-    protected final Map<String, XNode> sqlFragments = new StrictMap<>("XML fragments parsed from previous mappers");
+    protected final Map<String, XNode> sqlFragments = new HashMap<>();
 
     protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
     protected final Collection<CacheRefResolver> incompleteCacheRefs = new LinkedList<>();
