@@ -227,21 +227,21 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private void bindMapperForNamespace() {
-        String namespace = builderAssistant.getCurrentNamespace();
-        if (namespace != null) {
-            Class<?> boundType = null;
-            try {
-                boundType = Resources.classForName(namespace);
-            } catch (ClassNotFoundException e) {
-                // ignore, bound type is not required
-            }
-            if (boundType != null && !configuration.hasMapper(boundType)) {
-                // Spring may not know the real resource name so we set a flag
-                // to prevent loading again this resource from the mapper interface
-                // look at MapperAnnotationBuilder#loadXmlResource
-                configuration.addLoadedResource("namespace:" + namespace);
-                configuration.addMapper(boundType);
-            }
-        }
+//        String namespace = builderAssistant.getCurrentNamespace();
+//        if (namespace != null) {
+//            Class<?> boundType = null;
+//            try {
+//                boundType = Resources.classForName(namespace);
+//            } catch (ClassNotFoundException e) {
+//                // ignore, bound type is not required
+//            }
+//            if (boundType != null && !configuration.hasMapper(boundType)) {
+//                // Spring may not know the real resource name so we set a flag
+//                // to prevent loading again this resource from the mapper interface
+//                // look at MapperAnnotationBuilder#loadXmlResource
+//                configuration.addLoadedResource("namespace:" + namespace);
+//                configuration.addMapper(boundType);
+//            }
+//        }
     }
 }

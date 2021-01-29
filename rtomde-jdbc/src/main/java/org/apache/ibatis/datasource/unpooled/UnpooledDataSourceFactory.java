@@ -21,6 +21,7 @@ public class UnpooledDataSourceFactory implements DataSourceFactory {
 
   @Override
   public void setProperties(Properties properties) {
+    System.out.println(properties);
     Properties driverProperties = new Properties();
     MetaObject metaDataSource = SystemMetaObject.forObject(dataSource);
     for (Object key : properties.keySet()) {

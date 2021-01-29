@@ -26,6 +26,7 @@
         <module>rtomde-jdbc</module>
         <module>rtomde-jdbc-spring</module>
         <module>rtomde-jdbc-spring-boot</module>
+        <module>rtomde-springmvc</module>
     </modules>
 
     <properties>
@@ -79,12 +80,22 @@
             </dependency>
             <dependency>
                 <groupId>cn.sliew</groupId>
+                <artifactId>rtomde-executor</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.sliew</groupId>
                 <artifactId>rtomde-jdbc</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>cn.sliew</groupId>
                 <artifactId>rtomde-jdbc-spring</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.sliew</groupId>
+                <artifactId>rtomde-jdbc-spring-boot</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>

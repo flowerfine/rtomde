@@ -103,7 +103,6 @@ public class Configuration {
      */
     protected Class<?> configurationFactory;
 
-    protected final MapperRegistry mapperRegistry = new MapperRegistry(this);
     protected final InterceptorChain interceptorChain = new InterceptorChain();
     protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
     protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
@@ -454,16 +453,6 @@ public class Configuration {
         return typeAliasRegistry;
     }
 
-    /**
-     * Gets the mapper registry.
-     *
-     * @return the mapper registry
-     * @since 3.2.2
-     */
-    public MapperRegistry getMapperRegistry() {
-        return mapperRegistry;
-    }
-
     public ReflectorFactory getReflectorFactory() {
         return reflectorFactory;
     }
@@ -690,24 +679,16 @@ public class Configuration {
         interceptorChain.addInterceptor(interceptor);
     }
 
-    public void addMappers(String packageName, Class<?> superType) {
-        mapperRegistry.addMappers(packageName, superType);
+    /**
+     * fixme 添加新的mapper时动态生成接口，需要一套体系，而不是当前的全部解析后在进行接口生成
+     */
+    public void addMapper(String url) {
+//        mapperRegistry.addMapper(type);
+        loadedResources.add(url);
     }
 
-    public void addMappers(String packageName) {
-        mapperRegistry.addMappers(packageName);
-    }
-
-    public <T> void addMapper(Class<T> type) {
-        mapperRegistry.addMapper(type);
-    }
-
-    public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-        return mapperRegistry.getMapper(type, sqlSession);
-    }
-
-    public boolean hasMapper(Class<?> type) {
-        return mapperRegistry.hasMapper(type);
+    public boolean hasMapper(String url) {
+        return loadedResources.contains(url);
     }
 
     public boolean hasStatement(String statementName) {

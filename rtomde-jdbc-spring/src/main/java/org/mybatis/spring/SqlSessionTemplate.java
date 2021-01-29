@@ -201,14 +201,6 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
      * {@inheritDoc}
      */
     @Override
-    public <T> T getMapper(Class<T> type) {
-        return getConfiguration().getMapper(type, this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void close() {
         throw new UnsupportedOperationException("Manual close is not allowed over a Spring managed SqlSession");
     }

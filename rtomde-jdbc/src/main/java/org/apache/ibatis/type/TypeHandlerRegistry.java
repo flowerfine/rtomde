@@ -1,5 +1,6 @@
 package org.apache.ibatis.type;
 
+import org.apache.ibatis.binding.MapperMethod;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
 
@@ -195,7 +196,7 @@ public final class TypeHandlerRegistry {
 
     @SuppressWarnings("unchecked")
     private <T> TypeHandler<T> getTypeHandler(Type type, JdbcType jdbcType) {
-        if (ParamMap.class.equals(type)) {
+        if (MapperMethod.ParamMap.class.equals(type)) {
             return null;
         }
         Map<JdbcType, TypeHandler<?>> jdbcHandlerMap = getJdbcHandlerMap(type);
