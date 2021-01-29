@@ -3,7 +3,6 @@ package org.apache.ibatis.builder.xml;
 import org.apache.ibatis.builder.*;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
@@ -14,7 +13,6 @@ import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
 import java.io.InputStream;
-import java.io.Reader;
 import java.util.*;
 
 public class XMLMapperBuilder extends BaseBuilder {
@@ -162,7 +160,6 @@ public class XMLMapperBuilder extends BaseBuilder {
         for (XNode parameterMapNode : list) {
             String id = parameterMapNode.getStringAttribute("id");
             String type = parameterMapNode.getStringAttribute("type");
-//            Class<?> parameterClass = resolveClass(type);
             List<XNode> parameterNodes = parameterMapNode.evalNodes("parameter");
             List<ParameterMapping> parameterMappings = new ArrayList<>();
             for (XNode parameterNode : parameterNodes) {
