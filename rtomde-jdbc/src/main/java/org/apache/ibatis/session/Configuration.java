@@ -10,9 +10,7 @@ import org.apache.ibatis.cache.decorators.LruCache;
 import org.apache.ibatis.cache.decorators.SoftCache;
 import org.apache.ibatis.cache.decorators.WeakCache;
 import org.apache.ibatis.cache.impl.PerpetualCache;
-import org.apache.ibatis.datasource.jndi.JndiDataSourceFactory;
-import org.apache.ibatis.datasource.pooled.PooledDataSourceFactory;
-import org.apache.ibatis.datasource.unpooled.UnpooledDataSourceFactory;
+import org.apache.ibatis.datasource.hikaricp.HikaricpDataSourceFactory;
 import org.apache.ibatis.executor.CachingExecutor;
 import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.executor.ReuseExecutor;
@@ -144,10 +142,7 @@ public class Configuration {
     }
 
     public Configuration() {
-
-        typeAliasRegistry.registerAlias("JNDI", JndiDataSourceFactory.class);
-        typeAliasRegistry.registerAlias("POOLED", PooledDataSourceFactory.class);
-        typeAliasRegistry.registerAlias("UNPOOLED", UnpooledDataSourceFactory.class);
+        typeAliasRegistry.registerAlias("HIKARICP", HikaricpDataSourceFactory.class);
 
         typeAliasRegistry.registerAlias("PERPETUAL", PerpetualCache.class);
         typeAliasRegistry.registerAlias("FIFO", FifoCache.class);

@@ -1,5 +1,8 @@
 package org.apache.ibatis.io;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
@@ -129,6 +132,14 @@ public class Resources {
             props.load(in);
         }
         return props;
+    }
+
+    public static Config getResourceAsConfig(String resource) {
+        return ConfigFactory.load(resource);
+    }
+
+    public static Config getResourceAsConfig(ClassLoader loader, String resource) {
+        return ConfigFactory.load(loader, resource);
     }
 
     /**
