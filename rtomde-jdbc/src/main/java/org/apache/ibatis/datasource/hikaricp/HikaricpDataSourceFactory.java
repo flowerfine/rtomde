@@ -3,7 +3,6 @@ package org.apache.ibatis.datasource.hikaricp;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigValue;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.ibatis.datasource.DataSourceFactory;
 

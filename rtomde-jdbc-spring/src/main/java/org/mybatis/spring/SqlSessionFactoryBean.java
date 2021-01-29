@@ -80,8 +80,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
     private SqlSessionFactory sqlSessionFactory;
 
-    // EnvironmentAware requires spring 3.1
-    private String environment = SqlSessionFactoryBean.class.getSimpleName();
+    private String environment;
 
     private boolean failFast;
 
@@ -465,7 +464,11 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                 ErrorContext.instance().reset();
             }
         }
-        targetConfiguration.setDefaultEnv(targetConfiguration.getEnvironment(environment));
+        if (environment == null || environment.isEmpty()) {
+            targetConfiguration.setDefaultEnv(targetConfiguration.getDefaultEnv());
+        } else {
+            targetConfiguration.setDefaultEnv(targetConfiguration.getEnvironment(environment));
+        }
         if (this.mapperLocations != null) {
             if (this.mapperLocations.length == 0) {
                 LOGGER.warn(() -> "Property 'mapperLocations' was specified but matching resources are not found.");

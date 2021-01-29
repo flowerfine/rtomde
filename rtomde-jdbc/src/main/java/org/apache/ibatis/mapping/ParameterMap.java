@@ -2,20 +2,18 @@ package org.apache.ibatis.mapping;
 
 import cn.sliew.rtomde.common.bytecode.BeanGenerator;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.TypeAliasRegistry;
 
 import java.util.Collections;
 import java.util.List;
 
 public class ParameterMap {
-
-    private final Configuration configuration;
-
+    
     private final String id;
     private final Class<?> type;
     private final List<ParameterMapping> parameterMappings;
 
-    private ParameterMap(Configuration configuration, String id, Class<?> type, List<ParameterMapping> parameterMappings) {
-        this.configuration = configuration;
+    private ParameterMap(String id, Class<?> type, List<ParameterMapping> parameterMappings) {
         this.id = id;
         this.type = type;
         this.parameterMappings = parameterMappings;
@@ -55,15 +53,19 @@ public class ParameterMap {
         public ParameterMap build() {
             //lock down collections
             this.parameterMappings = Collections.unmodifiableList(parameterMappings);
-            try (BeanGenerator paramBeanG = BeanGenerator.newInstance(this.getClass().getClassLoader())) {
-                paramBeanG.className(this.type);
-                for (ParameterMapping mapping : parameterMappings) {
-                    paramBeanG.setgetter(mapping.getProperty(), mapping.getJavaType());
+            TypeAliasRegistry typeAliasRegistry = configuration.getTypeAliasRegistry();
+            if (!typeAliasRegistry.hasAlias(this.type)) {
+                try (BeanGenerator paramBeanG = BeanGenerator.newInstance(this.getClass().getClassLoader())) {
+                    paramBeanG.className(this.type);
+                    for (ParameterMapping mapping : parameterMappings) {
+                        paramBeanG.setgetter(mapping.getProperty(), mapping.getJavaType());
+                    }
+                    Class<?> typeClass = paramBeanG.toClass();
+                    typeAliasRegistry.registerAlias(typeClass);
+
                 }
-                Class<?> typeClass = paramBeanG.toClass();
-                configuration.getTypeAliasRegistry().registerAlias(typeClass);
-                return new ParameterMap(configuration, id, typeClass, parameterMappings);
             }
+            return new ParameterMap(id, typeAliasRegistry.resolveAlias(this.type), parameterMappings);
         }
     }
 

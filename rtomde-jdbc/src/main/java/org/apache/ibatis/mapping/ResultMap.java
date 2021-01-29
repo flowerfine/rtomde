@@ -2,11 +2,11 @@ package org.apache.ibatis.mapping;
 
 import cn.sliew.rtomde.common.bytecode.BeanGenerator;
 import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.type.TypeAliasRegistry;
 
 import java.util.*;
 
 public class ResultMap {
-    private final Configuration configuration;
 
     private final String id;
     private final Class<?> type;
@@ -15,8 +15,7 @@ public class ResultMap {
     private final Set<String> mappedProperties;
     private final Boolean autoMapping;
 
-    public ResultMap(Configuration configuration, String id, Class<?> type, List<ResultMapping> resultMappings, Set<String> mappedColumns, Set<String> mappedProperties, Boolean autoMapping) {
-        this.configuration = configuration;
+    public ResultMap(String id, Class<?> type, List<ResultMapping> resultMappings, Set<String> mappedColumns, Set<String> mappedProperties, Boolean autoMapping) {
         this.id = id;
         this.type = type;
         this.resultMappings = resultMappings;
@@ -82,16 +81,18 @@ public class ResultMap {
             // lock down collections
             this.resultMappings = Collections.unmodifiableList(resultMappings);
             this.mappedColumns = Collections.unmodifiableSet(mappedColumns);
-
-            try(BeanGenerator resultBeanG = BeanGenerator.newInstance(this.getClass().getClassLoader())) {
-                resultBeanG.className(this.type);
-                for (ResultMapping mapping : resultMappings) {
-                    resultBeanG.setgetter(mapping.getProperty(), mapping.getJavaType());
+            TypeAliasRegistry typeAliasRegistry = configuration.getTypeAliasRegistry();
+            if (!typeAliasRegistry.hasAlias(this.type)) {
+                try (BeanGenerator resultBeanG = BeanGenerator.newInstance(this.getClass().getClassLoader())) {
+                    resultBeanG.className(this.type);
+                    for (ResultMapping mapping : resultMappings) {
+                        resultBeanG.setgetter(mapping.getProperty(), mapping.getJavaType());
+                    }
+                    Class<?> typeClass = resultBeanG.toClass();
+                    typeAliasRegistry.registerAlias(typeClass);
                 }
-                Class<?> typeClass = resultBeanG.toClass();
-                configuration.getTypeAliasRegistry().registerAlias(typeClass);
-                return new ResultMap(configuration, id, typeClass, resultMappings, mappedColumns, mappedProperties, autoMapping);
             }
+            return new ResultMap(id, typeAliasRegistry.resolveAlias(this.type), resultMappings, mappedColumns, mappedProperties, autoMapping);
         }
     }
 

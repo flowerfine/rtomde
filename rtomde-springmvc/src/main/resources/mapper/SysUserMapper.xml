@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 4.0//EN"
         "http://mybatis.org/dtd/mybatis-4-mapper.dtd">
-<mapper namespace="cn.sliew.rtomde.SysUserMapper" application="rtomde">
+<mapper namespace="users" application="rtomde">
 
     <parameterMap id="UserParamMap" type="cn.sliew.rtomde.UserParam">
         <parameter property="id" javaType="long"/>

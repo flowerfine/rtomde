@@ -1,5 +1,6 @@
 package cn.sliew.rtomde.springmvc.dispatcher;
 
+import cn.sliew.rtomde.common.bytecode.ClassGenerator;
 import cn.sliew.rtomde.common.bytecode.CustomizedLoaderClassPath;
 import cn.sliew.rtomde.common.utils.ClassUtils;
 import javassist.*;
@@ -9,25 +10,21 @@ import javassist.bytecode.annotation.ArrayMemberValue;
 import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.binding.MapperInvoker;
-import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.binding.PlainMapperInvoker;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.GenericWebApplicationContext;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Set;
 
 @Slf4j
 @org.springframework.context.annotation.Configuration
@@ -35,9 +32,7 @@ public class JavassistController {
 
     private String application;
 
-    private static ClassPool classPool = ClassPool.getDefault();
-
-    private final ConcurrentMap<String, MapperInvoker> map = new ConcurrentHashMap<>(4);
+    private static ClassPool classPool = ClassGenerator.getClassPool(JavassistController.class.getClassLoader());
 
     @Autowired
     private GenericWebApplicationContext ac;
@@ -45,6 +40,8 @@ public class JavassistController {
     private RequestMappingHandlerMapping mappingRegistry;
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
+    @Autowired
+    private MapperDispatcher dispatcher;
 
     static {
         classPool.appendClassPath(new CustomizedLoaderClassPath(Thread.currentThread().getContextClassLoader()));
@@ -54,28 +51,19 @@ public class JavassistController {
     public void makeController() {
         Configuration configuration = sqlSessionFactory.getConfiguration();
         this.application = configuration.getApplication();
-        Collection<String> mappedStatementNames = configuration.getMappedStatementNames();
-        for (String mappedStatementName : mappedStatementNames) {
-            MapperMethod mapperMethod = new MapperMethod(configuration, mappedStatementName);
-            map.putIfAbsent(mappedStatementName, new PlainMapperInvoker(mapperMethod));
-        }
+
         ac.registerBean("cn.sliew.rtomde.springmvc.MapperController", makeDispatcherController());
         Object bean = ac.getBean("cn.sliew.rtomde.springmvc.MapperController");
-        Method[] methods = bean.getClass().getMethods();
-        for (Map.Entry<String, MapperInvoker> entry : map.entrySet()) {
-            String id = entry.getKey();
-            RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths("/" + id).build();
-            String name = id;
-            if (id.contains(".")) {
-                name = id.replace(".", "_");
-            }
-            for (Method method : methods) {
-                if (method.getName().equals(name)) {
-                    mappingRegistry.registerMapping(requestMappingInfo, bean, method);
-                    break;
-                }
-            }
+        for (String id : dispatcher.getMapperInvokers().keySet()) {
+            registerRequestMapper(id, bean, configuration.getMappedStatement(id));
         }
+        //todo 获取在线文档
+//        Map<RequestMappingInfo, HandlerMethod> handlerMethods = mappingRegistry.getHandlerMethods();
+//        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMethods.entrySet()) {
+//            RequestMappingInfo key = entry.getKey();
+//            HandlerMethod value = entry.getValue();
+//            System.out.println(key.getDirectPaths() + "=" + value);
+//        }
     }
 
     public Class<?> makeDispatcherController() {
@@ -142,17 +130,18 @@ public class JavassistController {
     }
 
     private CtMethod[] makeRequestMapping(CtClass declaring, ConstPool constpool) {
-        List<CtMethod> methods = new ArrayList<>(map.keySet().size());
-        for (String id : map.keySet()) {
+        Set<String> invokers = dispatcher.getMapperInvokers().keySet();
+        List<CtMethod> methods = new ArrayList<>(invokers.size());
+        for (String id : invokers) {
             CtMethod method = makeMapperMethod(declaring, id);
             // 方法上添加注解
             MethodInfo info = method.getMethodInfo();
             AnnotationsAttribute methodAttr = new AnnotationsAttribute(constpool, AnnotationsAttribute.visibleTag);
             // @RequestMapping
-            Annotation requestMapping = new Annotation("org.springframework.web.bind.annotation.RequestMapping", constpool);
+            Annotation requestMapping = new Annotation("org.springframework.web.bind.annotation.GetMapping", constpool);
             //Mapping路径(使用方法名)
             ArrayMemberValue pathValue = new ArrayMemberValue(constpool);
-            pathValue.setValue(new StringMemberValue[]{new StringMemberValue("/" + id, constpool)});
+            pathValue.setValue(new StringMemberValue[]{new StringMemberValue("/" + id.replace(".", "/"), constpool)});
             requestMapping.addMemberValue("path", pathValue);
             methodAttr.addAnnotation(requestMapping);
             //@ResponseBody
@@ -183,7 +172,7 @@ public class JavassistController {
     }
 
     private CtMethod generateMapperMethod(Class<?> resultType, Class<?> paramType, String id, CtClass declaring) throws Exception {
-        CtMethod method = new CtMethod(classPool.get(resultType.getName()), id, new CtClass[]{classPool.get(paramType.getName())}, declaring);
+        CtMethod method = new CtMethod(classPool.get(resultType.getName()), id.replace(".", "_"), new CtClass[]{classPool.get(paramType.getName())}, declaring);
         StringBuilder methodBody = new StringBuilder();
         methodBody.append("{");
         methodBody.append("return mapperDispatcher.execute(\"" + id + "\", $args);");
@@ -192,4 +181,16 @@ public class JavassistController {
         return method;
     }
 
+    private void registerRequestMapper(String id, Object bean, MappedStatement mappedStatement) {
+        try {
+            Class<?> paramType = mappedStatement.getParameterMap().getType();
+            Method method = bean.getClass().getMethod(id.replace(".", "_"), paramType);
+
+            RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths("/" + this.application + "/" + id.replace(".", "/")).build();
+
+            mappingRegistry.registerMapping(requestMappingInfo, bean, method);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("注册失败!", e);
+        }
+    }
 }

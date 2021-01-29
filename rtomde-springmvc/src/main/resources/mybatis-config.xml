@@ -4,13 +4,6 @@
 		"http://mybatis.org/dtd/mybatis-4-config.dtd">
 <configuration application="rtomde">
 
-	<!--resource和url中的配置文件会覆盖<property>中的属性?-->
-	<properties resource="hikaricp.properties"/>
-
-	<settings>
-		<setting name="mapUnderscoreToCamelCase" value="true"/>
-	</settings>
-
 	<typeAliases>
 		<typeAlias alias="HashMap" type="java.util.HashMap" />
 		<typeAlias alias="LinkedHashMap" type="java.util.LinkedHashMap" />
@@ -20,7 +13,7 @@
 
 	<environments default="dev">
 		<environment id="local">
-			<dataSource id="rtomde" type="UNPOOLED">
+			<dataSource id="rtomde" type="HIKARICP">
 				<property name="driver" value="com.mysql.cj.jdbc.Driver"/>
 				<property name="url" value="jdbc:mysql://localhost:3306/rtomde"/>
 				<property name="username" value="root"/>
@@ -28,21 +21,16 @@
 			</dataSource>
 		</environment>
 		<environment id="dev">
-			<dataSource id="rtomde" type="UNPOOLED">
+			<dataSource id="rtomde" type="HIKARICP">
 				<property name="driver" value="com.mysql.cj.jdbc.Driver"/>
 				<property name="url" value="jdbc:mysql://test-xc-dev.mysql.rds.aliyuncs.com:3331/data_service"/>
 				<property name="username" value="test_xc_dev"/>
 				<property name="password" value="x!c@_d#ev$xcD_SdeAvM"/>
-
-				<property name="dataSourceProperties.logger" value="com.mysql.cj.log.Slf4JLogger"/>
-				<property name="dataSourceProperties.logSlowQueries" value="true"/>
-				<property name="dataSourceProperties.profileSQL" value="true"/>
-				<property name="dataSourceProperties.dumpQueriesOnException" value="true"/>
 			</dataSource>
 		</environment>
 	</environments>
 
 	<mappers>
-		<mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-jdbc/src/test/java/org/apache/ibatis/session/SysUserMapper.xml"/>
+		<mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-springmvc/src/main/resources/mapper/SysUserMapper.xml"/>
 	</mappers>
 </configuration>

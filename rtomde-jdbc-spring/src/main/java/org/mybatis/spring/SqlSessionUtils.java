@@ -6,7 +6,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.logging.Logger;
 import org.mybatis.logging.LoggerFactory;
 import org.springframework.dao.TransientDataAccessResourceException;
-import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.transaction.support.TransactionSynchronizationAdapter;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -43,7 +42,7 @@ public final class SqlSessionUtils {
      */
     public static SqlSession getSqlSession(SqlSessionFactory sessionFactory) {
         ExecutorType executorType = sessionFactory.getConfiguration().getDefaultExecutorType();
-        return getSqlSession(sessionFactory, executorType, null);
+        return getSqlSession(sessionFactory, executorType);
     }
 
     /**
@@ -52,15 +51,13 @@ public final class SqlSessionUtils {
      * transaction if Spring TX is active and <code>SpringManagedTransactionFactory</code> is configured as a transaction
      * manager.
      *
-     * @param sessionFactory      a MyBatis {@code SqlSessionFactory} to create new sessions
-     * @param executorType        The executor type of the SqlSession to create
-     * @param exceptionTranslator Optional. Translates SqlSession.commit() exceptions to Spring exceptions.
+     * @param sessionFactory a MyBatis {@code SqlSessionFactory} to create new sessions
+     * @param executorType   The executor type of the SqlSession to create
      * @return an SqlSession managed by Spring Transaction Manager
      * @throws TransientDataAccessResourceException if a transaction is active and the {@code SqlSessionFactory} is not using a
      *                                              {@code SpringManagedTransactionFactory}
      */
-    public static SqlSession getSqlSession(SqlSessionFactory sessionFactory, ExecutorType executorType,
-                                           PersistenceExceptionTranslator exceptionTranslator) {
+    public static SqlSession getSqlSession(SqlSessionFactory sessionFactory, ExecutorType executorType) {
 
         notNull(sessionFactory, NO_SQL_SESSION_FACTORY_SPECIFIED);
         notNull(executorType, NO_EXECUTOR_TYPE_SPECIFIED);

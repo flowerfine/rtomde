@@ -1,9 +1,7 @@
 package org.mybatis.spring;
 
-import org.apache.ibatis.exceptions.PersistenceException;
 import org.apache.ibatis.session.*;
 import org.springframework.beans.factory.DisposableBean;
-import org.springframework.dao.support.PersistenceExceptionTranslator;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -51,8 +49,6 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
 
     private final SqlSession sqlSessionProxy;
 
-    private final PersistenceExceptionTranslator exceptionTranslator;
-
     /**
      * Constructs a Spring managed SqlSession with the {@code SqlSessionFactory} provided as an argument.
      *
@@ -70,29 +66,11 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
      * @param executorType      an executor type on session
      */
     public SqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType) {
-        this(sqlSessionFactory, executorType,
-                new MyBatisExceptionTranslator(sqlSessionFactory.getConfiguration().getDefaultEnv()));
-    }
-
-    /**
-     * Constructs a Spring managed {@code SqlSession} with the given {@code SqlSessionFactory} and {@code ExecutorType}. A
-     * custom {@code SQLExceptionTranslator} can be provided as an argument so any {@code PersistenceException} thrown by
-     * MyBatis can be custom translated to a {@code RuntimeException} The {@code SQLExceptionTranslator} can also be null
-     * and thus no exception translation will be done and MyBatis exceptions will be thrown
-     *
-     * @param sqlSessionFactory   a factory of SqlSession
-     * @param executorType        an executor type on session
-     * @param exceptionTranslator a translator of exception
-     */
-    public SqlSessionTemplate(SqlSessionFactory sqlSessionFactory, ExecutorType executorType,
-                              PersistenceExceptionTranslator exceptionTranslator) {
-
         notNull(sqlSessionFactory, "Property 'sqlSessionFactory' is required");
         notNull(executorType, "Property 'executorType' is required");
-
         this.sqlSessionFactory = sqlSessionFactory;
         this.executorType = executorType;
-        this.exceptionTranslator = exceptionTranslator;
+
         this.sqlSessionProxy = (SqlSession) newProxyInstance(SqlSessionFactory.class.getClassLoader(),
                 new Class[]{SqlSession.class}, new SqlSessionInterceptor());
     }
@@ -103,10 +81,6 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
 
     public ExecutorType getExecutorType() {
         return this.executorType;
-    }
-
-    public PersistenceExceptionTranslator getPersistenceExceptionTranslator() {
-        return this.exceptionTranslator;
     }
 
     /**
@@ -254,23 +228,11 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
     private class SqlSessionInterceptor implements InvocationHandler {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            SqlSession sqlSession = getSqlSession(SqlSessionTemplate.this.sqlSessionFactory,
-                    SqlSessionTemplate.this.executorType, SqlSessionTemplate.this.exceptionTranslator);
+            SqlSession sqlSession = getSqlSession(SqlSessionTemplate.this.sqlSessionFactory, SqlSessionTemplate.this.executorType);
             try {
                 return method.invoke(sqlSession, args);
             } catch (Throwable t) {
-                Throwable unwrapped = unwrapThrowable(t);
-                if (SqlSessionTemplate.this.exceptionTranslator != null && unwrapped instanceof PersistenceException) {
-                    // release the connection to avoid a deadlock if the translator is no loaded. See issue #22
-                    closeSqlSession(sqlSession, SqlSessionTemplate.this.sqlSessionFactory);
-                    sqlSession = null;
-                    Throwable translated = SqlSessionTemplate.this.exceptionTranslator
-                            .translateExceptionIfPossible((PersistenceException) unwrapped);
-                    if (translated != null) {
-                        unwrapped = translated;
-                    }
-                }
-                throw unwrapped;
+                throw unwrapThrowable(t);
             } finally {
                 if (sqlSession != null) {
                     closeSqlSession(sqlSession, SqlSessionTemplate.this.sqlSessionFactory);

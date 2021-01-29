@@ -59,10 +59,21 @@ abstract class Generator implements AutoCloseable {
         return getCtClass(c.getDeclaringClass()).getConstructor(ReflectUtils.getDesc(c));
     }
 
+    /**
+     * after {@link CtClass#writeFile()}, {@link CtClass#toBytecode()}, {@link CtClass#toClass()} invoked,
+     * {@link CtClass} would be frozen. for more use the future, defrost it.
+     *
+     * fixme Memory Leak Risk
+     * for reuse {@link ClassPool}, we cache all {@link ClassLoader} and {@link ClassPool}.
+     * if gc cant release {@link ClassPool}, we must destroy {@link CtClass} by ourself.
+     * but this will cause subsequent access {@link CtClass} by {@link Generator#mClassName} failed,
+     * so we didnt detach {@link CtClass}.
+     */
     @Override
     public void close() {
         if (mCtc != null) {
-            mCtc.detach();
+            mCtc.defrost();
+//            mCtc.detach();
         }
         if (mFields != null) {
             mFields.clear();

@@ -11,12 +11,9 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.io.Resource;
@@ -26,7 +23,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import javax.sql.DataSource;
 import java.beans.PropertyDescriptor;
 import java.util.List;
 import java.util.Set;
@@ -43,9 +39,7 @@ import java.util.stream.Stream;
  */
 @org.springframework.context.annotation.Configuration
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
-@ConditionalOnSingleCandidate(DataSource.class)
 @EnableConfigurationProperties(MybatisProperties.class)
-@AutoConfigureAfter(DataSourceAutoConfiguration.class)
 public class MybatisAutoConfiguration implements InitializingBean {
 
     private final MybatisProperties properties;
@@ -84,6 +78,9 @@ public class MybatisAutoConfiguration implements InitializingBean {
         }
     }
 
+    /**
+     * fixme 后面绝对不止一个sqlSessionFactory
+     */
     @Bean
     @ConditionalOnMissingBean
     public SqlSessionFactory sqlSessionFactory() throws Exception {

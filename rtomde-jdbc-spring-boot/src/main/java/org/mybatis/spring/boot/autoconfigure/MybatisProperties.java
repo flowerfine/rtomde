@@ -30,6 +30,11 @@ public class MybatisProperties {
     private String configLocation;
 
     /**
+     * Environment.
+     */
+    private String environment;
+
+    /**
      * Locations of MyBatis mapper files.
      */
     private String[] mapperLocations;

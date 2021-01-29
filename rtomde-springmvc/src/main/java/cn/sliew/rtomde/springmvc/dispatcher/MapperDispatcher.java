@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -31,6 +33,10 @@ public class MapperDispatcher {
             MapperMethod mapperMethod = new MapperMethod(configuration, mappedStatementName);
             map.putIfAbsent(mappedStatementName, new PlainMapperInvoker(mapperMethod));
         }
+    }
+
+    public Map<String, MapperInvoker> getMapperInvokers() {
+        return Collections.unmodifiableMap(map);
     }
 
     public Object execute(String id, Object... params) {
