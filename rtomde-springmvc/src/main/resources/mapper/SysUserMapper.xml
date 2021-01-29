@@ -28,7 +28,7 @@
         update_time, updater, comments
     </sql>
 
-    <select dataSourceId="rtomde" id="selectByPrimaryKey" parameterMap="UserParamMap" resultMap="UserResultMap">
+    <select id="selectByPrimaryKey" dataSourceId="rtomde" parameterMap="UserParamMap" resultMap="UserResultMap">
         select <include refid="Base_Column_List"/>
         from sys_user
         where id = #{id}

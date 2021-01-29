@@ -15,7 +15,6 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.GenericWebApplicationContext;
-import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
@@ -23,7 +22,6 @@ import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Slf4j
@@ -101,12 +99,8 @@ public class JavassistController {
             for (CtMethod m : methods) {
                 controllerClass.addMethod(m);
             }
-            controllerClass.writeFile();
             return controllerClass.toClass(ClassUtils.getClassLoader(JavassistController.class), getClass().getProtectionDomain());
         } catch (CannotCompileException e) {
-            log.error("create Controller:[{}] failed", controllerClass.getName(), e);
-            throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
-        } catch (Throwable e) {
             log.error("create Controller:[{}] failed", controllerClass.getName(), e);
             throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
         }
