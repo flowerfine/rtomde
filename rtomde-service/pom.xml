@@ -14,7 +14,6 @@
     <modules>
         <module>rtomde-service-akka-http</module>
         <module>rtomde-service-airlift</module>
-        <module>rtomde-service-springmvc</module>
     </modules>
 
 </project>

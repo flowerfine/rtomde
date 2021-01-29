@@ -16,13 +16,9 @@
     <description>Readable, Testable, Observable, Maintainable Data Engine</description>
 
     <modules>
-        <module>rtomde-executor</module>
-        <module>rtomde-mybatis</module>
-        <module>rtomde-mybatis-spring</module>
-        <module>rtomde-mybatis-spring-boot</module>
-        <module>rtomde-service</module>
-        <module>rtomde-common</module>
         <module>rtomde-spi</module>
+        <module>rtomde-common</module>
+        <module>rtomde-service</module>
         <module>rtomde-jdbc</module>
         <module>rtomde-jdbc-spring</module>
         <module>rtomde-jdbc-spring-boot</module>
@@ -64,23 +60,8 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>rtomde-mybatis</artifactId>
-                <version>3.5.6</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>rtomde-mybatis-spring</artifactId>
-                <version>2.0.6</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>rtomde-mybatis-spring-boot-starter</artifactId>
-                <version>2.1.4</version>
-            </dependency>
-            <dependency>
                 <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-executor</artifactId>
+                <artifactId>rtomde-common</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
@@ -96,11 +77,6 @@
             <dependency>
                 <groupId>cn.sliew</groupId>
                 <artifactId>rtomde-jdbc-spring-boot</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-common</artifactId>
                 <version>1.0.0-SNAPSHOT</version>
             </dependency>
 

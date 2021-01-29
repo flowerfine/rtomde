@@ -11,7 +11,7 @@
 		<typeAlias alias="LinkedList" type="java.util.LinkedList" />
 	</typeAliases>
 
-	<environments default="dev">
+	<environments default="local">
 		<environment id="local">
 			<dataSource id="rtomde" type="HIKARICP">
 				<property name="driver" value="com.mysql.cj.jdbc.Driver"/>

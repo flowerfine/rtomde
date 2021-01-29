@@ -464,7 +464,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
                 ErrorContext.instance().reset();
             }
         }
-        if (environment == null || environment.isEmpty()) {
+        if (environment == null) {
             targetConfiguration.setDefaultEnv(targetConfiguration.getDefaultEnv());
         } else {
             targetConfiguration.setDefaultEnv(targetConfiguration.getEnvironment(environment));

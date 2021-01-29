@@ -100,6 +100,14 @@ public class MybatisProperties {
         return this.mapperLocations;
     }
 
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
     public void setMapperLocations(String[] mapperLocations) {
         this.mapperLocations = mapperLocations;
     }
