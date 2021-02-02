@@ -23,6 +23,8 @@
         <module>rtomde-jdbc-spring</module>
         <module>rtomde-jdbc-spring-boot</module>
         <module>rtomde-springmvc</module>
+        <module>rtomde-akka-http-spring-boot</module>
+        <module>rtomde-akka-spring-boot</module>
     </modules>
 
     <properties>
@@ -114,8 +116,8 @@
                 <directory>${project.basedir}</directory>
                 <targetPath>META-INF</targetPath>
                 <includes>
-<!--                    <include>LICENSE</include>-->
-<!--                    <include>NOTICE</include>-->
+                    <include>LICENSE</include>
+                    <include>NOTICE</include>
                 </includes>
             </resource>
             <resource>
