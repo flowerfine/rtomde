@@ -6,12 +6,10 @@
     <parent>
         <groupId>cn.sliew</groupId>
         <artifactId>rtomde-akka-spring-boot</artifactId>
-        <version>${revision}</version>
-<!--        <relativePath>../rtomde-akka-spring-boot/pom.xml</relativePath>-->
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>rtomde-akka-spring-boot-autoconfigure</artifactId>
     <packaging>jar</packaging>
-    <version>${revision}</version>
 
     <properties>
         <akka.version>2.6.8</akka.version>

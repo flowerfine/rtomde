@@ -18,11 +18,11 @@
     <modules>
         <module>rtomde-spi</module>
         <module>rtomde-common</module>
-        <module>rtomde-service</module>
         <module>rtomde-jdbc</module>
         <module>rtomde-jdbc-spring</module>
         <module>rtomde-jdbc-spring-boot</module>
         <module>rtomde-springmvc</module>
+        <module>rtomde-service</module>
         <module>rtomde-akka-http-spring-boot</module>
         <module>rtomde-akka-spring-boot</module>
     </modules>
