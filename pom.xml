@@ -23,8 +23,7 @@
         <module>rtomde-jdbc-spring-boot</module>
         <module>rtomde-springmvc</module>
         <module>rtomde-service</module>
-        <module>rtomde-akka-http-spring-boot</module>
-        <module>rtomde-akka-spring-boot</module>
+        <module>rtomde-container</module>
     </modules>
 
     <properties>
