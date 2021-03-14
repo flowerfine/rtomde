@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.StreamSupport;
 
-import static com.google.common.base.Preconditions.checkArgument;
+import static cn.sliew.milky.common.check.Ensures.checkArgument;
 
 public class DefaultPluginLoader<T> implements PluginLoader<T> {
 
