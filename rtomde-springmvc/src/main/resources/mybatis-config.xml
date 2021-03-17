@@ -19,6 +19,13 @@
 				<property name="username" value="root"/>
 				<property name="password" value="123"/>
 			</dataSource>
+			<lettuce id="rtomode" type="standalone">
+				<property name="host" value="localhost"/>
+				<property name="port" value="6379"/>
+				<property name="password" value="123"/>
+				<property name="database" value="0"/>
+				<property name="timeout" value="1000"/>
+			</lettuce>
 		</environment>
 		<environment id="dev">
 			<dataSource id="rtomde" type="HIKARICP">
@@ -27,6 +34,13 @@
 				<property name="username" value="test_xc_dev"/>
 				<property name="password" value="x!c@_d#ev$xcD_SdeAvM"/>
 			</dataSource>
+			<lettuce id="rtomode" type="standalone">
+				<property name="host" value="localhost"/>
+				<property name="port" value="6379"/>
+				<property name="password" value="123"/>
+				<property name="database" value="0"/>
+				<property name="timeout" value="1000"/>
+			</lettuce>
 		</environment>
 	</environments>
 

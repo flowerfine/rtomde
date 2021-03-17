@@ -68,7 +68,7 @@ interceptor CDATA #REQUIRED
 default CDATA #REQUIRED
 >
 
-<!ELEMENT environment (dataSource+)>
+<!ELEMENT environment (dataSource+, lettuce?)>
 <!ATTLIST environment
 id CDATA #REQUIRED
 >
@@ -78,6 +78,13 @@ id CDATA #REQUIRED
 id CDATA #REQUIRED
 type CDATA #REQUIRED
 >
+
+<!ELEMENT lettuce (property*)>
+<!ATTLIST lettuce
+id CDATA #REQUIRED
+type (standalone|cluster) #REQUIRED
+>
+
 
 <!ELEMENT mappers (mapper*)>
 
