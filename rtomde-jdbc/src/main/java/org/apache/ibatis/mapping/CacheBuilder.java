@@ -7,34 +7,52 @@ import org.apache.ibatis.cache.decorators.*;
 import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 public class CacheBuilder {
+
     private final String id;
-    private Class<? extends Cache> implementation;
-    private final List<Class<? extends Cache>> decorators;
-    private Integer size;
-    private Long clearInterval;
-    private boolean readWrite;
+    private  String type;
+    private String refId;
+    private Long expire;
+    private Long size;
     private Properties properties;
-    private boolean blocking;
+
+    private final List<Class<? extends Cache>> decorators;
 
     private CacheBuilder(String id) {
         this.id = id;
-        this.decorators = new ArrayList<>();
+        this.decorators = new LinkedList<>();
     }
 
-    public static CacheBuilder builder(String id) {
-        return new CacheBuilder(id);
+    public CacheBuilder type(String type) {
+        this.type = type;
+        return this;
     }
 
-    public CacheBuilder implementation(Class<? extends Cache> implementation) {
-        this.implementation = implementation;
+    public CacheBuilder refId(String refId) {
+        this.refId = refId;
+        return this;
+    }
+
+    public CacheBuilder expire(Long expire) {
+        this.expire = expire;
+        return this;
+    }
+
+    public CacheBuilder size(Long size) {
+        this.size = size;
+        return this;
+    }
+
+    public CacheBuilder properties(Properties properties) {
+        this.properties = properties;
         return this;
     }
 
@@ -45,33 +63,7 @@ public class CacheBuilder {
         return this;
     }
 
-    public CacheBuilder size(Integer size) {
-        this.size = size;
-        return this;
-    }
-
-    public CacheBuilder clearInterval(Long clearInterval) {
-        this.clearInterval = clearInterval;
-        return this;
-    }
-
-    public CacheBuilder readWrite(boolean readWrite) {
-        this.readWrite = readWrite;
-        return this;
-    }
-
-    public CacheBuilder blocking(boolean blocking) {
-        this.blocking = blocking;
-        return this;
-    }
-
-    public CacheBuilder properties(Properties properties) {
-        this.properties = properties;
-        return this;
-    }
-
     public Cache build() {
-        setDefaultImplementations();
         Cache cache = newBaseCacheInstance(implementation, id);
         setCacheProperties(cache);
         if (PerpetualCache.class.equals(cache.getClass())) {
@@ -86,14 +78,6 @@ public class CacheBuilder {
         return cache;
     }
 
-    private void setDefaultImplementations() {
-        if (implementation == null) {
-            implementation = PerpetualCache.class;
-            if (decorators.isEmpty()) {
-                decorators.add(LruCache.class);
-            }
-        }
-    }
 
     private Cache setStandardDecorators(Cache cache) {
         try {

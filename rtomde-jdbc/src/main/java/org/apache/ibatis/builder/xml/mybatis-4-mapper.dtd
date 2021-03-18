@@ -1,24 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!ELEMENT mapper (cache-ref | cache | resultMap* | parameterMap* | sql* | select* )+>
+<!ELEMENT mapper (cache | resultMap* | parameterMap* | sql* | select* )+>
 <!ATTLIST mapper
 application CDATA #REQUIRED
 namespace CDATA #IMPLIED
 >
 
-<!ELEMENT cache-ref EMPTY>
-<!ATTLIST cache-ref
-refid CDATA #REQUIRED
->
-
 <!ELEMENT cache (property*)>
 <!ATTLIST cache
 id CDATA #REQUIRED
-type CDATA #IMPLIED
-eviction CDATA #IMPLIED
-flushInterval CDATA #IMPLIED
-size CDATA #IMPLIED
-readOnly CDATA #IMPLIED
-blocking CDATA #IMPLIED
+type (lettuce) #REQUIRED
+refId CDATA #REQUIRED
+expire 30000 #IMPLIED
+size 30000 #IMPLIED
 >
 
 <!ELEMENT parameterMap (parameter+)?>
@@ -71,6 +64,7 @@ parameterMap CDATA #REQUIRED
 resultMap CDATA #REQUIRED
 timeout CDATA #IMPLIED
 dataSourceId CDATA #REQUIRED
+cacheRef CDATA #IMPLIED
 >
 
 <!-- Dynamic -->

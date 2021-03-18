@@ -6,6 +6,9 @@ import org.apache.ibatis.cache.CacheException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * fixme 更换为lettuce和OHCache。
+ */
 public class PerpetualCache implements Cache {
 
     private final String id;

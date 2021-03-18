@@ -23,12 +23,14 @@
         <result column="comments" property="comments" javaType="string"/>
     </resultMap>
 
+    <cache id="selectByPrimaryKey" type="lettuce" expire="300" size="300"/>
+
     <sql id="Base_Column_List">
         id, username, `password`, nickname, email, phone, deleted, create_time, creator,
         update_time, updater, comments
     </sql>
 
-    <select id="selectByPrimaryKey" dataSourceId="rtomde" parameterMap="UserParamMap" resultMap="UserResultMap">
+    <select id="selectByPrimaryKey" dataSourceId="rtomde" parameterMap="UserParamMap" resultMap="UserResultMap" cacheRef="selectByPrimaryKey">
         select <include refid="Base_Column_List"/>
         from sys_user
         where id = #{id}

@@ -81,15 +81,16 @@ public class MapperBuilderAssistant extends BaseBuilder {
         }
     }
 
-    public Cache useNewCache(String id, Class<? extends Cache> typeClass, Class<? extends Cache> evictionClass, Long flushInterval, Integer size, boolean readWrite, boolean blocking, Properties props) {
+    /**
+     * fixme 处理缓存的处理
+     */
+    public Cache useNewCache(String id, String type, String cacheRefId,  Long expire, Long size, Properties props) {
         id = applyCurrentNamespace(id, false);
         Cache cache = CacheBuilder.builder(id)
-                .implementation(valueOrDefault(typeClass, PerpetualCache.class))
-                .addDecorator(valueOrDefault(evictionClass, LruCache.class))
-                .clearInterval(flushInterval)
+                .type(type)
+                .refId(cacheRefId)
+                .expire(expire)
                 .size(size)
-                .readWrite(readWrite)
-                .blocking(blocking)
                 .properties(props)
                 .build();
         configuration.addCache(cache);

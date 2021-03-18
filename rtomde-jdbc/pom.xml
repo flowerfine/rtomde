@@ -17,6 +17,17 @@
             <artifactId>rtomde-common</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>6.0.3.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>cn.sliew</groupId>
+            <artifactId>milky-serialize-protostuff</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>ognl</groupId>
             <artifactId>ognl</artifactId>
             <version>3.2.15</version>

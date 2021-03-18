@@ -42,7 +42,6 @@ public class XMLMapperBuilder extends BaseBuilder {
             bindMapperForNamespace();
         }
         parsePendingResultMaps();
-        parsePendingCacheRefs();
         parsePendingStatements();
     }
 
@@ -98,21 +97,6 @@ public class XMLMapperBuilder extends BaseBuilder {
         }
     }
 
-    private void parsePendingCacheRefs() {
-        Collection<CacheRefResolver> incompleteCacheRefs = configuration.getIncompleteCacheRefs();
-        synchronized (incompleteCacheRefs) {
-            Iterator<CacheRefResolver> iter = incompleteCacheRefs.iterator();
-            while (iter.hasNext()) {
-                try {
-                    iter.next().resolveCacheRef();
-                    iter.remove();
-                } catch (IncompleteElementException e) {
-                    // Cache ref is still missing a resource...
-                }
-            }
-        }
-    }
-
     private void parsePendingStatements() {
         Collection<XMLStatementBuilder> incompleteStatements = configuration.getIncompleteStatements();
         synchronized (incompleteStatements) {
@@ -143,16 +127,12 @@ public class XMLMapperBuilder extends BaseBuilder {
     private void cacheElement(XNode context) {
         if (context != null) {
             String id = context.getStringAttribute("id");
-            String type = context.getStringAttribute("type", "PERPETUAL");
-            Class<? extends Cache> typeClass = typeAliasRegistry.resolveAlias(type);
-            String eviction = context.getStringAttribute("eviction", "LRU");
-            Class<? extends Cache> evictionClass = typeAliasRegistry.resolveAlias(eviction);
-            Long flushInterval = context.getLongAttribute("flushInterval");
-            Integer size = context.getIntAttribute("size");
-            boolean readWrite = !context.getBooleanAttribute("readOnly", false);
-            boolean blocking = context.getBooleanAttribute("blocking", false);
+            String type = context.getStringAttribute("type");
+            String refId = context.getStringAttribute("refId");
+            Long expire = context.getLongAttribute("expire", 30000L);
+            Long size = context.getLongAttribute("size", 30000L);
             Properties props = context.getChildrenAsProperties();
-            builderAssistant.useNewCache(id, typeClass, evictionClass, flushInterval, size, readWrite, blocking, props);
+            builderAssistant.useNewCache(id, type, refId, expire, size, props);
         }
     }
 
