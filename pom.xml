@@ -24,6 +24,7 @@
         <module>rtomde-springmvc</module>
         <module>rtomde-service</module>
         <module>rtomde-container</module>
+        <module>rtomde-cache</module>
     </modules>
 
     <properties>
