@@ -84,7 +84,8 @@ public class MapperBuilderAssistant extends BaseBuilder {
      */
     public Cache useNewCache(String id, String type, String cacheRefId, Long expire, Long size, Properties props) {
         id = applyCurrentNamespace(id, false);
-        Cache cache = CacheBuilder.builder(id)
+        Cache cache = CacheBuilder.builder(configuration)
+                .id(id)
                 .type(type)
                 .refId(cacheRefId)
                 .expire(expire)

@@ -3,10 +3,13 @@ package org.apache.ibatis.mapping;
 import org.apache.ibatis.builder.InitializingObject;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheException;
+import org.apache.ibatis.cache.CacheType;
 import org.apache.ibatis.cache.decorators.LoggingCache;
+import org.apache.ibatis.cache.impl.LettuceCache;
 import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
+import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Constructor;
 import java.util.LinkedList;
@@ -16,7 +19,9 @@ import java.util.Properties;
 
 public class CacheBuilder {
 
-    private final String id;
+    private final Configuration configuration;
+
+    private String id;
     private String type;
     private String refId;
     private Long expire;
@@ -25,13 +30,18 @@ public class CacheBuilder {
 
     private final List<Class<? extends Cache>> decorators;
 
-    private CacheBuilder(String id) {
-        this.id = id;
+    private CacheBuilder(Configuration configuration) {
+        this.configuration = configuration;
         this.decorators = new LinkedList<>();
     }
 
-    public static CacheBuilder builder(String id) {
-        return new CacheBuilder(id);
+    public static CacheBuilder builder(Configuration configuration) {
+        return new CacheBuilder(configuration);
+    }
+
+    public CacheBuilder id(String id) {
+        this.id = id;
+        return this;
     }
 
     public CacheBuilder type(String type) {
@@ -79,6 +89,21 @@ public class CacheBuilder {
             cache = new LoggingCache(cache);
         }
         return cache;
+    }
+
+    /**
+     * fixme properties
+     */
+    private Cache newBaseCacheInstance() {
+        CacheType cacheType = CacheType.ofName(type);
+        switch (cacheType) {
+            case LETTUCE:
+                return new LettuceCache(id, configuration, refId);
+            case OHC:
+            case CAFFEINE:
+            default:
+                return new LettuceCache(id, configuration, refId);
+        }
     }
 
 
@@ -142,24 +167,6 @@ public class CacheBuilder {
         }
     }
 
-    private Cache newBaseCacheInstance() {
-
-        Constructor<? extends Cache> cacheConstructor = getBaseCacheConstructor(cacheClass);
-        try {
-            return cacheConstructor.newInstance(id);
-        } catch (Exception e) {
-            throw new CacheException("Could not instantiate cache implementation (" + cacheClass + "). Cause: " + e, e);
-        }
-    }
-
-    private Constructor<? extends Cache> getBaseCacheConstructor(Class<? extends Cache> cacheClass) {
-        try {
-            return cacheClass.getConstructor(String.class);
-        } catch (Exception e) {
-            throw new CacheException("Invalid base cache implementation (" + cacheClass + ").  "
-                    + "Base cache implementations must have a constructor that takes a String id as a parameter.  Cause: " + e, e);
-        }
-    }
 
     private Cache newCacheDecoratorInstance(Class<? extends Cache> cacheClass, Cache base) {
         Constructor<? extends Cache> cacheConstructor = getCacheDecoratorConstructor(cacheClass);

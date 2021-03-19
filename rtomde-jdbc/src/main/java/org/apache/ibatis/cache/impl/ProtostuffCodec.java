@@ -47,6 +47,7 @@ public class ProtostuffCodec<K, V> implements RedisCodec<K, V> {
             ByteBuffer byteBuffer = ByteBuffer.allocate(bytes.length + 4);
             byteBuffer.putInt(bytes.length);
             byteBuffer.put(bytes);
+            return byteBuffer;
         } catch (IOException e) {
             log.error(e.getMessage(), e);
         }

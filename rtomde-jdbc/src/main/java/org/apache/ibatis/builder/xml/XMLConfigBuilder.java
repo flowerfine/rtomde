@@ -22,7 +22,8 @@ import org.apache.ibatis.type.JdbcType;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.net.URL;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Properties;
 
 public class XMLConfigBuilder extends BaseBuilder {
@@ -84,7 +85,7 @@ public class XMLConfigBuilder extends BaseBuilder {
             loadCustomVfs(settings);
             loadCustomLogImpl(settings);
             typeAliasesElement(root.evalNode("typeAliases"));
-            // fixme page
+            // fixme page。如何处理分页问题，交由业务来处理？？？
             pluginElement(root.evalNode("plugins"));
             objectFactoryElement(root.evalNode("objectFactory"));
             objectWrapperFactoryElement(root.evalNode("objectWrapperFactory"));
@@ -237,6 +238,9 @@ public class XMLConfigBuilder extends BaseBuilder {
 //        configuration.setDefaultSqlProviderType(resolveClass(props.getProperty("defaultSqlProviderType")));
     }
 
+    /**
+     * fixme 增加缓存节点的处理
+     */
     private void environmentsElement(XNode context) throws Exception {
         if (context != null) {
             if (defaultEnvironment == null) {
@@ -245,15 +249,9 @@ public class XMLConfigBuilder extends BaseBuilder {
             for (XNode envNode : context.getChildren()) {
                 String envId = envNode.getStringAttribute("id");
                 Environment.Builder envBuilder = Environment.builder().id(envId);
-                for (XNode dataSourceNode : envNode.getChildren()) {
-                    String dataSourceId = dataSourceNode.getStringAttribute("id");
-                    String type = dataSourceNode.getStringAttribute("type");
-                    Properties props = dataSourceNode.getChildrenAsProperties();
-                    DataSourceFactory factory = (DataSourceFactory) resolveClass(type).getDeclaredConstructor().newInstance();
-                    factory.setProperties(props);
-                    // eager construct may influence bootstrap speed
-                    envBuilder.dataSource(dataSourceId, factory.getDataSource());
-                }
+                dataSourcesElement(envNode.evalNodes("dataSource"), envBuilder);
+                lettuceElement(envNode.evalNode("lettuce"), envBuilder);
+
                 Environment environment = envBuilder.build();
                 configuration.addEnvironment(environment);
                 if (environment.getId().equals(defaultEnvironment)) {
@@ -261,6 +259,33 @@ public class XMLConfigBuilder extends BaseBuilder {
                 }
             }
         }
+    }
+
+    private void dataSourcesElement(List<XNode> contexts, Environment.Builder envBuilder) throws Exception {
+        for (XNode context : contexts) {
+            dataSourceElement(context, envBuilder);
+        }
+    }
+
+    private void dataSourceElement(XNode context, Environment.Builder envBuilder) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+        String dataSourceId = context.getStringAttribute("id");
+        String type = context.getStringAttribute("type");
+        Properties props = context.getChildrenAsProperties();
+        DataSourceFactory factory = (DataSourceFactory) resolveClass(type).getDeclaredConstructor().newInstance();
+        factory.setProperties(props);
+        // eager construct may influence bootstrap speed
+        envBuilder.dataSource(dataSourceId, factory.getDataSource());
+    }
+
+    private void lettuceElement(XNode context, Environment.Builder envBuilder) {
+        String dataSourceId = context.getStringAttribute("id");
+        String type = context.getStringAttribute("type", "standalone");
+        Properties props = context.getChildrenAsProperties();
+        props.putAll(configuration.getVariables());
+
+
+        // eager construct may influence bootstrap speed
+        envBuilder.dataSource(dataSourceId, factory.getDataSource());
     }
 
     private void typeHandlerElement(XNode parent) {

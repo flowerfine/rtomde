@@ -5,6 +5,7 @@ import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
 import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.session.Configuration;
 
 import java.time.Duration;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -24,7 +25,7 @@ public class LettuceCache implements Cache {
      */
     private Integer expire;
 
-    public LettuceCache(final String id) {
+    public LettuceCache(final String id, Configuration configuration, String refId) {
         if (id == null) {
             throw new IllegalArgumentException("Cache instances require an ID");
         }
