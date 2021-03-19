@@ -5,10 +5,6 @@ import org.apache.ibatis.builder.IncompleteElementException;
 import org.apache.ibatis.builder.ResultMapResolver;
 import org.apache.ibatis.builder.xml.XMLStatementBuilder;
 import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.cache.decorators.FifoCache;
-import org.apache.ibatis.cache.decorators.LruCache;
-import org.apache.ibatis.cache.decorators.SoftCache;
-import org.apache.ibatis.cache.decorators.WeakCache;
 import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.datasource.hikaricp.HikaricpDataSourceFactory;
 import org.apache.ibatis.executor.CachingExecutor;
@@ -145,10 +141,6 @@ public class Configuration {
         typeAliasRegistry.registerAlias("HIKARICP", HikaricpDataSourceFactory.class);
 
         typeAliasRegistry.registerAlias("PERPETUAL", PerpetualCache.class);
-        typeAliasRegistry.registerAlias("FIFO", FifoCache.class);
-        typeAliasRegistry.registerAlias("LRU", LruCache.class);
-        typeAliasRegistry.registerAlias("SOFT", SoftCache.class);
-        typeAliasRegistry.registerAlias("WEAK", WeakCache.class);
 
         typeAliasRegistry.registerAlias("DB_VENDOR", VendorDatabaseIdProvider.class);
 

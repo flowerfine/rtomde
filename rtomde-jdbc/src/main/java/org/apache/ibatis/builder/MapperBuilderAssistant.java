@@ -1,8 +1,6 @@
 package org.apache.ibatis.builder;
 
 import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.cache.decorators.LruCache;
-import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.mapping.*;
 import org.apache.ibatis.scripting.LanguageDriver;
@@ -84,7 +82,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
     /**
      * fixme 处理缓存的处理
      */
-    public Cache useNewCache(String id, String type, String cacheRefId,  Long expire, Long size, Properties props) {
+    public Cache useNewCache(String id, String type, String cacheRefId, Long expire, Long size, Properties props) {
         id = applyCurrentNamespace(id, false);
         Cache cache = CacheBuilder.builder(id)
                 .type(type)

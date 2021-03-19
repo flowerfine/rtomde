@@ -3,11 +3,10 @@ package org.apache.ibatis.mapping;
 import org.apache.ibatis.builder.InitializingObject;
 import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.cache.CacheException;
-import org.apache.ibatis.cache.decorators.*;
+import org.apache.ibatis.cache.decorators.LoggingCache;
 import org.apache.ibatis.cache.impl.PerpetualCache;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.SystemMetaObject;
-import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Constructor;
 import java.util.LinkedList;
@@ -18,7 +17,7 @@ import java.util.Properties;
 public class CacheBuilder {
 
     private final String id;
-    private  String type;
+    private String type;
     private String refId;
     private Long expire;
     private Long size;
@@ -29,6 +28,10 @@ public class CacheBuilder {
     private CacheBuilder(String id) {
         this.id = id;
         this.decorators = new LinkedList<>();
+    }
+
+    public static CacheBuilder builder(String id) {
+        return new CacheBuilder(id);
     }
 
     public CacheBuilder type(String type) {
@@ -64,7 +67,7 @@ public class CacheBuilder {
     }
 
     public Cache build() {
-        Cache cache = newBaseCacheInstance(implementation, id);
+        Cache cache = newBaseCacheInstance();
         setCacheProperties(cache);
         if (PerpetualCache.class.equals(cache.getClass())) {
             for (Class<? extends Cache> decorator : decorators) {
@@ -85,18 +88,7 @@ public class CacheBuilder {
             if (size != null && metaCache.hasSetter("size")) {
                 metaCache.setValue("size", size);
             }
-            if (clearInterval != null) {
-                cache = new ScheduledCache(cache);
-                ((ScheduledCache) cache).setClearInterval(clearInterval);
-            }
-            if (readWrite) {
-                cache = new SerializedCache(cache);
-            }
             cache = new LoggingCache(cache);
-            cache = new SynchronizedCache(cache);
-            if (blocking) {
-                cache = new BlockingCache(cache);
-            }
             return cache;
         } catch (Exception e) {
             throw new CacheException("Error building standard cache decorators.  Cause: " + e, e);
@@ -150,7 +142,8 @@ public class CacheBuilder {
         }
     }
 
-    private Cache newBaseCacheInstance(Class<? extends Cache> cacheClass, String id) {
+    private Cache newBaseCacheInstance() {
+
         Constructor<? extends Cache> cacheConstructor = getBaseCacheConstructor(cacheClass);
         try {
             return cacheConstructor.newInstance(id);
