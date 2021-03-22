@@ -73,6 +73,9 @@ public class MybatisPlatformOptions extends PlatformOptions {
         interceptorChain.addInterceptor(interceptor);
     }
 
+    public String getEnvironment() {
+        return environment;
+    }
 
     public void setVariables(Properties variables) {
         this.variables = variables;

@@ -66,6 +66,8 @@ public class XMLMetadataBuilder {
 
     private void parseMetadata(XNode root) {
         try {
+            String name = root.getStringAttribute("name");
+            platform.setName(name);
             propertiesElement(root.evalNode("properties"));
             Properties settings = settingsAsProperties(root.evalNode("settings"));
             loadCustomVfs(settings);

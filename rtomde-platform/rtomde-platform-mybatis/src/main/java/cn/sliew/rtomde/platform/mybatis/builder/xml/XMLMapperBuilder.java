@@ -1,42 +1,46 @@
 package cn.sliew.rtomde.platform.mybatis.builder.xml;
 
+import cn.sliew.rtomde.platform.mybatis.builder.*;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
 import cn.sliew.rtomde.platform.mybatis.mapping.ResultMap;
 import cn.sliew.rtomde.platform.mybatis.mapping.ResultMapping;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.parsing.XPathParser;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
-import cn.sliew.rtomde.type.JdbcType;
-import cn.sliew.rtomde.type.TypeHandler;
+import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
+import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
 
 import java.io.InputStream;
 import java.util.*;
 
-public class XMLMapperBuilder extends BaseBuilder {
+public class XMLMapperBuilder {
 
     private final XPathParser parser;
     private final MapperBuilderAssistant builderAssistant;
     private final Map<String, XNode> sqlFragments;
     private final String resource;
+    private final MybatisApplicationOptions application;
 
-    public XMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
-        this(new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()),
-                configuration, resource, sqlFragments);
+    public XMLMapperBuilder(InputStream inputStream, Properties properties, MybatisApplicationOptions application, String resource, Map<String, XNode> sqlFragments) {
+        this(new XPathParser(inputStream, true, properties, new XMLMapperEntityResolver()),
+                application, resource, sqlFragments);
     }
 
-    private XMLMapperBuilder(XPathParser parser, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
-        super(configuration);
-        this.builderAssistant = new MapperBuilderAssistant(configuration, resource);
+    private XMLMapperBuilder(XPathParser parser, MybatisApplicationOptions application, String resource, Map<String, XNode> sqlFragments) {
         this.parser = parser;
-        this.sqlFragments = sqlFragments;
+        this.builderAssistant = new MapperBuilderAssistant(configuration, resource);
+        this.application = application;
         this.resource = resource;
+        this.sqlFragments = sqlFragments;
+
     }
 
     public void parse() {
-        if (!configuration.isResourceLoaded(resource)) {
-            configurationElement(parser.evalNode("/mapper"));
-            configuration.addLoadedResource(resource);
+        if (!application.isResourceLoaded(resource)) {
+            mapperElement(parser.evalNode("/mapper"));
+            application.addLoadedResource(resource);
             bindMapperForNamespace();
         }
         parsePendingResultMaps();
@@ -47,15 +51,15 @@ public class XMLMapperBuilder extends BaseBuilder {
         return sqlFragments.get(refid);
     }
 
-    private void configurationElement(XNode context) {
+    private void mapperElement(XNode context) {
         try {
             String namespace = context.getStringAttribute("namespace");
             if (namespace == null || namespace.isEmpty()) {
                 throw new BuilderException("Mapper's namespace cannot be empty");
             }
             String application = context.getStringAttribute("application");
-            if (!configuration.getApplication().equals(application)) {
-                throw new BuilderException("Mapper's application '" + application + "' cannot match Config's application '" + configuration.getApplication() + "'");
+            if (!this.application.getId().equals(application)) {
+                throw new BuilderException("Mapper's application '" + application + "' cannot match Config's application '" + this.application.getId() + "'");
             }
             builderAssistant.setCurrentNamespace(namespace);
             cacheRefElement(context.evalNode("cache-ref"));
@@ -218,5 +222,32 @@ public class XMLMapperBuilder extends BaseBuilder {
 //                configuration.addMapper(boundType);
 //            }
 //        }
+    }
+
+    protected <T> Class<? extends T> resolveClass(String alias) {
+        if (alias == null) {
+            return null;
+        }
+        try {
+            return resolveAlias(alias);
+        } catch (Exception e) {
+            throw new BuilderException("Error resolving class. Cause: " + e, e);
+        }
+    }
+
+    protected <T> Class<? extends T> resolveAlias(String alias) {
+        MybatisPlatformOptions platform = (MybatisPlatformOptions) this.application.getPlatform();
+        return platform.getTypeAliasRegistry().resolveAlias(alias);
+    }
+
+    protected JdbcType resolveJdbcType(String alias) {
+        if (alias == null) {
+            return null;
+        }
+        try {
+            return JdbcType.valueOf(alias);
+        } catch (IllegalArgumentException e) {
+            throw new BuilderException("Error resolving JdbcType. Cause: " + e, e);
+        }
     }
 }

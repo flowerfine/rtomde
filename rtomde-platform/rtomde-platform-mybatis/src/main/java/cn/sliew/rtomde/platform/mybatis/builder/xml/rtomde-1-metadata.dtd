@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!ELEMENT metadata (properties?, settings?, typeAliases?, typeHandlers?, plugins?)>
 <!ATTLIST metadata
-id CDATA #REQUIRED
+name CDATA #REQUIRED
 >
 
 <!ELEMENT properties (property*)>

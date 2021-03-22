@@ -9,6 +9,11 @@ public class PlatformOptions extends AbstractOptions {
      */
     private String name;
 
-    // mybatis template platform.
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }
