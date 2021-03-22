@@ -2,6 +2,13 @@ package cn.sliew.rtomde.config;
 
 import java.util.Map;
 
+/**
+ * 1. owner, organization, architecture
+ * 2. environment
+ * 3. qos
+ * 4. platform
+ * 5. config
+ */
 public class ApplicationOptions extends AbstractOptions {
 
     private static final long serialVersionUID = 2443366122854267151L;

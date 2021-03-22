@@ -6,7 +6,7 @@ import org.springframework.dao.UncategorizedDataAccessException;
  * MyBatis specific subclass of {@code UncategorizedDataAccessException}, for MyBatis system errors that do not match
  * any concrete {@code org.springframework.dao} exceptions.
  * <p>
- * In MyBatis 3 {@code org.apache.ibatis.exceptions.PersistenceException} is a {@code RuntimeException}, but using this
+ * In MyBatis 3 {@code cn.sliew.rtomde.platform.mybatis.exceptions.PersistenceException} is a {@code RuntimeException}, but using this
  * wrapper class to bring everything under a single hierarchy will be easier for client code to handle.
  */
 @SuppressWarnings("squid:MaximumInheritanceDepth") // It is the intended design

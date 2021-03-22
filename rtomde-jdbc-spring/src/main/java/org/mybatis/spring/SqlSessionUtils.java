@@ -1,8 +1,8 @@
 package org.mybatis.spring;
 
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
-import org.apache.ibatis.session.SqlSessionFactory;
+import cn.sliew.rtomde.platform.mybatis.session.ExecutorType;
+import cn.sliew.rtomde.platform.mybatis.session.SqlSession;
+import cn.sliew.rtomde.platform.mybatis.session.SqlSessionFactory;
 import org.mybatis.logging.Logger;
 import org.mybatis.logging.LoggerFactory;
 import org.springframework.dao.TransientDataAccessResourceException;

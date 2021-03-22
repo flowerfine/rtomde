@@ -1,6 +1,5 @@
 package org.mybatis.spring;
 
-import org.apache.ibatis.session.*;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.lang.reflect.InvocationHandler;
@@ -9,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.reflect.Proxy.newProxyInstance;
-import static org.apache.ibatis.reflection.ExceptionUtil.unwrapThrowable;
+import static cn.sliew.rtomde.platform.mybatis.reflection.ExceptionUtil.unwrapThrowable;
 import static org.mybatis.spring.SqlSessionUtils.closeSqlSession;
 import static org.mybatis.spring.SqlSessionUtils.getSqlSession;
 import static org.springframework.util.Assert.notNull;
