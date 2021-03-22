@@ -5,7 +5,7 @@ import io.lettuce.core.RedisClient;
 import io.lettuce.core.RedisURI;
 import io.lettuce.core.api.StatefulRedisConnection;
 import io.lettuce.core.api.sync.RedisCommands;
-import org.apache.ibatis.cache.Cache;
+import cn.sliew.rtomde.platform.mybatis.cache.Cache;
 
 import java.time.Duration;
 import java.util.concurrent.locks.ReadWriteLock;

@@ -1,6 +1,6 @@
 package org.mybatis.logging;
 
-import org.apache.ibatis.logging.Log;
+import cn.sliew.rtomde.platform.mybatis.logging.Log;
 
 import java.util.function.Supplier;
 

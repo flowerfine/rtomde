@@ -1,7 +1,7 @@
 package org.mybatis.spring;
 
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSession;
+import cn.sliew.rtomde.platform.mybatis.session.ExecutorType;
+import cn.sliew.rtomde.platform.mybatis.session.SqlSession;
 import org.springframework.transaction.support.ResourceHolderSupport;
 
 import static org.springframework.util.Assert.notNull;

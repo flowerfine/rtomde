@@ -1,7 +1,7 @@
 package org.mybatis.spring;
 
-import org.apache.ibatis.exceptions.PersistenceException;
-import org.apache.ibatis.mapping.Environment;
+import cn.sliew.rtomde.platform.mybatis.exceptions.PersistenceException;
+import cn.sliew.rtomde.platform.mybatis.mapping.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.support.PersistenceExceptionTranslator;
 import org.springframework.jdbc.UncategorizedSQLException;

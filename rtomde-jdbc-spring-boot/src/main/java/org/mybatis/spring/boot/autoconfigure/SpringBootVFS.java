@@ -1,6 +1,6 @@
 package org.mybatis.spring.boot.autoconfigure;
 
-import org.apache.ibatis.io.VFS;
+import cn.sliew.rtomde.platform.mybatis.io.VFS;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
