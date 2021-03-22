@@ -284,8 +284,8 @@ public class XMLConfigBuilder extends BaseBuilder {
         props.putAll(configuration.getVariables());
 
 
-        // eager construct may influence bootstrap speed
-        envBuilder.dataSource(dataSourceId, factory.getDataSource());
+
+
     }
 
     private void typeHandlerElement(XNode parent) {

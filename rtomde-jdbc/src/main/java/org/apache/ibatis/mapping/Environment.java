@@ -1,5 +1,7 @@
 package org.apache.ibatis.mapping;
 
+import org.apache.ibatis.cache.LettuceWrapper;
+
 import javax.sql.DataSource;
 import java.util.Collections;
 import java.util.Map;
@@ -12,8 +14,9 @@ public final class Environment {
      * dataSourceId -> DataSource
      */
     private final ConcurrentMap<String, DataSource> dataSourceRegistry = new ConcurrentHashMap<>(2);
+    private final LettuceWrapper lettuceWrapper;
 
-    private Environment(String id, Map<String, DataSource> dataSources) {
+    private Environment(String id, Map<String, DataSource> dataSources, LettuceWrapper lettuceWrapper) {
         if (id == null) {
             throw new IllegalArgumentException("Parameter 'id' must not be null");
         }
@@ -22,6 +25,7 @@ public final class Environment {
             throw new IllegalArgumentException("Parameter 'dataSource' must not be null");
         }
         this.dataSourceRegistry.putAll(dataSources);
+        this.lettuceWrapper = lettuceWrapper;
     }
 
     public static Builder builder() {
@@ -31,6 +35,7 @@ public final class Environment {
     public static class Builder {
         private String id;
         private ConcurrentMap<String, DataSource> dataSources = new ConcurrentHashMap<>(2);
+        private LettuceWrapper lettuceWrapper;
 
         private Builder() {
         }
@@ -45,8 +50,13 @@ public final class Environment {
             return this;
         }
 
+        public Builder lettuceWrapper(LettuceWrapper lettuceWrapper) {
+            this.lettuceWrapper = lettuceWrapper;
+            return this;
+        }
+
         public Environment build() {
-            return new Environment(this.id, this.dataSources);
+            return new Environment(this.id, this.dataSources, this.lettuceWrapper);
         }
 
     }
@@ -61,6 +71,10 @@ public final class Environment {
 
     public Map<String, DataSource> getDataSources() {
         return Collections.unmodifiableMap(dataSourceRegistry);
+    }
+
+    public LettuceWrapper getLettuceWrapper() {
+        return lettuceWrapper;
     }
 
 }
