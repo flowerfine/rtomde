@@ -2,6 +2,7 @@ package org.apache.ibatis.builder.xml;
 
 import org.apache.ibatis.builder.BaseBuilder;
 import org.apache.ibatis.builder.BuilderException;
+import org.apache.ibatis.cache.LettuceWrapper;
 import org.apache.ibatis.datasource.DataSourceFactory;
 import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.Resources;
@@ -278,14 +279,12 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
 
     private void lettuceElement(XNode context, Environment.Builder envBuilder) {
-        String dataSourceId = context.getStringAttribute("id");
+        String id = context.getStringAttribute("id");
         String type = context.getStringAttribute("type", "standalone");
         Properties props = context.getChildrenAsProperties();
         props.putAll(configuration.getVariables());
-
-
-
-
+        LettuceWrapper lettuceWrapper = LettuceWrapper.builder().id(id).type(type).props(props).build();
+        envBuilder.lettuceWrapper(lettuceWrapper);
     }
 
     private void typeHandlerElement(XNode parent) {
