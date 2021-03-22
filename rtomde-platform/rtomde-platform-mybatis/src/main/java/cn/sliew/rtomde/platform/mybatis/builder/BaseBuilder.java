@@ -1,7 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.builder;
 
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandlerRegistry;
 
@@ -17,12 +16,12 @@ public abstract class BaseBuilder {
 
     public BaseBuilder(MybatisPlatformOptions platform) {
         this.platform = platform;
-        this.typeAliasRegistry = this.configuration.getTypeAliasRegistry();
-        this.typeHandlerRegistry = this.configuration.getTypeHandlerRegistry();
+        this.typeAliasRegistry = this.platform.getTypeAliasRegistry();
+        this.typeHandlerRegistry = this.platform.getTypeHandlerRegistry();
     }
 
-    public Configuration getConfiguration() {
-        return configuration;
+    public MybatisPlatformOptions getPlatform() {
+        return this.platform;
     }
 
     protected Pattern parseExpression(String regex, String defaultValue) {
