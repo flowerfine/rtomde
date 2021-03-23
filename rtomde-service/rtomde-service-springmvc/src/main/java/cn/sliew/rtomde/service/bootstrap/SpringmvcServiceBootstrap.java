@@ -22,6 +22,7 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -102,8 +103,17 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
             for (CtMethod m : methods) {
                 controllerClass.addMethod(m);
             }
+            // fixme debug
+            controllerClass.writeFile();
+
             return controllerClass.toClass(ClassUtils.getClassLoader(SpringmvcServiceBootstrap.class), getClass().getProtectionDomain());
         } catch (CannotCompileException e) {
+            log.error("create Controller:[{}] failed", controllerClass.getName(), e);
+            throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
+        } catch (IOException e) {
+            log.error("create Controller:[{}] failed", controllerClass.getName(), e);
+            throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
+        } catch (NotFoundException e) {
             log.error("create Controller:[{}] failed", controllerClass.getName(), e);
             throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
         }
