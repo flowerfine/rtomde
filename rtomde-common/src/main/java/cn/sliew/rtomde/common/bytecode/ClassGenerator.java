@@ -291,7 +291,6 @@ public final class ClassGenerator extends Generator implements AutoCloseable {
                     }
                 }
             }
-            mCtc.writeFile();
             return mCtc.toClass(loader, pd);
         } catch (RuntimeException e) {
             throw e;
