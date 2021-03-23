@@ -28,7 +28,7 @@ import java.util.*;
 
 @Slf4j
 @Order(DubboServiceBootstrap.ORDER)
-@Component
+//@Component
 public class DubboServiceBootstrap implements ApplicationRunner {
 
     static final int ORDER = Integer.MAX_VALUE - 10000;
