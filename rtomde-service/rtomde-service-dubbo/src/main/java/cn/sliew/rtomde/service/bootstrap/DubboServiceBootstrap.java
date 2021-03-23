@@ -148,8 +148,6 @@ public class DubboServiceBootstrap implements ApplicationRunner {
             for (CtMethod m : methods) {
                 serviceImplClass.addMethod(m);
             }
-//            CtConstructor defaultConstructor = CtNewConstructor.make("public " + serviceImplClass.getSimpleName() + "() {}", serviceImplClass);
-//            serviceImplClass.addConstructor(defaultConstructor);
             return serviceImplClass;
         } catch (CannotCompileException e) {
             log.error("create Service:[{}] failed", serviceImplClass.getName(), e);
