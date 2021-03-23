@@ -416,7 +416,9 @@ public class Configuration {
     }
 
     public void setVariables(Properties variables) {
-        this.variables = variables;
+        if (variables != null) {
+            this.variables = variables;
+        }
     }
 
     public TypeHandlerRegistry getTypeHandlerRegistry() {

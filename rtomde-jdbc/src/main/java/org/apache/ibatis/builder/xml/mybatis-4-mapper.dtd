@@ -10,8 +10,8 @@ namespace CDATA #IMPLIED
 id CDATA #REQUIRED
 type (lettuce) #REQUIRED
 refId CDATA #REQUIRED
-expire 30000 #IMPLIED
-size 30000 #IMPLIED
+expire CDATA "30000"
+size CDATA "30000"
 >
 
 <!ELEMENT parameterMap (parameter+)?>
