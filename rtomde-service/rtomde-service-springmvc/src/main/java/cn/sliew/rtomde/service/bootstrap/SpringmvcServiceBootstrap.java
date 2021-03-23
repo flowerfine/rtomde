@@ -1,8 +1,9 @@
-package cn.sliew.rtomde.service.springmvc.dispatcher;
+package cn.sliew.rtomde.service.bootstrap;
 
 import cn.sliew.rtomde.common.bytecode.ClassGenerator;
 import cn.sliew.rtomde.common.bytecode.CustomizedLoaderClassPath;
 import cn.sliew.rtomde.common.utils.ClassUtils;
+import cn.sliew.rtomde.service.bytecode.config.dispatcher.MapperDispatcher;
 import javassist.*;
 import javassist.bytecode.*;
 import javassist.bytecode.annotation.Annotation;
@@ -14,23 +15,25 @@ import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import javax.annotation.PostConstruct;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Slf4j
-@org.springframework.context.annotation.Configuration
-public class JavassistController {
+@Component
+public class SpringmvcServiceBootstrap implements ApplicationRunner {
 
     private String application;
 
-    private static ClassPool classPool = ClassGenerator.getClassPool(JavassistController.class.getClassLoader());
+    private static ClassPool classPool = ClassGenerator.getClassPool(SpringmvcServiceBootstrap.class.getClassLoader());
 
     @Autowired
     private GenericWebApplicationContext ac;
@@ -45,8 +48,8 @@ public class JavassistController {
         classPool.appendClassPath(new CustomizedLoaderClassPath(Thread.currentThread().getContextClassLoader()));
     }
 
-    @PostConstruct
-    public void makeController() {
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
         Configuration configuration = sqlSessionFactory.getConfiguration();
         this.application = configuration.getApplication();
 
@@ -64,7 +67,7 @@ public class JavassistController {
 //        }
     }
 
-    public Class<?> makeDispatcherController() {
+    private Class<?> makeDispatcherController() {
         CtClass controllerClass = classPool.makeClass("cn.sliew.rtomde.executor.MapperController");
         ClassFile ccFile = controllerClass.getClassFile();
 
@@ -99,7 +102,7 @@ public class JavassistController {
             for (CtMethod m : methods) {
                 controllerClass.addMethod(m);
             }
-            return controllerClass.toClass(ClassUtils.getClassLoader(JavassistController.class), getClass().getProtectionDomain());
+            return controllerClass.toClass(ClassUtils.getClassLoader(SpringmvcServiceBootstrap.class), getClass().getProtectionDomain());
         } catch (CannotCompileException e) {
             log.error("create Controller:[{}] failed", controllerClass.getName(), e);
             throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);

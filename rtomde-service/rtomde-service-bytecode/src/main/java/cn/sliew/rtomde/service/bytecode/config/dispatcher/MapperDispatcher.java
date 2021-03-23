@@ -1,4 +1,4 @@
-package cn.sliew.rtomde.service.springmvc.dispatcher;
+package cn.sliew.rtomde.service.bytecode.config.dispatcher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.binding.MapperInvoker;
