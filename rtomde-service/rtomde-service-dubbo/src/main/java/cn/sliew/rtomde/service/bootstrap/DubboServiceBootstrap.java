@@ -65,7 +65,7 @@ public class DubboServiceBootstrap implements ApplicationRunner {
 
 
         ApplicationConfig application = new ApplicationConfig();
-        application.setName("demo-generic-provider");
+        application.setName(this.application);
         application.setOwner("wangqi");
         application.setArchitecture("data-center");
         Map<String, String> parameters = new HashMap<>(2);
