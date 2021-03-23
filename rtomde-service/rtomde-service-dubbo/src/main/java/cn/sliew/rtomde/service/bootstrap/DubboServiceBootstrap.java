@@ -36,7 +36,8 @@ public class DubboServiceBootstrap implements ApplicationRunner {
 
     private String application;
 
-    private static ClassPool classPool = ClassGenerator.getClassPool(DubboServiceBootstrap.class.getClassLoader());
+    private static ClassLoader classLoader = ClassUtils.getClassLoader(DubboServiceBootstrap.class);
+    private static ClassPool classPool = ClassGenerator.getClassPool(classLoader);
 
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
@@ -57,8 +58,8 @@ public class DubboServiceBootstrap implements ApplicationRunner {
         CtClass serviceCt = makeDispatcherService();
         CtClass serviceImplCt = makeDispatcherServiceImpl(serviceCt);
 
-        Class serviceInterface = serviceCt.toClass(ClassUtils.getClassLoader(DubboServiceBootstrap.class), getClass().getProtectionDomain());
-        Class serviceInterfaceImpl = serviceImplCt.toClass(ClassUtils.getClassLoader(DubboServiceBootstrap.class), getClass().getProtectionDomain());
+        Class serviceInterface = serviceCt.toClass(classLoader, getClass().getProtectionDomain());
+        Class serviceInterfaceImpl = serviceImplCt.toClass(classLoader, getClass().getProtectionDomain());
         ac.registerBean("dubbo.MapperService", serviceInterfaceImpl);
         Object instance = ac.getBean("dubbo.MapperService");
 

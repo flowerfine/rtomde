@@ -33,7 +33,8 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
 
     private String application;
 
-    private static ClassPool classPool = ClassGenerator.getClassPool(SpringmvcServiceBootstrap.class.getClassLoader());
+    private static ClassLoader classLoader = ClassUtils.getClassLoader(SpringmvcServiceBootstrap.class);
+    private static ClassPool classPool = ClassGenerator.getClassPool(classLoader);
 
     @Autowired
     private GenericWebApplicationContext ac;
@@ -102,7 +103,7 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
             for (CtMethod m : methods) {
                 controllerClass.addMethod(m);
             }
-            return controllerClass.toClass(ClassUtils.getClassLoader(SpringmvcServiceBootstrap.class), getClass().getProtectionDomain());
+            return controllerClass.toClass(classLoader, getClass().getProtectionDomain());
         } catch (CannotCompileException e) {
             log.error("create Controller:[{}] failed", controllerClass.getName(), e);
             throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
