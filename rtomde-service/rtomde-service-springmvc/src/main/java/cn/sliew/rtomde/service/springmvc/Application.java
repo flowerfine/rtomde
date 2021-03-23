@@ -1,4 +1,4 @@
-package cn.sliew.rtomde.springmvc;
+package cn.sliew.rtomde.service.springmvc;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

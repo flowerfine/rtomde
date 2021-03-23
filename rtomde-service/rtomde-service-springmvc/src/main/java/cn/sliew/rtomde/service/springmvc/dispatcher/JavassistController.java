@@ -1,4 +1,4 @@
-package cn.sliew.rtomde.springmvc.dispatcher;
+package cn.sliew.rtomde.service.springmvc.dispatcher;
 
 import cn.sliew.rtomde.common.bytecode.ClassGenerator;
 import cn.sliew.rtomde.common.bytecode.CustomizedLoaderClassPath;
@@ -50,8 +50,8 @@ public class JavassistController {
         Configuration configuration = sqlSessionFactory.getConfiguration();
         this.application = configuration.getApplication();
 
-        ac.registerBean("cn.sliew.rtomde.springmvc.MapperController", makeDispatcherController());
-        Object bean = ac.getBean("cn.sliew.rtomde.springmvc.MapperController");
+        ac.registerBean("springmvc.MapperController", makeDispatcherController());
+        Object bean = ac.getBean("springmvc.MapperController");
         for (String id : dispatcher.getMapperInvokers().keySet()) {
             registerRequestMapper(id, bean, configuration.getMappedStatement(id));
         }

@@ -45,6 +45,6 @@
 	</environments>
 
 	<mappers>
-		<mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-springmvc/src/main/resources/mapper/SysUserMapper.xml"/>
+		<mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/SysUserMapper.xml"/>
 	</mappers>
 </configuration>

@@ -31,9 +31,9 @@ public class LettuceCache implements Cache {
         }
         this.id = id;
         RedisURI redisURI = RedisURI.builder()
-                .withHost("localhost")
+                .withHost("daily-xinc818.redis.rds.aliyuncs.com")
                 .withPort(6379)
-                .withPassword("123")
+                .withPassword("I$zvz%Z1zv7mujtd")
                 .withDatabase(0)
                 .withTimeout(Duration.ofSeconds(1L))
                 .build();
