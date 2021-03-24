@@ -47,4 +47,3 @@ handler CDATA #REQUIRED
 <!ATTLIST plugin
 interceptor CDATA #REQUIRED
 >
->

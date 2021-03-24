@@ -16,7 +16,7 @@
 package cn.sliew.rtomde.platform.mybatis.type;
 
 import cn.sliew.rtomde.platform.mybatis.io.Resources;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import org.apache.ibatis.session.Configuration;
 
 import java.sql.*;
 import java.util.HashMap;

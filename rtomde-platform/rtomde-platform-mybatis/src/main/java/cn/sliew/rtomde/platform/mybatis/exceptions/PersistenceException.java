@@ -5,7 +5,7 @@ import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
 import java.util.Optional;
 
 @SuppressWarnings("deprecation")
-public class PersistenceException extends IbatisException {
+public class PersistenceException extends RuntimeException {
 
     private static final long serialVersionUID = -7537395265357977271L;
 

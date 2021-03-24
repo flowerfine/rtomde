@@ -1,10 +1,10 @@
 package cn.sliew.rtomde.platform.mybatis.mapping;
 
-import cn.sliew.rtomde.platform.mybatis.cache.Cache;
-import cn.sliew.rtomde.platform.mybatis.logging.Log;
-import cn.sliew.rtomde.platform.mybatis.logging.LogFactory;
-import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import org.apache.ibatis.cache.Cache;
+import org.apache.ibatis.logging.Log;
+import org.apache.ibatis.logging.LogFactory;
+import org.apache.ibatis.scripting.LanguageDriver;
+import org.apache.ibatis.session.Configuration;
 
 import java.util.List;
 

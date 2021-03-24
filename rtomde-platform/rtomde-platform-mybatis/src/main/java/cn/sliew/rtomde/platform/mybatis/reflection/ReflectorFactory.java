@@ -2,9 +2,9 @@ package cn.sliew.rtomde.platform.mybatis.reflection;
 
 public interface ReflectorFactory {
 
-  boolean isClassCacheEnabled();
+    boolean isClassCacheEnabled();
 
-  void setClassCacheEnabled(boolean classCacheEnabled);
+    void setClassCacheEnabled(boolean classCacheEnabled);
 
-  Reflector findForClass(Class<?> type);
+    Reflector findForClass(Class<?> type);
 }

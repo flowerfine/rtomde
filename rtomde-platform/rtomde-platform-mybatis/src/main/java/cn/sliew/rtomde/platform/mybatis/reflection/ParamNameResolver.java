@@ -1,11 +1,11 @@
 package cn.sliew.rtomde.platform.mybatis.reflection;
 
-import cn.sliew.rtomde.platform.mybatis.binding.MapperMethod.ParamMap;
-import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMap;
-import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
-import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
-import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
+import org.apache.ibatis.binding.MapperMethod.ParamMap;
+import org.apache.ibatis.mapping.ParameterMap;
+import org.apache.ibatis.mapping.ParameterMapping;
+import org.apache.ibatis.session.Configuration;
+import org.apache.ibatis.session.ResultHandler;
+import org.apache.ibatis.session.RowBounds;
 
 import java.util.*;
 
