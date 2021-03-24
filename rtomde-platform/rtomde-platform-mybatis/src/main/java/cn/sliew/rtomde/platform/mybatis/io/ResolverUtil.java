@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.io;
 
-import cn.sliew.rtomde.platform.mybatis.logging.Log;
-import cn.sliew.rtomde.platform.mybatis.logging.LogFactory;
+import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.common.log.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -46,7 +46,7 @@ public class ResolverUtil<T> {
     /**
      * An instance of Log to use for logging in this class.
      */
-    private static final Log log = LogFactory.getLog(ResolverUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(ResolverUtil.class);
 
     /**
      * A simple interface that specifies how to test classes to determine if they

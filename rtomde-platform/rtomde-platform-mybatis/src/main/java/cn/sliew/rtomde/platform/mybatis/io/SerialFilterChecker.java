@@ -1,12 +1,12 @@
 package cn.sliew.rtomde.platform.mybatis.io;
 
-import cn.sliew.rtomde.platform.mybatis.logging.Log;
-import cn.sliew.rtomde.platform.mybatis.logging.LogFactory;
+import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.common.log.LoggerFactory;
 
 import java.security.Security;
 
 public final class SerialFilterChecker {
-    private static final Log log = LogFactory.getLog(SerialFilterChecker.class);
+    private static final Logger log = LoggerFactory.getLogger(SerialFilterChecker.class);
     /* Property key for the JEP-290 serialization filters */
     private static final String JDK_SERIAL_FILTER = "jdk.serialFilter";
     private static final boolean SERIAL_FILTER_MISSING;

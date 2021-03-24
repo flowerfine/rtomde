@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.io;
 
-import cn.sliew.rtomde.platform.mybatis.logging.Log;
-import cn.sliew.rtomde.platform.mybatis.logging.LogFactory;
+import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.common.log.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -14,7 +14,7 @@ import java.util.List;
  * A {@link VFS} implementation that works with the VFS API provided by JBoss 6.
  */
 public class JBoss6VFS extends VFS {
-    private static final Log log = LogFactory.getLog(JBoss6VFS.class);
+    private static final Logger log = LoggerFactory.getLogger(JBoss6VFS.class);
 
     /**
      * A class that mimics a tiny subset of the JBoss VirtualFile class.

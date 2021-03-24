@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.io;
 
-import cn.sliew.rtomde.platform.mybatis.logging.Log;
-import cn.sliew.rtomde.platform.mybatis.logging.LogFactory;
+import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.common.log.LoggerFactory;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -18,9 +18,11 @@ import java.util.jar.JarInputStream;
  * A default implementation of {@link VFS} that works for most application servers.
  */
 public class DefaultVFS extends VFS {
-    private static final Log log = LogFactory.getLog(DefaultVFS.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultVFS.class);
 
-    /** The magic header that indicates a JAR (ZIP) file. */
+    /**
+     * The magic header that indicates a JAR (ZIP) file.
+     */
     private static final byte[] JAR_MAGIC = {'P', 'K', 3, 4};
 
     @Override
@@ -148,7 +150,7 @@ public class DefaultVFS extends VFS {
      * List the names of the entries in the given {@link JarInputStream} that begin with the
      * specified {@code path}. Entries will match with or without a leading slash.
      *
-     * @param jar The JAR input stream
+     * @param jar  The JAR input stream
      * @param path The leading path to match
      * @return The names of all the matching entries
      * @throws IOException If I/O errors occur
@@ -193,8 +195,7 @@ public class DefaultVFS extends VFS {
      *
      * @param url The URL of the JAR entry.
      * @return The URL of the JAR file, if one is found. Null if not.
-     * @throws MalformedURLException
-     *           the malformed URL exception
+     * @throws MalformedURLException the malformed URL exception
      */
     protected URL findJarForResource(URL url) throws MalformedURLException {
         if (log.isDebugEnabled()) {
@@ -276,8 +277,7 @@ public class DefaultVFS extends VFS {
      * Converts a Java package name to a path that can be looked up with a call to
      * {@link ClassLoader#getResources(String)}.
      *
-     * @param packageName
-     *          The Java package name to convert to a path
+     * @param packageName The Java package name to convert to a path
      * @return the package path
      */
     protected String getPackagePath(String packageName) {
@@ -287,8 +287,7 @@ public class DefaultVFS extends VFS {
     /**
      * Returns true if the resource located at the given URL is a JAR file.
      *
-     * @param url
-     *          The URL of the resource to test.
+     * @param url The URL of the resource to test.
      * @return true, if is jar
      */
     protected boolean isJar(URL url) {
@@ -298,11 +297,9 @@ public class DefaultVFS extends VFS {
     /**
      * Returns true if the resource located at the given URL is a JAR file.
      *
-     * @param url
-     *          The URL of the resource to test.
-     * @param buffer
-     *          A buffer into which the first few bytes of the resource are read. The buffer must be at least the size of
-     *          {@link #JAR_MAGIC}. (The same buffer may be reused for multiple calls as an optimization.)
+     * @param url    The URL of the resource to test.
+     * @param buffer A buffer into which the first few bytes of the resource are read. The buffer must be at least the size of
+     *               {@link #JAR_MAGIC}. (The same buffer may be reused for multiple calls as an optimization.)
      * @return true, if is jar
      */
     protected boolean isJar(URL url, byte[] buffer) {

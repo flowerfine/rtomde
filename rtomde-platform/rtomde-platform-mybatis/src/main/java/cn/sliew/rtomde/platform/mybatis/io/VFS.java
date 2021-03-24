@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.io;
 
-import cn.sliew.rtomde.platform.mybatis.logging.Log;
-import cn.sliew.rtomde.platform.mybatis.logging.LogFactory;
+import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.common.log.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -16,7 +16,7 @@ import java.util.List;
  * Provides a very simple API for accessing resources within an application server.
  */
 public abstract class VFS {
-    private static final Log log = LogFactory.getLog(VFS.class);
+    private static final Logger log = LoggerFactory.getLogger(VFS.class);
 
     /**
      * The built-in implementations.
