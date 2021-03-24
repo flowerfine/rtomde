@@ -15,12 +15,6 @@
             <groupId>cn.sliew</groupId>
             <artifactId>rtomde-config</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>cn.sliew</groupId>
-            <artifactId>milky-common</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
 </project>
