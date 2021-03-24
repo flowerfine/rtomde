@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!ELEMENT application (properties?, environments?, mappers?)>
+<!ELEMENT application (properties?, typeAliases?, environments?, mappers?)>
 <!ATTLIST application
 name CDATA #REQUIRED
 >
@@ -12,9 +12,17 @@ name CDATA #REQUIRED
 value CDATA #REQUIRED
 >
 
+<!ELEMENT typeAliases (typeAlias*)>
+
+<!ELEMENT typeAlias EMPTY>
+<!ATTLIST typeAlias
+type CDATA #REQUIRED
+alias CDATA #IMPLIED
+>
+
 <!ELEMENT environments (environment+)>
 
-<!ELEMENT environment (hikaricp, lettuce)>
+<!ELEMENT environment (hikaricp+, lettuce+)>
 <!ATTLIST environment
 id CDATA #REQUIRED
 >

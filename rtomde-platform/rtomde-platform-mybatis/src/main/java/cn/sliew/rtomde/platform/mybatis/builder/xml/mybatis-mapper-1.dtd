@@ -2,7 +2,7 @@
 <!ELEMENT mapper (cache | resultMap* | parameterMap* | sql* | select* )+>
 <!ATTLIST mapper
 application CDATA #REQUIRED
-namespace CDATA #IMPLIED
+namespace CDATA #REQUIRED
 >
 
 <!ELEMENT cache (property*)>
