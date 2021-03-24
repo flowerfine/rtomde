@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE application
     PUBLIC "-//mybatis.org//DTD Config 4.0//EN"
-    "http://mybatis.org/dtd/rtomde-1-application.dtd">
+        "mybatis-application-1.dtd">
 
 <application name="minimal">
 

@@ -14,13 +14,13 @@ import java.util.Locale;
  */
 public class XMLMapperEntityResolver implements EntityResolver {
 
-    private static final String IBATIS_CONFIG_SYSTEM = "ibatis-4-config.dtd";
-    private static final String IBATIS_MAPPER_SYSTEM = "ibatis-4-mapper.dtd";
-    private static final String MYBATIS_CONFIG_SYSTEM = "mybatis-4-config.dtd";
-    private static final String MYBATIS_MAPPER_SYSTEM = "mybatis-4-mapper.dtd";
+    private static final String MYBATIS_PLATFORM_SYSTEM = "mybatis-metadata-1.dtd";
+    private static final String MYBATIS_APPLICATION_SYSTEM = "mybatis-application-1.dtd";
+    private static final String MYBATIS_MAPPER_SYSTEM = "mybatis-mapper-1.dtd";
 
-    private static final String MYBATIS_CONFIG_DTD = "org/apache/ibatis/builder/xml/mybatis-4-config.dtd";
-    private static final String MYBATIS_MAPPER_DTD = "org/apache/ibatis/builder/xml/mybatis-4-mapper.dtd";
+    private static final String MYBATIS_PLATFORM_DTD = "cn/sliew/rtomde/platform/mybatis/builder/xml/mybatis-metadata-1.dtd";
+    private static final String MYBATIS_APPLICATION_DTD = "cn/sliew/rtomde/platform/mybatis/builder/xml/mybatis-application-1.dtd";
+    private static final String MYBATIS_MAPPER_DTD = "cn/sliew/rtomde/platform/mybatis/builder/xml/mybatis-mapper-1.dtd";
 
     /**
      * Converts a public DTD into a local one.
@@ -35,9 +35,11 @@ public class XMLMapperEntityResolver implements EntityResolver {
         try {
             if (systemId != null) {
                 String lowerCaseSystemId = systemId.toLowerCase(Locale.ENGLISH);
-                if (lowerCaseSystemId.contains(MYBATIS_CONFIG_SYSTEM) || lowerCaseSystemId.contains(IBATIS_CONFIG_SYSTEM)) {
-                    return getInputSource(MYBATIS_CONFIG_DTD, publicId, systemId);
-                } else if (lowerCaseSystemId.contains(MYBATIS_MAPPER_SYSTEM) || lowerCaseSystemId.contains(IBATIS_MAPPER_SYSTEM)) {
+                if (lowerCaseSystemId.contains(MYBATIS_PLATFORM_SYSTEM)) {
+                    return getInputSource(MYBATIS_PLATFORM_DTD, publicId, systemId);
+                } else if (lowerCaseSystemId.contains(MYBATIS_APPLICATION_SYSTEM)) {
+                    return getInputSource(MYBATIS_APPLICATION_DTD, publicId, systemId);
+                } else if (lowerCaseSystemId.contains(MYBATIS_MAPPER_SYSTEM)) {
                     return getInputSource(MYBATIS_MAPPER_DTD, publicId, systemId);
                 }
             }
