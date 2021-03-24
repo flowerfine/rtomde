@@ -1,14 +1,15 @@
 package cn.sliew.rtomde.platform.mybatis.builder;
 
 import cn.sliew.rtomde.platform.mybatis.cache.Cache;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisArgumentOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMap;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
 import cn.sliew.rtomde.platform.mybatis.mapping.ResultMap;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.session.Configuration;
-import cn.sliew.rtomde.type.JdbcType;
-import cn.sliew.rtomde.type.TypeHandler;
+import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
+import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +111,8 @@ public class MapperBuilderAssistant extends BaseBuilder {
         return parameterMap;
     }
 
-    public ParameterMapping buildParameterMapping(String property, Class<?> javaType, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandler) {
+
+    public MybatisArgumentOptions buildParameterMapping(String property, Class<?> javaType, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandler) {
         Class<?> javaTypeClass = resolveParameterJavaType(javaType);
         TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
         return ParameterMapping.builder(configuration)

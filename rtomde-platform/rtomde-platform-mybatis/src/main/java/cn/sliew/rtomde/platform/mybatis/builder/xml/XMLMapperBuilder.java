@@ -2,6 +2,7 @@ package cn.sliew.rtomde.platform.mybatis.builder.xml;
 
 import cn.sliew.rtomde.platform.mybatis.builder.*;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisArgumentOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
@@ -34,7 +35,6 @@ public class XMLMapperBuilder {
         this.application = application;
         this.resource = resource;
         this.sqlFragments = sqlFragments;
-
     }
 
     public void parse() {
@@ -143,7 +143,7 @@ public class XMLMapperBuilder {
             String id = parameterMapNode.getStringAttribute("id");
             String type = parameterMapNode.getStringAttribute("type");
             List<XNode> parameterNodes = parameterMapNode.evalNodes("parameter");
-            List<ParameterMapping> parameterMappings = new ArrayList<>();
+            List<MybatisArgumentOptions> parameterMappings = new ArrayList<>();
             for (XNode parameterNode : parameterNodes) {
                 String property = parameterNode.getStringAttribute("property");
                 String javaType = parameterNode.getStringAttribute("javaType");

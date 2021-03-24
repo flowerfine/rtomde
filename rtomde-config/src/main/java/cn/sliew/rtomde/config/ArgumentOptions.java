@@ -7,10 +7,10 @@ public class ArgumentOptions extends AbstractOptions {
     /**
      * The argument index: index -1 represents not set
      */
-    private Integer index = -1;
+    protected Integer index = -1;
 
     /**
      * Argument type
      */
-    private String type;
+    protected String type;
 }

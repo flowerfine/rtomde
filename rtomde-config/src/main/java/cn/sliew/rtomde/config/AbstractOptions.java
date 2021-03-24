@@ -23,7 +23,7 @@ public abstract class AbstractOptions implements Serializable {
      *
      * @see cn.sliew.milky.common.version.SemVersion
      */
-    private String version;
+    protected String version;
 
     /**
      * The config util config.
@@ -60,7 +60,7 @@ public abstract class AbstractOptions implements Serializable {
     }
 
     public String getPrefix() {
-        return StringUtils.isNotBlank(prefix) ? prefix : (CommonConstants.RTOMDE + "." + getTagName(this.getClass()));
+        return StringUtils.isNotBlank(prefix) ? prefix : (Constants.RTOMDE + "." + getTagName(this.getClass()));
     }
 
     public void setPrefix(String prefix) {
