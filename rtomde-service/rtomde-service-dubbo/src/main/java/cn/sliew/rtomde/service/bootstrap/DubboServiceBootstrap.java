@@ -29,15 +29,15 @@ import java.util.*;
 
 @Slf4j
 @Order(DubboServiceBootstrap.ORDER)
-@Component
+//@Component
 public class DubboServiceBootstrap implements ApplicationRunner {
 
     static final int ORDER = Integer.MAX_VALUE - 10000;
 
     private String application;
 
-    private static ClassLoader classLoader = ClassUtils.getClassLoader(DubboServiceBootstrap.class);
-    private static ClassPool classPool = ClassGenerator.getClassPool(classLoader);
+    private ClassLoader classLoader = ClassUtils.getClassLoader(DubboServiceBootstrap.class);
+    private ClassPool classPool = ClassGenerator.getClassPool(classLoader);
 
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
@@ -46,7 +46,7 @@ public class DubboServiceBootstrap implements ApplicationRunner {
     @Autowired
     private AnnotationConfigApplicationContext ac;
 
-    static {
+    {
         classPool.appendClassPath(new CustomizedLoaderClassPath(Thread.currentThread().getContextClassLoader()));
     }
 
@@ -60,37 +60,43 @@ public class DubboServiceBootstrap implements ApplicationRunner {
 
         Class serviceInterface = serviceCt.toClass(classLoader, getClass().getProtectionDomain());
         Class serviceInterfaceImpl = serviceImplCt.toClass(classLoader, getClass().getProtectionDomain());
+        serviceCt.detach();
+        serviceImplCt.detach();
         ac.registerBean("dubbo.MapperService", serviceInterfaceImpl);
         Object instance = ac.getBean("dubbo.MapperService");
 
+        ClassPool pool = ClassPool.getDefault();
 
-        ApplicationConfig application = new ApplicationConfig();
-        application.setName(this.application);
-        application.setOwner("wangqi");
-        application.setArchitecture("data-center");
-        Map<String, String> parameters = new HashMap<>(2);
-        parameters.put("unicast", "false");
-        application.setParameters(parameters);
+        CtClass ctClass = pool.get(serviceInterface.getName());
 
-        RegistryConfig zookeeper = new RegistryConfig();
-        zookeeper.setProtocol("zookeeper");
-        zookeeper.setAddress("127.0.0.1:2181");
-        RegistryConfig multicast = new RegistryConfig();
-        multicast.setProtocol("multicast");
-        multicast.setAddress("224.5.6.7:1234");
 
-        ProtocolConfig dubbo = new ProtocolConfig();
-        dubbo.setName("dubbo");
-        dubbo.setPort(20880);
-        dubbo.setThreads(20);
-
-        ServiceConfig service = new ServiceConfig();
-        service.setApplication(application);
-        service.setRegistries(Arrays.asList(zookeeper, multicast));
-        service.setProtocols(Arrays.asList(dubbo));
-        service.setInterface(serviceInterface);
-        service.setRef(instance);
-        service.export();
+//        ApplicationConfig application = new ApplicationConfig();
+//        application.setName(this.application);
+//        application.setOwner("wangqi");
+//        application.setArchitecture("data-center");
+//        Map<String, String> parameters = new HashMap<>(2);
+//        parameters.put("unicast", "false");
+//        application.setParameters(parameters);
+//
+//        RegistryConfig zookeeper = new RegistryConfig();
+//        zookeeper.setProtocol("zookeeper");
+//        zookeeper.setAddress("127.0.0.1:2181");
+//        RegistryConfig multicast = new RegistryConfig();
+//        multicast.setProtocol("multicast");
+//        multicast.setAddress("224.5.6.7:1234");
+//
+//        ProtocolConfig dubbo = new ProtocolConfig();
+//        dubbo.setName("dubbo");
+//        dubbo.setPort(20880);
+//        dubbo.setThreads(20);
+//
+//        ServiceConfig service = new ServiceConfig();
+//        service.setApplication(application);
+//        service.setRegistries(Arrays.asList(zookeeper, multicast));
+//        service.setProtocols(Arrays.asList(dubbo));
+//        service.setInterface(serviceInterface);
+//        service.setRef(instance);
+//        service.export();
     }
 
     private CtClass makeDispatcherService() {
