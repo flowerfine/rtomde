@@ -2,6 +2,7 @@ package cn.sliew.rtomde.platform.mybatis.builder.xml;
 
 import cn.sliew.rtomde.platform.mybatis.builder.BaseBuilder;
 import cn.sliew.rtomde.platform.mybatis.builder.BuilderException;
+import cn.sliew.rtomde.platform.mybatis.builder.MapperBuilderAssistant;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.parsing.XPathParser;
 import cn.sliew.rtomde.platform.mybatis.session.Configuration;
@@ -31,7 +32,7 @@ public class XMLMapperBuilder extends BaseBuilder {
 
     public void parse() {
         if (!configuration.isResourceLoaded(resource)) {
-            configurationElement(parser.evalNode("/mapper"));
+            mapperElement(parser.evalNode("/mapper"));
             configuration.addLoadedResource(resource);
             bindMapperForNamespace();
         }
@@ -43,7 +44,7 @@ public class XMLMapperBuilder extends BaseBuilder {
         return sqlFragments.get(refid);
     }
 
-    private void configurationElement(XNode context) {
+    private void mapperElement(XNode context) {
         try {
             String namespace = context.getStringAttribute("namespace");
             if (namespace == null || namespace.isEmpty()) {
@@ -54,7 +55,7 @@ public class XMLMapperBuilder extends BaseBuilder {
                 throw new BuilderException("Mapper's application '" + application + "' cannot match Config's application '" + configuration.getApplication() + "'");
             }
             builderAssistant.setCurrentNamespace(namespace);
-            cacheRefElement(context.evalNode("cache-ref"));
+//            cacheRefElement(context.evalNode("cache-ref"));
             cacheElement(context.evalNode("cache"));
             parameterMapElement(context.evalNodes("/mapper/parameterMap"));
             resultMapElements(context.evalNodes("/mapper/resultMap"));
