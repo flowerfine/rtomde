@@ -1,6 +1,6 @@
 package org.mybatis.spring.boot.autoconfigure;
 
-import org.apache.ibatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 
 /**
  * Callback interface that can be customized a {@link Configuration} object generated on auto-configuration.

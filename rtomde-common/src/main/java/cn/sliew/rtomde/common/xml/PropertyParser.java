@@ -4,7 +4,7 @@ import java.util.Properties;
 
 public class PropertyParser {
 
-    private static final String KEY_PREFIX = "org.apache.ibatis.parsing.PropertyParser.";
+    private static final String KEY_PREFIX = "cn.sliew.rtomde.platform.mybatis.parsing.PropertyParser.";
     /**
      * The special property key that indicate whether enable a default value on placeholder.
      * <p>

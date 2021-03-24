@@ -1,7 +1,7 @@
 {
   "properties": [
     {
-      "sourceType": "org.apache.ibatis.session.Configuration",
+      "sourceType": "cn.sliew.rtomde.platform.mybatis.session.Configuration",
       "defaultValue": "org.apache.ibatis.scripting.xmltags.XMLLanguageDriver",
       "name": "mybatis.configuration.default-scripting-language",
       "description": "A default LanguageDriver class.",
@@ -12,7 +12,7 @@
       }
     },
     {
-      "sourceType": "org.apache.ibatis.session.Configuration",
+      "sourceType": "cn.sliew.rtomde.platform.mybatis.session.Configuration",
       "defaultValue": "org.apache.ibatis.type.EnumTypeHandler",
       "name": "mybatis.configuration.default-enum-type-handler",
       "description": "A default TypeHandler class for Enum.",

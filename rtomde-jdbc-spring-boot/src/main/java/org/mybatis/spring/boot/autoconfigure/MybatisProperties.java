@@ -1,8 +1,8 @@
 package org.mybatis.spring.boot.autoconfigure;
 
-import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
+import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
+import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.session.ExecutorType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;

@@ -18,12 +18,14 @@
     <modules>
         <module>rtomde-spi</module>
         <module>rtomde-common</module>
+        <module>rtomde-config</module>
         <module>rtomde-jdbc</module>
         <module>rtomde-jdbc-spring</module>
         <module>rtomde-jdbc-spring-boot</module>
         <module>rtomde-service</module>
         <module>rtomde-container</module>
         <module>rtomde-cache</module>
+        <module>rtomde-platform</module>
     </modules>
 
     <properties>
@@ -38,6 +40,8 @@
         <scala.version>2.12.8</scala.version>
         <scala.binary.version>2.12</scala.binary.version>
 
+        <milky.version>1.0.0-SNAPSHOT</milky.version>
+
         <maven.test.skip>true</maven.test.skip>
         <maven.deploy.skip>false</maven.deploy.skip>
     </properties>
@@ -46,12 +50,18 @@
         <dependency>
             <groupId>cn.sliew</groupId>
             <artifactId>milky-common</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>${milky.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -66,8 +76,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>cn.sliew</groupId>
+            <artifactId>milky-test</artifactId>
+            <version>${milky.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -77,22 +88,22 @@
             <dependency>
                 <groupId>cn.sliew</groupId>
                 <artifactId>rtomde-common</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.sliew</groupId>
                 <artifactId>rtomde-jdbc</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.sliew</groupId>
                 <artifactId>rtomde-jdbc-spring</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>cn.sliew</groupId>
                 <artifactId>rtomde-jdbc-spring-boot</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${project.version}</version>
             </dependency>
 
             <!-- This manages the 'javax.annotation' annotations (JSR305) -->

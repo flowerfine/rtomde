@@ -1,11 +1,11 @@
 package cn.sliew.rtomde.service.bytecode.config.dispatcher;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.binding.MapperInvoker;
-import org.apache.ibatis.binding.MapperMethod;
-import org.apache.ibatis.binding.PlainMapperInvoker;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
+import cn.sliew.rtomde.platform.mybatis.binding.MapperInvoker;
+import cn.sliew.rtomde.platform.mybatis.binding.MapperMethod;
+import cn.sliew.rtomde.platform.mybatis.binding.PlainMapperInvoker;
+import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!ELEMENT metadata (properties?, settings?, typeAliases?, typeHandlers?, plugins?)>
+<!ATTLIST metadata
+id CDATA #REQUIRED
+>
+
+<!ELEMENT properties (property*)>
+<!ATTLIST properties
+resource CDATA #IMPLIED
+url CDATA #IMPLIED
+>
+
+<!ELEMENT property EMPTY>
+<!ATTLIST property
+name CDATA #REQUIRED
+value CDATA #REQUIRED
+>
+
+<!ELEMENT settings (setting+)>
+
+<!ELEMENT setting EMPTY>
+<!ATTLIST setting
+name CDATA #REQUIRED
+value CDATA #REQUIRED
+>
+
+<!ELEMENT typeAliases (typeAlias*)>
+
+<!ELEMENT typeAlias EMPTY>
+<!ATTLIST typeAlias
+type CDATA #REQUIRED
+alias CDATA #IMPLIED
+>
+
+<!ELEMENT typeHandlers (typeHandler*)>
+
+<!ELEMENT typeHandler EMPTY>
+<!ATTLIST typeHandler
+javaType CDATA #IMPLIED
+jdbcType CDATA #IMPLIED
+handler CDATA #REQUIRED
+>
+
+<!ELEMENT plugins (plugin+)>
+
+<!ELEMENT plugin (property*)>
+<!ATTLIST plugin
+interceptor CDATA #REQUIRED
+>
+>

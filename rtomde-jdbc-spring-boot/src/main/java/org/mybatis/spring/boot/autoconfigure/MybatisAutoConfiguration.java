@@ -1,11 +1,11 @@
 package org.mybatis.spring.boot.autoconfigure;
 
-import org.apache.ibatis.plugin.Interceptor;
-import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ExecutorType;
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.type.TypeHandler;
+import cn.sliew.rtomde.platform.mybatis.plugin.Interceptor;
+import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
+import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.session.ExecutorType;
+import cn.sliew.rtomde.platform.mybatis.session.SqlSessionFactory;
+import cn.sliew.rtomde.type.TypeHandler;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.BeanWrapperImpl;

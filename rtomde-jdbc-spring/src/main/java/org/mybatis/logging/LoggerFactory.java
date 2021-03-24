@@ -1,6 +1,6 @@
 package org.mybatis.logging;
 
-import org.apache.ibatis.logging.LogFactory;
+import cn.sliew.rtomde.platform.mybatis.logging.LogFactory;
 
 /**
  * LoggerFactory is a wrapper around {@link LogFactory} to support {@link Logger}.
