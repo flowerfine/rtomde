@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!ELEMENT application (properties?, environments?, mappers?)>
 <!ATTLIST application
-id CDATA #REQUIRED
+name CDATA #REQUIRED
 >
 
 <!ELEMENT properties (property*)>
-<!ATTLIST properties
-resource CDATA #IMPLIED
-url CDATA #IMPLIED
->
 
 <!ELEMENT property EMPTY>
 <!ATTLIST property
@@ -17,27 +13,30 @@ value CDATA #REQUIRED
 >
 
 <!ELEMENT environments (environment+)>
-<!ATTLIST environments
-default CDATA #REQUIRED
->
 
-<!ELEMENT environment (dataSource+, lettuce?)>
+<!ELEMENT environment (hikaricp, lettuce)>
 <!ATTLIST environment
 id CDATA #REQUIRED
 >
 
-<!ELEMENT dataSource (property*)>
-<!ATTLIST dataSource
+<!ELEMENT hikaricp (jdbcUrl, username, password, driverClassName, profileSQL)>
+<!ATTLIST hikaricp
 id CDATA #REQUIRED
-type CDATA #REQUIRED
 >
 
-<!ELEMENT lettuce (property*)>
+<!ELEMENT jdbcUrl (#PCDATA)>
+<!ELEMENT username (#PCDATA)>
+<!ELEMENT password (#PCDATA)>
+<!ELEMENT driverClassName (#PCDATA)>
+<!ELEMENT profileSQL (#PCDATA)>
+
+<!ELEMENT lettuce (redisURI|clusterRedisURI)>
 <!ATTLIST lettuce
 id CDATA #REQUIRED
-type (standalone) #REQUIRED
 >
 
+<!ELEMENT redisURI (#PCDATA)>
+<!ELEMENT clusterRedisURI (#PCDATA)>
 
 <!ELEMENT mappers (mapper*)>
 

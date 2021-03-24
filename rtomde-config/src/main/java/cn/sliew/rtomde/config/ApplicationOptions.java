@@ -14,6 +14,11 @@ public class ApplicationOptions extends AbstractOptions {
     private static final long serialVersionUID = 2443366122854267151L;
 
     /**
+     * Application name
+     */
+    private String name;
+
+    /**
      * Application owner
      */
     private String owner;
@@ -73,4 +78,107 @@ public class ApplicationOptions extends AbstractOptions {
      */
     private ConfigOptions config;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
+    }
+
+    public String getArchitecture() {
+        return architecture;
+    }
+
+    public void setArchitecture(String architecture) {
+        this.architecture = architecture;
+    }
+
+    public String getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
+    }
+
+    public String getDumpDirectory() {
+        return dumpDirectory;
+    }
+
+    public void setDumpDirectory(String dumpDirectory) {
+        this.dumpDirectory = dumpDirectory;
+    }
+
+    public Boolean getQosEnable() {
+        return qosEnable;
+    }
+
+    public void setQosEnable(Boolean qosEnable) {
+        this.qosEnable = qosEnable;
+    }
+
+    public String getQosHost() {
+        return qosHost;
+    }
+
+    public void setQosHost(String qosHost) {
+        this.qosHost = qosHost;
+    }
+
+    public Integer getQosPort() {
+        return qosPort;
+    }
+
+    public void setQosPort(Integer qosPort) {
+        this.qosPort = qosPort;
+    }
+
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
+
+    public String getMetadataType() {
+        return metadataType;
+    }
+
+    public void setMetadataType(String metadataType) {
+        this.metadataType = metadataType;
+    }
+
+    public PlatformOptions getPlatform() {
+        return platform;
+    }
+
+    public void setPlatform(PlatformOptions platform) {
+        this.platform = platform;
+    }
+
+    public ConfigOptions getConfig() {
+        return config;
+    }
+
+    public void setConfig(ConfigOptions config) {
+        this.config = config;
+    }
 }
