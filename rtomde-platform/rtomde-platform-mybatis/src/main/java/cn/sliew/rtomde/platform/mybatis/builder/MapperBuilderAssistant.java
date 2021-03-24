@@ -2,6 +2,9 @@ package cn.sliew.rtomde.platform.mybatis.builder;
 
 import cn.sliew.rtomde.platform.mybatis.cache.Cache;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
+import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMap;
+import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
+import cn.sliew.rtomde.platform.mybatis.mapping.ResultMap;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.type.JdbcType;

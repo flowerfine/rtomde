@@ -1,6 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.builder;
 
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
+import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
 import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandlerRegistry;
 
