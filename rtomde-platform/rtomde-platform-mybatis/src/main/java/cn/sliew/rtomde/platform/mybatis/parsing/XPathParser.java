@@ -15,7 +15,7 @@
  */
 package cn.sliew.rtomde.platform.mybatis.parsing;
 
-import cn.sliew.rtomde.platform.mybatis.builder.BuilderException;
+import org.apache.ibatis.builder.BuilderException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
