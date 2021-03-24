@@ -94,6 +94,11 @@
             </dependency>
             <dependency>
                 <groupId>cn.sliew</groupId>
+                <artifactId>rtomde-config</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.sliew</groupId>
                 <artifactId>rtomde-jdbc</artifactId>
                 <version>${project.version}</version>
             </dependency>

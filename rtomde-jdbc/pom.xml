@@ -17,10 +17,6 @@
             <artifactId>rtomde-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>cn.sliew</groupId>
-            <artifactId>rtomde-type</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.lettuce</groupId>
             <artifactId>lettuce-core</artifactId>
             <version>6.0.3.RELEASE</version>
