@@ -19,13 +19,15 @@
         <module>rtomde-spi</module>
         <module>rtomde-common</module>
         <module>rtomde-config</module>
+        <module>rtomde-platform</module>
+        <module>rtomde-service</module>
+
         <module>rtomde-jdbc</module>
         <module>rtomde-jdbc-spring</module>
         <module>rtomde-jdbc-spring-boot</module>
-        <module>rtomde-service</module>
+
         <module>rtomde-container</module>
         <module>rtomde-cache</module>
-        <module>rtomde-platform</module>
     </modules>
 
     <properties>
