@@ -17,16 +17,25 @@ public interface Executor {
 
     DataSource getDataSource(String dataSourceId);
 
+    /**
+     * 查询相关的
+     */
     <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey cacheKey, BoundSql boundSql) throws SQLException;
 
     <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException;
 
+    /**
+     * 缓存相关的代码
+     */
     CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql);
 
     boolean isCached(MappedStatement ms, CacheKey key);
 
     void clearLocalCache();
 
+    /**
+     * 延迟加载
+     */
     void deferLoad(MappedStatement ms, MetaObject resultObject, String property, CacheKey key, Class<?> targetType);
 
     void close();

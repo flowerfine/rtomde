@@ -17,20 +17,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Properties;
 
-public class XMLConfigBuilder extends BaseBuilder {
+public class XMLApplicationBuilder extends BaseBuilder {
 
     private boolean parsed;
     private final XPathParser parser;
 
-    public XMLConfigBuilder(Reader reader, Configuration configuration) {
+    public XMLApplicationBuilder(Reader reader, Configuration configuration) {
         this(new XPathParser(reader, true, configuration.getVariables(), new XMLMapperEntityResolver()), configuration);
     }
 
-    public XMLConfigBuilder(InputStream inputStream, Configuration configuration) {
+    public XMLApplicationBuilder(InputStream inputStream, Configuration configuration) {
         this(new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()), configuration);
     }
 
-    private XMLConfigBuilder(XPathParser parser, Configuration configuration) {
+    private XMLApplicationBuilder(XPathParser parser, Configuration configuration) {
         super(configuration);
         ErrorContext.instance().resource("SQL Mapper Application Configuration");
         this.parsed = false;
