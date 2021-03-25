@@ -1,6 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.cache;
 
-import org.apache.ibatis.reflection.ArrayUtil;
+import cn.sliew.rtomde.platform.mybatis.reflection.ArrayUtil;
 
 import java.io.Serializable;
 import java.util.ArrayList;

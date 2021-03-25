@@ -1,6 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.cache;
 
-import org.apache.ibatis.exceptions.PersistenceException;
+import cn.sliew.rtomde.platform.mybatis.exceptions.PersistenceException;
 
 public class CacheException extends PersistenceException {
 

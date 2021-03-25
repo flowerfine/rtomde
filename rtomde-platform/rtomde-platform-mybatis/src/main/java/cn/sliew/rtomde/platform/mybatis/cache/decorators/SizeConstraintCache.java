@@ -1,6 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.cache.decorators;
 
-import org.apache.ibatis.cache.Cache;
+import cn.sliew.rtomde.platform.mybatis.cache.Cache;
 
 public class SizeConstraintCache implements Cache {
 

@@ -1,19 +1,19 @@
 package cn.sliew.rtomde.platform.mybatis.cache.decorators;
 
-import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
+import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.common.log.LoggerFactory;
+import cn.sliew.rtomde.platform.mybatis.cache.Cache;
 
 public class LoggingCache implements Cache {
 
-    private final Log log;
+    private final Logger log;
     private final Cache delegate;
     protected int requests = 0;
     protected int hits = 0;
 
     public LoggingCache(Cache delegate) {
         this.delegate = delegate;
-        this.log = LogFactory.getLog(getId());
+        this.log = LoggerFactory.getLogger(getId());
     }
 
     @Override

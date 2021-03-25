@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.cache.impl;
 
-import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.cache.CacheException;
+import cn.sliew.rtomde.platform.mybatis.cache.Cache;
+import cn.sliew.rtomde.platform.mybatis.cache.CacheException;
 
 import java.util.HashMap;
 import java.util.Map;
