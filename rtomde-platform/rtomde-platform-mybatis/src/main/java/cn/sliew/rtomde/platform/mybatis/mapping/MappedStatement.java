@@ -1,10 +1,13 @@
 package cn.sliew.rtomde.platform.mybatis.mapping;
 
-import org.apache.ibatis.cache.Cache;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.scripting.LanguageDriver;
-import org.apache.ibatis.session.Configuration;
+import cn.sliew.milky.cache.lettuce.LettuceCacheFactory;
+import cn.sliew.milky.cache.lettuce.LettuceCacheOptions;
+import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.common.log.LoggerFactory;
+import cn.sliew.rtomde.platform.mybatis.cache.Cache;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisCacheOptions;
+import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
+import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 
 import java.util.List;
 
@@ -20,10 +23,10 @@ public final class MappedStatement {
     private final Integer timeout;
 
     private final Cache cache;
-    private final Log statementLog;
+    private final Logger statementLog;
     private final LanguageDriver lang;
 
-    private MappedStatement(String resource, Configuration configuration, String id, String dataSourceId, ParameterMap parameterMap, ResultMap resultMap, SqlSource sqlSource, Integer timeout, Cache cache, Log statementLog, LanguageDriver lang) {
+    private MappedStatement(String resource, Configuration configuration, String id, String dataSourceId, ParameterMap parameterMap, ResultMap resultMap, SqlSource sqlSource, Integer timeout, Cache cache, Logger statementLog, LanguageDriver lang) {
         this.resource = resource;
         this.configuration = configuration;
         this.id = id;
@@ -51,8 +54,8 @@ public final class MappedStatement {
         private SqlSource sqlSource;
         private Integer timeout;
 
-        private Cache cache;
-        private Log statementLog;
+        private String cacheRef;
+        private Logger statementLog;
         private LanguageDriver lang;
 
         private Builder(Configuration configuration) {
@@ -94,8 +97,8 @@ public final class MappedStatement {
             return this;
         }
 
-        public Builder cache(Cache cache) {
-            this.cache = cache;
+        public Builder cacheRef(String cacheRef) {
+            this.cacheRef = cacheRef;
             return this;
         }
 
@@ -109,11 +112,17 @@ public final class MappedStatement {
             if (configuration.getLogPrefix() != null) {
                 logId = configuration.getLogPrefix() + id;
             }
-            this.statementLog = LogFactory.getLog(logId);
+            this.statementLog = LoggerFactory.getLogger(logId);
             if (this.lang == null) {
                 this.lang = configuration.getDefaultScriptingLanguageInstance();
             }
-            return new MappedStatement(resource, configuration, id, dataSourceId, parameterMap, resultMap, sqlSource, timeout, cache, statementLog, lang);
+            Environment environment = configuration.getEnvironment();
+            MybatisCacheOptions cacheOptions = environment.getCacheOptionsById(cacheRef);
+            // fixme 创建Cache对象
+            LettuceCacheFactory factory = new LettuceCacheFactory();
+            LettuceCacheOptions lettuceCacheOptions = new LettuceCacheOptions();
+
+            return new MappedStatement(resource, configuration, id, dataSourceId, parameterMap, resultMap, sqlSource, timeout, cacheRef, statementLog, lang);
         }
     }
 
@@ -153,7 +162,7 @@ public final class MappedStatement {
         return cache;
     }
 
-    public Log getStatementLog() {
+    public Logger getStatementLog() {
         return statementLog;
     }
 

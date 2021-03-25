@@ -1,9 +1,16 @@
 package cn.sliew.rtomde.platform.mybatis.builder;
 
+import cn.sliew.rtomde.platform.mybatis.cache.CacheType;
+import cn.sliew.rtomde.platform.mybatis.config.LettuceOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisCacheOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
-import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
+import cn.sliew.rtomde.platform.mybatis.mapping.*;
+import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
+import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -12,8 +19,6 @@ public class MapperBuilderAssistant extends BaseBuilder {
 
     private String currentNamespace;
     private final String resource;
-    private Cache currentCache;
-    private boolean unresolvedCacheRef;
 
     public MapperBuilderAssistant(Configuration configuration, String resource) {
         super(configuration);
@@ -57,40 +62,26 @@ public class MapperBuilderAssistant extends BaseBuilder {
         return currentNamespace + "." + base;
     }
 
-    public Cache useCacheRef(String refid) {
-        if (refid == null) {
-            throw new BuilderException("cache-ref element requires a refid attribute.");
-        }
-        try {
-            unresolvedCacheRef = true;
-            Cache cache = configuration.getCache(refid);
-            if (cache == null) {
-                throw new IncompleteElementException("No cache for refid '" + refid + "' could be found.");
-            }
-            currentCache = cache;
-            unresolvedCacheRef = false;
-            return cache;
-        } catch (IllegalArgumentException e) {
-            throw new IncompleteElementException("No cache for refid '" + refid + "' could be found.", e);
-        }
-    }
-
-    /**
-     * fixme 处理缓存的处理
-     */
-    public Cache useNewCache(String id, String type, String cacheRefId, Long expire, Long size, Properties props) {
+    public MybatisCacheOptions addCache(String id, String type, String cacheRefId, Long expire, Long size, Properties props) {
         id = applyCurrentNamespace(id, false);
-        Cache cache = CacheBuilder.builder(configuration)
-                .id(id)
-                .type(type)
-                .refId(cacheRefId)
-                .expire(expire)
-                .size(size)
-                .properties(props)
-                .build();
-        configuration.addCache(cache);
-        currentCache = cache;
-        return cache;
+        Environment environment = configuration.getEnvironment();
+
+        MybatisCacheOptions options = new MybatisCacheOptions();
+        options.setId(id);
+        if (CacheType.LETTUCE.getName().equals(type)) {
+            LettuceOptions lettuce = environment.getLettuceOptionsById(cacheRefId);
+            if (lettuce == null) {
+                throw new BuilderException("No lettuce cache for refid '" + cacheRefId + "' could be found.");
+            }
+            options.setLettuce(lettuce);
+        } else {
+            throw new BuilderException("Only suppoert lettuce cache, wrong cache type: " + type);
+        }
+        options.setExpire(Duration.ofSeconds(expire));
+        options.setSize(size);
+        options.setProperties(props);
+        environment.registerCacheOptions(options);
+        return options;
     }
 
     public ParameterMap addParameterMap(String id, String type, List<ParameterMapping> parameterMappings) {
@@ -145,10 +136,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
                 .build();
     }
 
-    public MappedStatement addMappedStatement(String id, String dataSourceId, String parameterMap, String resultMap, SqlSource sqlSource, Integer timeout, LanguageDriver lang) {
-        if (unresolvedCacheRef) {
-            throw new IncompleteElementException("Cache-ref not yet resolved");
-        }
+    public MappedStatement addMappedStatement(String id, String dataSourceId, String parameterMap, String resultMap, SqlSource sqlSource, Integer timeout, LanguageDriver lang, String cacheRef) {
         id = applyCurrentNamespace(id, false);
         ParameterMap statementParameterMap = getStatementParameterMap(parameterMap);
         ResultMap statementResultMap = getStatementResultMap(resultMap);
@@ -160,7 +148,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
                 .resultMap(statementResultMap)
                 .sqlSource(sqlSource)
                 .timeout(timeout)
-                .cache(currentCache)
+                .cacheRef(cacheRef)
                 .lang(lang)
                 .build();
         configuration.addMappedStatement(statement);

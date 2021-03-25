@@ -1,11 +1,16 @@
 package cn.sliew.rtomde.platform.mybatis.builder.xml;
 
-import cn.sliew.rtomde.platform.mybatis.builder.BaseBuilder;
-import cn.sliew.rtomde.platform.mybatis.builder.BuilderException;
-import cn.sliew.rtomde.platform.mybatis.builder.MapperBuilderAssistant;
+import cn.sliew.rtomde.platform.mybatis.builder.*;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisCacheOptions;
+import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
+import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
+import cn.sliew.rtomde.platform.mybatis.mapping.ResultMap;
+import cn.sliew.rtomde.platform.mybatis.mapping.ResultMapping;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.parsing.XPathParser;
 import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
+import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
 
 import java.io.InputStream;
 import java.util.*;
@@ -30,6 +35,10 @@ public class XMLMapperBuilder extends BaseBuilder {
         this.resource = resource;
     }
 
+    /**
+     * 因为在application层配置lettuce连接信息，在mapper层配置缓存配置信息，
+     * select在引用的时候会生成一个新的缓存对象，所以缓存配置也是可以支持跨域支持的。
+     */
     public void parse() {
         if (!configuration.isResourceLoaded(resource)) {
             mapperElement(parser.evalNode("/mapper"));
@@ -55,7 +64,6 @@ public class XMLMapperBuilder extends BaseBuilder {
                 throw new BuilderException("Mapper's application '" + application + "' cannot match Config's application '" + configuration.getApplication() + "'");
             }
             builderAssistant.setCurrentNamespace(namespace);
-//            cacheRefElement(context.evalNode("cache-ref"));
             cacheElement(context.evalNode("cache"));
             parameterMapElement(context.evalNodes("/mapper/parameterMap"));
             resultMapElements(context.evalNodes("/mapper/resultMap"));
@@ -107,18 +115,9 @@ public class XMLMapperBuilder extends BaseBuilder {
         }
     }
 
-    private void cacheRefElement(XNode context) {
-        if (context != null) {
-            configuration.addCacheRef(builderAssistant.getCurrentNamespace(), context.getStringAttribute("id"));
-            CacheRefResolver cacheRefResolver = new CacheRefResolver(builderAssistant, context.getStringAttribute("id"));
-            try {
-                cacheRefResolver.resolveCacheRef();
-            } catch (IncompleteElementException e) {
-                configuration.addIncompleteCacheRef(cacheRefResolver);
-            }
-        }
-    }
-
+    /**
+     * 需要在 {@link Configuration} 中记录当前使用的 {@link MybatisCacheOptions}
+     */
     private void cacheElement(XNode context) {
         if (context != null) {
             String id = context.getStringAttribute("id");
@@ -127,7 +126,7 @@ public class XMLMapperBuilder extends BaseBuilder {
             Long expire = context.getLongAttribute("expire", 30000L);
             Long size = context.getLongAttribute("size", 30000L);
             Properties props = context.getChildrenAsProperties();
-            builderAssistant.useNewCache(id, type, refId, expire, size, props);
+            builderAssistant.addCache(id, type, refId, expire, size, props);
         }
     }
 
@@ -181,6 +180,7 @@ public class XMLMapperBuilder extends BaseBuilder {
             ResultMapping resultMapping = builderAssistant.buildResultMapping(property, javaTypeClass, column, jdbcTypeEnum, typeHandlerClass);
             resultMappings.add(resultMapping);
         }
+        // 解析失败后记录解析上下文，稍后继续解析。
         ResultMapResolver resultMapResolver = new ResultMapResolver(builderAssistant, id, type, extend, resultMappings, autoMapping);
         try {
             return resultMapResolver.resolve();

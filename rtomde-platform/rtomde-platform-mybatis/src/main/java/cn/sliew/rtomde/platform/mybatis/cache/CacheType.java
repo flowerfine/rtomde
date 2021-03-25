@@ -28,4 +28,8 @@ public enum CacheType {
         }
         throw new IllegalStateException(String.format("unknown cache type: [%s]", name));
     }
+
+    public String getName() {
+        return name;
+    }
 }

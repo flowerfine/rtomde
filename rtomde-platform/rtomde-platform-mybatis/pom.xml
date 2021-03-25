@@ -13,6 +13,10 @@
     <dependencies>
         <dependency>
             <groupId>cn.sliew</groupId>
+            <artifactId>rtomde-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cn.sliew</groupId>
             <artifactId>rtomde-config</artifactId>
         </dependency>
 
@@ -20,6 +24,13 @@
             <groupId>cn.sliew</groupId>
             <artifactId>milky-cache-lettuce</artifactId>
             <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ognl</groupId>
+            <artifactId>ognl</artifactId>
+            <version>3.2.15</version>
+            <scope>compile</scope>
         </dependency>
 
         <dependency>

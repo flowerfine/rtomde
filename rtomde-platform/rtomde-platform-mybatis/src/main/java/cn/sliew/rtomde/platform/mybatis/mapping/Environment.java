@@ -2,6 +2,7 @@ package cn.sliew.rtomde.platform.mybatis.mapping;
 
 import cn.sliew.rtomde.platform.mybatis.config.DatasourceOptions;
 import cn.sliew.rtomde.platform.mybatis.config.LettuceOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisCacheOptions;
 
 import javax.sql.DataSource;
 import java.util.Collections;
@@ -18,6 +19,7 @@ public final class Environment {
 
     private final ConcurrentMap<String, DatasourceOptions> datasourceOptionsRegistry = new ConcurrentHashMap<>(2);
     private final ConcurrentMap<String, LettuceOptions> lettuceOptionsRegistry = new ConcurrentHashMap<>(2);
+    private final ConcurrentMap<String, MybatisCacheOptions> cacheOptionsRegistry = new ConcurrentHashMap<>(2);
 
     private Environment(String id, Map<String, DatasourceOptions> dataSources, Map<String, LettuceOptions> lettuces) {
         if (id == null) {
@@ -72,6 +74,18 @@ public final class Environment {
         return this.dataSourceRegistry.get(id);
     }
 
+    public LettuceOptions getLettuceOptionsById(String id) {
+        return lettuceOptionsRegistry.get(id);
+    }
+
+    public void registerCacheOptions(MybatisCacheOptions options) {
+        cacheOptionsRegistry.put(options.getId(), options);
+    }
+
+    public MybatisCacheOptions getCacheOptionsById(String id) {
+        return cacheOptionsRegistry.get(id);
+    }
+
     public Map<String, DataSource> getDataSources() {
         return Collections.unmodifiableMap(dataSourceRegistry);
     }
@@ -79,7 +93,6 @@ public final class Environment {
     public Map<String, DatasourceOptions> getDatasourceOptions() {
         return Collections.unmodifiableMap(datasourceOptionsRegistry);
     }
-
 
     public Map<String, LettuceOptions> getLettuceOptions() {
         return Collections.unmodifiableMap(lettuceOptionsRegistry);
