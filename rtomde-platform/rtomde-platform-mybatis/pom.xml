@@ -32,6 +32,11 @@
             <version>3.2.15</version>
             <scope>compile</scope>
         </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>3.3.0</version>
+        </dependency>
 
         <dependency>
             <groupId>com.typesafe</groupId>

@@ -1,5 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.scripting.xmltags;
 
+import cn.sliew.rtomde.platform.mybatis.builder.SqlSourceBuilder;
 import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
 import cn.sliew.rtomde.platform.mybatis.mapping.SqlSource;
 import cn.sliew.rtomde.platform.mybatis.session.Configuration;

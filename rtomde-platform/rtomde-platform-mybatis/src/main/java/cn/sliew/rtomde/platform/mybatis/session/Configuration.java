@@ -6,11 +6,13 @@ import cn.sliew.rtomde.platform.mybatis.builder.IncompleteElementException;
 import cn.sliew.rtomde.platform.mybatis.builder.ResultMapResolver;
 import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLStatementBuilder;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
+import cn.sliew.rtomde.platform.mybatis.executor.CachingExecutor;
+import cn.sliew.rtomde.platform.mybatis.executor.Executor;
+import cn.sliew.rtomde.platform.mybatis.executor.SimpleExecutor;
+import cn.sliew.rtomde.platform.mybatis.executor.parameter.ParameterHandler;
+import cn.sliew.rtomde.platform.mybatis.executor.statement.StatementHandler;
 import cn.sliew.rtomde.platform.mybatis.io.VFS;
-import cn.sliew.rtomde.platform.mybatis.mapping.Environment;
-import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
-import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMap;
-import cn.sliew.rtomde.platform.mybatis.mapping.ResultMap;
+import cn.sliew.rtomde.platform.mybatis.mapping.*;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.plugin.Interceptor;
 import cn.sliew.rtomde.platform.mybatis.plugin.InterceptorChain;
@@ -24,9 +26,7 @@ import cn.sliew.rtomde.platform.mybatis.reflection.wrapper.ObjectWrapperFactory;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriverRegistry;
 import cn.sliew.rtomde.platform.mybatis.scripting.xmltags.XMLLanguageDriver;
-import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
-import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
-import cn.sliew.rtomde.platform.mybatis.type.TypeHandlerRegistry;
+import cn.sliew.rtomde.platform.mybatis.type.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -57,7 +57,6 @@ public class Configuration {
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
     protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
     protected Integer defaultStatementTimeout;
-    protected ExecutorType defaultExecutorType = ExecutorType.SIMPLE;
     protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
     protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
@@ -352,14 +351,6 @@ public class Configuration {
         this.lazyLoadTriggerMethods = lazyLoadTriggerMethods;
     }
 
-    public ExecutorType getDefaultExecutorType() {
-        return defaultExecutorType;
-    }
-
-    public void setDefaultExecutorType(ExecutorType defaultExecutorType) {
-        this.defaultExecutorType = defaultExecutorType;
-    }
-
     public Integer getDefaultStatementTimeout() {
         return defaultStatementTimeout;
     }
@@ -408,7 +399,7 @@ public class Configuration {
 
     /**
      * Set a default {@link TypeHandler} class for {@link Enum}.
-     * A default {@link TypeHandler} is {@link org.apache.ibatis.type.EnumTypeHandler}.
+     * A default {@link TypeHandler} is {@link EnumTypeHandler}.
      *
      * @param typeHandler a type handler class for {@link Enum}
      * @since 3.4.5
@@ -515,18 +506,7 @@ public class Configuration {
     }
 
     public Executor newExecutor() {
-        return newExecutor(defaultExecutorType);
-    }
-
-    public Executor newExecutor(ExecutorType executorType) {
-        executorType = executorType == null ? defaultExecutorType : executorType;
-        executorType = executorType == null ? ExecutorType.SIMPLE : executorType;
-        Executor executor;
-        if (ExecutorType.REUSE == executorType) {
-            executor = new ReuseExecutor(this);
-        } else {
-            executor = new SimpleExecutor(this);
-        }
+        Executor executor = new SimpleExecutor(this);
         executor = new CachingExecutor(executor);
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
