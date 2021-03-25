@@ -19,6 +19,10 @@
             <groupId>cn.sliew</groupId>
             <artifactId>rtomde-config</artifactId>
         </dependency>
+        <dependency>
+            <groupId>cn.sliew</groupId>
+            <artifactId>rtomde-platform-engine</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>cn.sliew</groupId>

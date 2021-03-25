@@ -13,6 +13,17 @@
 
     <modules>
         <module>rtomde-platform-mybatis</module>
+        <module>rtomde-platform-engine</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>cn.sliew</groupId>
+                <artifactId>rtomde-platform-engine</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>
