@@ -1,11 +1,10 @@
 package cn.sliew.rtomde.platform.mybatis.reflection;
 
-import org.apache.ibatis.binding.MapperMethod.ParamMap;
-import org.apache.ibatis.mapping.ParameterMap;
-import org.apache.ibatis.mapping.ParameterMapping;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.RowBounds;
+import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMap;
+import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
+import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
+import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
 
 import java.util.*;
 
@@ -60,8 +59,7 @@ public class ParamNameResolver {
      * ...).
      * </p>
      *
-     * @param args
-     *          the args
+     * @param args the args
      * @return the named params
      */
     public Object getNamedParams(Object[] args) {
@@ -91,7 +89,7 @@ public class ParamNameResolver {
     /**
      * Wrap to a {@link ParamMap} if object is {@link Collection} or array.
      *
-     * @param object a parameter object
+     * @param object          a parameter object
      * @param actualParamName an actual parameter name
      *                        (If specify a name, set an object to {@link ParamMap} with specified name)
      * @return a {@link ParamMap}

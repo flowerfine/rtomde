@@ -1,10 +1,9 @@
 package cn.sliew.rtomde.platform.mybatis.driver;
 
-import cn.sliew.milky.cache.CacheFactory;
 import cn.sliew.milky.cache.lettuce.LettuceCacheFactory;
+import cn.sliew.milky.cache.ohc.OhcCacheFactory;
 import cn.sliew.milky.common.chain.ContextMap;
 import cn.sliew.milky.common.log.LoggerFactory;
-import cn.sliew.rtomde.platform.mybatis.cache.Cache;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.bulkhead.internal.InMemoryBulkheadRegistry;
@@ -30,6 +29,7 @@ public class MapperContext<K, V> extends ContextMap<K, V> {
     private final BulkheadRegistry bulkheadRegistry = new InMemoryBulkheadRegistry();
     private final RetryRegistry retryRegistry = new InMemoryRetryRegistry();
     private final LettuceCacheFactory lettuceCacheFactory = new LettuceCacheFactory();
+    private final OhcCacheFactory ohcCacheFactory = new OhcCacheFactory();
 
     public MapperContext(MappedStatement ms, MeterRegistry meterRegistry) {
         this.ms = ms;
@@ -83,4 +83,7 @@ public class MapperContext<K, V> extends ContextMap<K, V> {
         return lettuceCacheFactory;
     }
 
+    public OhcCacheFactory ohcCacheFactory() {
+        return ohcCacheFactory;
+    }
 }
