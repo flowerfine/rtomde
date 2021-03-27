@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.type;
 
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.io.Resources;
-import org.apache.ibatis.binding.MapperMethod;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -27,20 +27,12 @@ public final class TypeHandlerRegistry {
     private Class<? extends TypeHandler> defaultEnumTypeHandler = EnumTypeHandler.class;
 
     /**
-     * The default constructor.
-     */
-    public TypeHandlerRegistry() {
-        this(new Configuration());
-    }
-
-    /**
-     * The constructor that pass the MyBatis configuration.
+     * The constructor that pass the MyBatis platform options.
      *
-     * @param configuration a MyBatis configuration
-     * @since 3.5.4
+     * @param platform a MyBatis platform options
      */
-    public TypeHandlerRegistry(Configuration configuration) {
-        this.unknownTypeHandler = new UnknownTypeHandler(configuration);
+    public TypeHandlerRegistry(MybatisPlatformOptions platform) {
+        this.unknownTypeHandler = new UnknownTypeHandler(platform);
 
         register(Boolean.class, new BooleanTypeHandler());
         register(boolean.class, new BooleanTypeHandler());
