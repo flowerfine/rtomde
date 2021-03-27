@@ -1,15 +1,15 @@
 package cn.sliew.rtomde.platform.mybatis.builder.xml;
 
-import cn.sliew.rtomde.platform.mybatis.builder.BaseBuilder;
 import cn.sliew.rtomde.platform.mybatis.builder.BuilderException;
 import cn.sliew.rtomde.platform.mybatis.config.DatasourceOptions;
 import cn.sliew.rtomde.platform.mybatis.config.LettuceOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.io.Resources;
 import cn.sliew.rtomde.platform.mybatis.mapping.Environment;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.parsing.XPathParser;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 
 import java.io.InputStream;
 import java.io.Reader;
@@ -22,40 +22,42 @@ public class XMLApplicationBuilder extends BaseBuilder {
     private boolean parsed;
     private final XPathParser parser;
 
-    public XMLApplicationBuilder(Reader reader, Configuration configuration) {
-        this(new XPathParser(reader, true, configuration.getVariables(), new XMLMapperEntityResolver()), configuration);
+    public XMLApplicationBuilder(Reader reader, MybatisPlatformOptions platform) {
+        this(new XPathParser(reader, true, platform.getVariables(), new XMLMapperEntityResolver()), platform);
     }
 
-    public XMLApplicationBuilder(InputStream inputStream, Configuration configuration) {
-        this(new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()), configuration);
+    public XMLApplicationBuilder(InputStream inputStream, MybatisPlatformOptions platform) {
+        this(new XPathParser(inputStream, true, platform.getVariables(), new XMLMapperEntityResolver()), platform);
     }
 
-    private XMLApplicationBuilder(XPathParser parser, Configuration configuration) {
-        super(configuration);
+    private XMLApplicationBuilder(XPathParser parser, MybatisPlatformOptions platform) {
+        super(new MybatisApplicationOptions());
+        application.setPlatform(platform);
         ErrorContext.instance().resource("SQL Mapper Application Configuration");
         this.parsed = false;
         this.parser = parser;
     }
 
-    public Configuration parse() {
+    public MybatisApplicationOptions parse() {
         if (parsed) {
             throw new BuilderException("Each XMLConfigBuilder can only be used once.");
         }
         parsed = true;
-        parseConfiguration(parser.evalNode("/application"));
-        return configuration;
+        parseApplication(parser.evalNode("/application"));
+        return application;
     }
 
     /**
      * fixme 远程读取mapper文件
      */
-    private void parseConfiguration(XNode root) {
+    private void parseApplication(XNode root) {
         try {
             String application = root.getStringAttribute("name");
             if (application == null || application.trim().length() == 0) {
                 throw new BuilderException("Error parsing SQL Mapper Application Configuration. Must provide application name!");
             }
-            configuration.setApplication(application);
+            this.application.setId(application);
+            this.application.setName(application);
 
             propertiesElement(root.evalNode("properties"));
             typeAliasesElement(root.evalNode("typeAliases"));
@@ -79,12 +81,12 @@ public class XMLApplicationBuilder extends BaseBuilder {
             } else if (url != null) {
                 defaults.putAll(Resources.getUrlAsProperties(url));
             }
-            Properties vars = configuration.getVariables();
-            if (vars != null) {
-                defaults.putAll(vars);
+            Properties props = application.getProps();
+            if (props != null) {
+                defaults.putAll(props);
             }
             parser.setVariables(defaults);
-            configuration.setVariables(defaults);
+            application.setProps(defaults);
         }
     }
 

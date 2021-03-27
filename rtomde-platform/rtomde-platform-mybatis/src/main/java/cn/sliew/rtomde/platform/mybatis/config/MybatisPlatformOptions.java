@@ -28,10 +28,7 @@ import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
 import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandlerRegistry;
 
-import javax.sql.DataSource;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 /**
  * todo 更换log实现
@@ -42,43 +39,24 @@ public class MybatisPlatformOptions extends PlatformOptions {
 
     private final String environment;
 
-    protected Properties variables = new Properties();
-
-    protected Class<? extends VFS> vfsImpl;
-
     private Map<String, String> settings;
 
-    private final TypeHandlerRegistry typeHandlerRegistry;
-
-    private final TypeAliasRegistry typeAliasRegistry;
-
-    private final ObjectFactory objectFactory = new DefaultObjectFactory();
-
-    private final ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
-
-    private final ReflectorFactory reflectorFactory;
-
-    protected final InterceptorChain interceptorChain = new InterceptorChain();
-
-    protected ProxyFactory proxyFactory = new JavassistProxyFactory();
-
-    protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
-
-    /**
-     * dataSourceId -> DataSource
-     */
-    private final ConcurrentMap<String, DataSource> dataSourceRegistry = new ConcurrentHashMap<>(2);
-    private final ConcurrentMap<String, DatasourceOptions> datasourceOptionsRegistry = new ConcurrentHashMap<>(2);
-    private final ConcurrentMap<String, LettuceOptions> lettuceOptionsRegistry = new ConcurrentHashMap<>(2);
-    private final ConcurrentMap<String, MybatisCacheOptions> cacheOptionsRegistry = new ConcurrentHashMap<>(2);
-
+    protected boolean safeRowBoundsEnabled;
+    protected boolean safeResultHandlerEnabled = true;
+    protected boolean aggressiveLazyLoading;
+    protected boolean multipleResultSetsEnabled = true;
     protected boolean useColumnLabel = true;
+    protected boolean callSettersOnNulls;
+    protected boolean useActualParamName = true;
+    protected boolean returnInstanceForEmptyRow;
+    protected boolean shrinkWhitespacesInSql;
 
     protected String logPrefix;
     protected Class<? extends Logger> logImpl = Slf4JLogger.class;
     protected Class<? extends VFS> vfsImpl;
-
+    protected Class<?> defaultSqlProviderType;
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
+    protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
     protected Integer defaultStatementTimeout;
     protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
     protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
@@ -90,6 +68,14 @@ public class MybatisPlatformOptions extends PlatformOptions {
 
     protected boolean lazyLoadingEnabled = false;
     protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
+
+    /**
+     * Configuration factory class.
+     * Used to create Configuration for loading deserialized unread properties.
+     *
+     * @see <a href='https://github.com/mybatis/old-google-code-issues/issues/300'>Issue 300 (google code)</a>
+     */
+    protected Class<?> configurationFactory;
 
     protected final InterceptorChain interceptorChain = new InterceptorChain();
     protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
@@ -108,11 +94,8 @@ public class MybatisPlatformOptions extends PlatformOptions {
     protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
 
 
-    public MybatisPlatformOptions(TypeHandlerRegistry typeHandlerRegistry, TypeAliasRegistry typeAliasRegistry, ReflectorFactory reflectorFactory, Properties props) {
+    public MybatisPlatformOptions(Properties props) {
         this.environment = System.getenv("ENV");
-        this.typeHandlerRegistry = typeHandlerRegistry;
-        this.typeAliasRegistry = typeAliasRegistry;
-        this.reflectorFactory = reflectorFactory;
         this.variables = props;
     }
 

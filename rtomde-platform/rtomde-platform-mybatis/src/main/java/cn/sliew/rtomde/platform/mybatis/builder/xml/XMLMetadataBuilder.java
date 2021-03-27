@@ -8,7 +8,6 @@ import cn.sliew.rtomde.platform.mybatis.io.VFS;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.parsing.XPathParser;
 import cn.sliew.rtomde.platform.mybatis.plugin.Interceptor;
-import cn.sliew.rtomde.platform.mybatis.reflection.DefaultReflectorFactory;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaClass;
 import cn.sliew.rtomde.platform.mybatis.reflection.ReflectorFactory;
 import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
@@ -49,10 +48,10 @@ public class XMLMetadataBuilder {
         ErrorContext.instance().resource("Mybatis Platform Options");
         this.parsed = false;
         this.parser = parser;
-        this.typeAliasRegistry = new TypeAliasRegistry();
-        this.typeHandlerRegistry = new TypeHandlerRegistry();
-        this.reflectorFactory = new DefaultReflectorFactory();
-        this.platform = new MybatisPlatformOptions(typeHandlerRegistry, typeAliasRegistry, reflectorFactory, props);
+        this.platform = new MybatisPlatformOptions(props);
+        this.typeAliasRegistry = platform.getTypeAliasRegistry();
+        this.typeHandlerRegistry = platform.getTypeHandlerRegistry();
+        this.reflectorFactory = platform.getReflectorFactory();
     }
 
     public MybatisPlatformOptions parse() {

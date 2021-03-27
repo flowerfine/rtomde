@@ -4,10 +4,7 @@ import cn.sliew.rtomde.config.ApplicationOptions;
 import cn.sliew.rtomde.config.ConfigOptions;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 后面直接接配置中心apollo后就不需要在自定义数据源的配置，
@@ -28,6 +25,12 @@ public class MybatisApplicationOptions extends ApplicationOptions {
      */
     private LettuceOptions lettuce;
 
+    /**
+     * application properties
+     */
+    protected Properties props = new Properties();
+
+
     protected final Map<String, XNode> sqlFragments = new HashMap<>();
     protected final Set<String> loadedResources = new HashSet<>();
 
@@ -46,6 +49,14 @@ public class MybatisApplicationOptions extends ApplicationOptions {
 
     public void setLettuce(LettuceOptions lettuce) {
         this.lettuce = lettuce;
+    }
+
+    public Properties getProps() {
+        return props;
+    }
+
+    public void setProps(Properties props) {
+        this.props = props;
     }
 
     public Map<String, XNode> getSqlFragments() {
