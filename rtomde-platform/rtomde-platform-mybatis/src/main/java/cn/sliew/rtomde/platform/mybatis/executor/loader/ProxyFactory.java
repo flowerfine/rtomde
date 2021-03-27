@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.executor.loader;
 
-import org.apache.ibatis.reflection.factory.ObjectFactory;
-import org.apache.ibatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
+import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 
 import java.util.List;
 import java.util.Properties;

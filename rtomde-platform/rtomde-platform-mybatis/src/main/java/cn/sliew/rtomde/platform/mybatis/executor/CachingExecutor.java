@@ -1,11 +1,11 @@
 package cn.sliew.rtomde.platform.mybatis.executor;
 
-import org.apache.ibatis.cache.CacheKey;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.RowBounds;
+import cn.sliew.rtomde.platform.mybatis.cache.CacheKey;
+import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
+import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
+import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
+import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
+import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;

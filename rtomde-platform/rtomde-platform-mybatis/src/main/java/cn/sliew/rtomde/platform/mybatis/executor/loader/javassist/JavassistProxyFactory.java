@@ -1,28 +1,28 @@
 package cn.sliew.rtomde.platform.mybatis.executor.loader.javassist;
 
+import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.common.log.LoggerFactory;
+import cn.sliew.rtomde.platform.mybatis.executor.ExecutorException;
+import cn.sliew.rtomde.platform.mybatis.executor.loader.AbstractEnhancedDeserializationProxy;
+import cn.sliew.rtomde.platform.mybatis.executor.loader.AbstractSerialStateHolder;
+import cn.sliew.rtomde.platform.mybatis.executor.loader.ResultLoaderMap;
+import cn.sliew.rtomde.platform.mybatis.executor.loader.WriteReplaceInterface;
+import cn.sliew.rtomde.platform.mybatis.io.Resources;
+import cn.sliew.rtomde.platform.mybatis.reflection.ExceptionUtil;
+import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
+import cn.sliew.rtomde.platform.mybatis.reflection.property.PropertyCopier;
+import cn.sliew.rtomde.platform.mybatis.reflection.property.PropertyNamer;
+import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
-import org.apache.ibatis.executor.ExecutorException;
-import org.apache.ibatis.executor.loader.AbstractEnhancedDeserializationProxy;
-import org.apache.ibatis.executor.loader.AbstractSerialStateHolder;
-import org.apache.ibatis.executor.loader.ResultLoaderMap;
-import org.apache.ibatis.executor.loader.WriteReplaceInterface;
-import org.apache.ibatis.io.Resources;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.reflection.ExceptionUtil;
-import org.apache.ibatis.reflection.factory.ObjectFactory;
-import org.apache.ibatis.reflection.property.PropertyCopier;
-import org.apache.ibatis.reflection.property.PropertyNamer;
-import org.apache.ibatis.session.Configuration;
 
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class JavassistProxyFactory implements org.apache.ibatis.executor.loader.ProxyFactory {
+public class JavassistProxyFactory implements cn.sliew.rtomde.platform.mybatis.executor.loader.ProxyFactory {
 
     private static final String FINALIZE_METHOD = "finalize";
     private static final String WRITE_REPLACE_METHOD = "writeReplace";
@@ -172,7 +172,7 @@ public class JavassistProxyFactory implements org.apache.ibatis.executor.loader.
     }
 
     private static class LogHolder {
-        private static final Log log = LogFactory.getLog(JavassistProxyFactory.class);
+        private static final Logger log = LoggerFactory.getLogger(JavassistProxyFactory.class);
     }
 
 }

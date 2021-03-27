@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.executor.loader;
 
-import org.apache.ibatis.io.SerialFilterChecker;
-import org.apache.ibatis.reflection.factory.ObjectFactory;
+import cn.sliew.rtomde.platform.mybatis.io.SerialFilterChecker;
+import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
 
 import java.io.*;
 import java.util.Arrays;

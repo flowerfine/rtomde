@@ -1,10 +1,10 @@
 package cn.sliew.rtomde.platform.mybatis.executor.loader;
 
-import org.apache.ibatis.executor.ExecutorException;
-import org.apache.ibatis.reflection.ExceptionUtil;
-import org.apache.ibatis.reflection.factory.ObjectFactory;
-import org.apache.ibatis.reflection.property.PropertyCopier;
-import org.apache.ibatis.reflection.property.PropertyNamer;
+import cn.sliew.rtomde.platform.mybatis.executor.ExecutorException;
+import cn.sliew.rtomde.platform.mybatis.reflection.ExceptionUtil;
+import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
+import cn.sliew.rtomde.platform.mybatis.reflection.property.PropertyCopier;
+import cn.sliew.rtomde.platform.mybatis.reflection.property.PropertyNamer;
 
 import java.lang.reflect.Method;
 import java.util.List;

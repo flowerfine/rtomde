@@ -1,6 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.executor.result;
 
-import org.apache.ibatis.session.ResultContext;
+import cn.sliew.rtomde.platform.mybatis.session.ResultContext;
 
 public class DefaultResultContext<T> implements ResultContext<T> {
 

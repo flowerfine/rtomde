@@ -1,17 +1,15 @@
 package cn.sliew.rtomde.platform.mybatis.executor.statement;
 
-import org.apache.ibatis.executor.ErrorContext;
-import org.apache.ibatis.executor.Executor;
-import org.apache.ibatis.executor.ExecutorException;
-import org.apache.ibatis.executor.parameter.ParameterHandler;
-import org.apache.ibatis.executor.resultset.ResultSetHandler;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.reflection.factory.ObjectFactory;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.RowBounds;
-import org.apache.ibatis.type.TypeHandlerRegistry;
+import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
+import cn.sliew.rtomde.platform.mybatis.executor.Executor;
+import cn.sliew.rtomde.platform.mybatis.executor.ExecutorException;
+import cn.sliew.rtomde.platform.mybatis.executor.parameter.ParameterHandler;
+import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
+import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
+import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
+import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
+import cn.sliew.rtomde.platform.mybatis.type.TypeHandlerRegistry;
 
 import java.sql.Connection;
 import java.sql.SQLException;

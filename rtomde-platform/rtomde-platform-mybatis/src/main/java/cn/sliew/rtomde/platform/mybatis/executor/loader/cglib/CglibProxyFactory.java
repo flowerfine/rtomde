@@ -2,15 +2,18 @@ package cn.sliew.rtomde.platform.mybatis.executor.loader.cglib;
 
 import cn.sliew.milky.common.log.Logger;
 import cn.sliew.milky.common.log.LoggerFactory;
-import cn.sliew.rtomde.platform.mybatis.executor.loader.ProxyFactory;
-import cn.sliew.rtomde.platform.mybatis.executor.loader.ResultLoaderMap;
-import cn.sliew.rtomde.platform.mybatis.executor.loader.WriteReplaceInterface;
+import cn.sliew.rtomde.platform.mybatis.executor.loader.*;
 import cn.sliew.rtomde.platform.mybatis.io.Resources;
+import cn.sliew.rtomde.platform.mybatis.reflection.ExceptionUtil;
 import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
+import cn.sliew.rtomde.platform.mybatis.reflection.property.PropertyCopier;
+import cn.sliew.rtomde.platform.mybatis.reflection.property.PropertyNamer;
 import cn.sliew.rtomde.platform.mybatis.session.Configuration;
-import org.springframework.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.Callback;
+import net.sf.cglib.proxy.Enhancer;
+import net.sf.cglib.proxy.MethodInterceptor;
+import net.sf.cglib.proxy.MethodProxy;
 
-import javax.security.auth.callback.Callback;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;

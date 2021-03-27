@@ -1,8 +1,8 @@
 package cn.sliew.rtomde.platform.mybatis.executor.loader.cglib;
 
-import org.apache.ibatis.executor.loader.AbstractSerialStateHolder;
-import org.apache.ibatis.executor.loader.ResultLoaderMap;
-import org.apache.ibatis.reflection.factory.ObjectFactory;
+import cn.sliew.rtomde.platform.mybatis.executor.loader.AbstractSerialStateHolder;
+import cn.sliew.rtomde.platform.mybatis.executor.loader.ResultLoaderMap;
+import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
 
 import java.util.List;
 import java.util.Map;

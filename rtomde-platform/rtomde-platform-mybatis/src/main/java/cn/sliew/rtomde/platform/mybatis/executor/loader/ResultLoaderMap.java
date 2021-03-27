@@ -1,15 +1,15 @@
 package cn.sliew.rtomde.platform.mybatis.executor.loader;
 
-import org.apache.ibatis.executor.BaseExecutor;
-import org.apache.ibatis.executor.ExecutorException;
-import org.apache.ibatis.logging.Log;
-import org.apache.ibatis.logging.LogFactory;
-import org.apache.ibatis.mapping.BoundSql;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.reflection.MetaObject;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.RowBounds;
+import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.common.log.LoggerFactory;
+import cn.sliew.rtomde.platform.mybatis.executor.BaseExecutor;
+import cn.sliew.rtomde.platform.mybatis.executor.ExecutorException;
+import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
+import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
+import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
+import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
+import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
@@ -101,7 +101,7 @@ public class ResultLoaderMap {
         /**
          * Wow, logger.
          */
-        private transient Log log;
+        private transient Logger log;
         /**
          * Factory class through which we get database connection.
          */
@@ -135,7 +135,7 @@ public class ResultLoaderMap {
 
                     this.configurationFactory = resultLoader.configuration.getConfigurationFactory();
                 } else {
-                    Log log = this.getLogger();
+                    Logger log = this.getLogger();
                     if (log.isDebugEnabled()) {
                         log.debug("Property [" + this.property + "] of ["
                                 + metaResultObject.getOriginalObject().getClass() + "] cannot be loaded "
@@ -246,9 +246,9 @@ public class ResultLoaderMap {
             return Configuration.class.cast(configurationObject);
         }
 
-        private Log getLogger() {
+        private Logger getLogger() {
             if (this.log == null) {
-                this.log = LogFactory.getLog(this.getClass());
+                this.log = LoggerFactory.getLogger(this.getClass());
             }
             return this.log;
         }
