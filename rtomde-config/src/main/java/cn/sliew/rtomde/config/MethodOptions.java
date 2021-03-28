@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * 1. TimeLimiter
  * 2. RateLimiter
- * 3. Retryer
+ * 3. Retry
  * 4. Circuitbreaker
  * 5. Cache
  * 6. id, interface, arguments, results
