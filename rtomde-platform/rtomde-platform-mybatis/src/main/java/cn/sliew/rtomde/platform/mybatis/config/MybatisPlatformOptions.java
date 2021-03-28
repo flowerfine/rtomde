@@ -1,18 +1,11 @@
 package cn.sliew.rtomde.platform.mybatis.config;
 
-import cn.sliew.milky.cache.Cache;
 import cn.sliew.milky.common.log.Logger;
 import cn.sliew.milky.common.log.Slf4JLogger;
 import cn.sliew.rtomde.config.PlatformOptions;
-import cn.sliew.rtomde.platform.mybatis.builder.ResultMapResolver;
-import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLStatementBuilder;
 import cn.sliew.rtomde.platform.mybatis.executor.loader.ProxyFactory;
 import cn.sliew.rtomde.platform.mybatis.executor.loader.javassist.JavassistProxyFactory;
 import cn.sliew.rtomde.platform.mybatis.io.VFS;
-import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
-import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMap;
-import cn.sliew.rtomde.platform.mybatis.mapping.ResultMap;
-import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.plugin.Interceptor;
 import cn.sliew.rtomde.platform.mybatis.plugin.InterceptorChain;
 import cn.sliew.rtomde.platform.mybatis.reflection.DefaultReflectorFactory;
@@ -28,7 +21,10 @@ import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
 import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandlerRegistry;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * todo 更换log实现
@@ -38,8 +34,7 @@ public class MybatisPlatformOptions extends PlatformOptions {
     private static final long serialVersionUID = -2816717900936922789L;
 
     private final String environment;
-
-    private Map<String, String> settings;
+    private Properties settings;
 
     protected boolean safeRowBoundsEnabled;
     protected boolean safeResultHandlerEnabled = true;
@@ -57,7 +52,7 @@ public class MybatisPlatformOptions extends PlatformOptions {
     protected Class<?> defaultSqlProviderType;
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
     protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
-    protected Integer defaultStatementTimeout;
+
     protected AutoMappingBehavior autoMappingBehavior = AutoMappingBehavior.PARTIAL;
     protected AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior = AutoMappingUnknownColumnBehavior.NONE;
 
@@ -81,17 +76,6 @@ public class MybatisPlatformOptions extends PlatformOptions {
     protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
     protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
     protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
-
-    protected final Map<String, MappedStatement> mappedStatements = new HashMap<>();
-    protected final Map<String, Cache> caches = new HashMap<>();
-    protected final Map<String, ResultMap> resultMaps = new HashMap<>();
-    protected final Map<String, ParameterMap> parameterMaps = new HashMap<>();
-
-    protected final Set<String> loadedResources = new HashSet<>();
-    protected final Map<String, XNode> sqlFragments = new HashMap<>();
-
-    protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
-    protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
 
 
     public MybatisPlatformOptions(Properties props) {
@@ -124,10 +108,6 @@ public class MybatisPlatformOptions extends PlatformOptions {
 
     public Properties getVariables() {
         return variables;
-    }
-
-    public Map<String, String> getSettings() {
-        return settings;
     }
 
     public TypeHandlerRegistry getTypeHandlerRegistry() {
@@ -174,4 +154,11 @@ public class MybatisPlatformOptions extends PlatformOptions {
         this.useColumnLabel = useColumnLabel;
     }
 
+    public Properties getSettings() {
+        return settings;
+    }
+
+    public void setSettings(Properties settings) {
+        this.settings = settings;
+    }
 }

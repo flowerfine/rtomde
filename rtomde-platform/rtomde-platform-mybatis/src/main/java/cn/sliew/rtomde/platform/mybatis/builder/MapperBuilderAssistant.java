@@ -2,13 +2,14 @@ package cn.sliew.rtomde.platform.mybatis.builder;
 
 import cn.sliew.rtomde.platform.mybatis.cache.CacheType;
 import cn.sliew.rtomde.platform.mybatis.config.LettuceOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisCacheOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.mapping.*;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
+import cn.sliew.rtomde.platform.mybatis.builder.xml.BaseBuilder;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -20,8 +21,8 @@ public class MapperBuilderAssistant extends BaseBuilder {
     private String currentNamespace;
     private final String resource;
 
-    public MapperBuilderAssistant(Configuration configuration, String resource) {
-        super(configuration);
+    public MapperBuilderAssistant(MybatisApplicationOptions application, String resource) {
+        super(application);
         ErrorContext.instance().resource(resource);
         this.resource = resource;
     }

@@ -1,6 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.builder.xml;
 
 import cn.sliew.rtomde.platform.mybatis.builder.*;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisCacheOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
@@ -22,14 +23,14 @@ public class XMLMapperBuilder extends BaseBuilder {
     private final Map<String, XNode> sqlFragments;
     private final String resource;
 
-    public XMLMapperBuilder(InputStream inputStream, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
-        this(new XPathParser(inputStream, true, configuration.getVariables(), new XMLMapperEntityResolver()),
-                configuration, resource, sqlFragments);
+    public XMLMapperBuilder(InputStream inputStream, MybatisApplicationOptions application, String resource, Map<String, XNode> sqlFragments) {
+        this(new XPathParser(inputStream, true, application.getProps(), new XMLMapperEntityResolver()),
+                application, resource, sqlFragments);
     }
 
-    private XMLMapperBuilder(XPathParser parser, Configuration configuration, String resource, Map<String, XNode> sqlFragments) {
-        super(configuration);
-        this.builderAssistant = new MapperBuilderAssistant(configuration, resource);
+    private XMLMapperBuilder(XPathParser parser, MybatisApplicationOptions application, String resource, Map<String, XNode> sqlFragments) {
+        super(application);
+        this.builderAssistant = new MapperBuilderAssistant(application, resource);
         this.parser = parser;
         this.sqlFragments = sqlFragments;
         this.resource = resource;
@@ -40,9 +41,9 @@ public class XMLMapperBuilder extends BaseBuilder {
      * select在引用的时候会生成一个新的缓存对象，所以缓存配置也是可以支持跨域支持的。
      */
     public void parse() {
-        if (!configuration.isResourceLoaded(resource)) {
+        if (!application.isResourceLoaded(resource)) {
             mapperElement(parser.evalNode("/mapper"));
-            configuration.addLoadedResource(resource);
+            application.addLoadedResource(resource);
             bindMapperForNamespace();
         }
         parsePendingResultMaps();
@@ -60,7 +61,7 @@ public class XMLMapperBuilder extends BaseBuilder {
                 throw new BuilderException("Mapper's namespace cannot be empty");
             }
             String application = context.getStringAttribute("application");
-            if (!configuration.getApplication().equals(application)) {
+            if (!this.application.getId().equals(application)) {
                 throw new BuilderException("Mapper's application '" + application + "' cannot match Config's application '" + configuration.getApplication() + "'");
             }
             builderAssistant.setCurrentNamespace(namespace);

@@ -34,11 +34,6 @@ public class ApplicationOptions extends AbstractOptions {
     private String architecture;
 
     /**
-     * Environment, e.g. dev, test or production
-     */
-    private String environment;
-
-    /**
      * Directory for saving thread dump
      */
     private String dumpDirectory;
@@ -108,14 +103,6 @@ public class ApplicationOptions extends AbstractOptions {
 
     public void setArchitecture(String architecture) {
         this.architecture = architecture;
-    }
-
-    public String getEnvironment() {
-        return environment;
-    }
-
-    public void setEnvironment(String environment) {
-        this.environment = environment;
     }
 
     public String getDumpDirectory() {

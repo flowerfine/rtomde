@@ -7,13 +7,11 @@ import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.io.Resources;
-import cn.sliew.rtomde.platform.mybatis.mapping.Environment;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.parsing.XPathParser;
 
 import java.io.InputStream;
 import java.io.Reader;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Properties;
 
@@ -31,7 +29,7 @@ public class XMLApplicationBuilder extends BaseBuilder {
     }
 
     private XMLApplicationBuilder(XPathParser parser, MybatisPlatformOptions platform) {
-        super(new MybatisApplicationOptions());
+        super(new MybatisApplicationOptions(platform));
         application.setPlatform(platform);
         ErrorContext.instance().resource("SQL Mapper Application Configuration");
         this.parsed = false;
@@ -109,29 +107,28 @@ public class XMLApplicationBuilder extends BaseBuilder {
         }
     }
 
-    private void environmentsElement(XNode context) throws Exception {
+    private void environmentsElement(XNode context) {
         if (context != null) {
             for (XNode envNode : context.getChildren()) {
                 String envId = envNode.getStringAttribute("id");
-                if (!configuration.getPlatform().getEnvironment().equals(envId)) {
+                MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+                if (!platform.getEnvironment().equals(envId)) {
                     continue;
                 }
 
-                Environment.Builder envBuilder = Environment.builder().id(envId);
-                dataSourcesElement(envNode.evalNodes("hikaricp"), envBuilder);
-                lettucesElement(envNode.evalNodes("lettuce"), envBuilder);
-                configuration.setEnvironment(envBuilder.build());
+                dataSourcesElement(envNode.evalNodes("hikaricp"));
+                lettucesElement(envNode.evalNodes("lettuce"));
             }
         }
     }
 
-    private void dataSourcesElement(List<XNode> contexts, Environment.Builder envBuilder) throws Exception {
+    private void dataSourcesElement(List<XNode> contexts) {
         for (XNode context : contexts) {
-            dataSourceElement(context, envBuilder);
+            dataSourceElement(context);
         }
     }
 
-    private void dataSourceElement(XNode context, Environment.Builder envBuilder) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+    private void dataSourceElement(XNode context) {
         String id = context.getStringAttribute("id");
         XNode jdbcUrl = context.evalNode("jdbcUrl");
         XNode username = context.evalNode("username");
@@ -146,16 +143,16 @@ public class XMLApplicationBuilder extends BaseBuilder {
         datasource.setPassword(password.getStringBody());
         datasource.setDriverClassName(driverClassName.getStringBody());
         datasource.setProfileSQL(profileSQL.getBooleanBody());
-        envBuilder.datasource(id, datasource);
+        application.addDatasourceOptions(datasource);
     }
 
-    private void lettucesElement(List<XNode> contexts, Environment.Builder envBuilder) {
+    private void lettucesElement(List<XNode> contexts) {
         for (XNode context : contexts) {
-            lettuceElement(context, envBuilder);
+            lettuceElement(context);
         }
     }
 
-    private void lettuceElement(XNode context, Environment.Builder envBuilder) {
+    private void lettuceElement(XNode context) {
         String id = context.getStringAttribute("id");
         XNode redisURI = context.evalNode("redisURI");
         XNode clusterRedisURI = context.evalNode("clusterRedisURI");
@@ -168,7 +165,7 @@ public class XMLApplicationBuilder extends BaseBuilder {
         if (clusterRedisURI != null) {
             lettuce.setClusterRedisURI(clusterRedisURI.getStringBody());
         }
-        envBuilder.lettuce(id, lettuce);
+        application.addLettuceOptions(lettuce);
     }
 
     private void mapperElement(XNode parent) throws Exception {

@@ -21,8 +21,9 @@ public class BaseBuilder {
 
     public BaseBuilder(MybatisApplicationOptions application) {
         this.application = application;
+        this.typeAliasRegistry = application.getTypeAliasRegistry();
+
         MybatisPlatformOptions platform = (MybatisPlatformOptions) this.application.getPlatform();
-        this.typeAliasRegistry = platform.getTypeAliasRegistry();
         this.typeHandlerRegistry = platform.getTypeHandlerRegistry();
     }
 

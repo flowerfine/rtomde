@@ -5,7 +5,10 @@ import cn.sliew.rtomde.config.ConfigOptions;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
 
+import javax.sql.DataSource;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * 后面直接接配置中心apollo后就不需要在自定义数据源的配置，
@@ -36,13 +39,24 @@ public class MybatisApplicationOptions extends ApplicationOptions {
      */
     protected TypeAliasRegistry typeAliasRegistry;
 
+    /**
+     * dataSourceId -> DataSource
+     */
+    private final ConcurrentMap<String, DataSource> dataSourceRegistry = new ConcurrentHashMap<>(2);
+
+    private final ConcurrentMap<String, DatasourceOptions> datasourceOptionsRegistry = new ConcurrentHashMap<>(2);
+    private final ConcurrentMap<String, LettuceOptions> lettuceOptionsRegistry = new ConcurrentHashMap<>(2);
+    private final ConcurrentMap<String, MybatisCacheOptions> cacheOptionsRegistry = new ConcurrentHashMap<>(2);
+
+
 
     protected final Map<String, XNode> sqlFragments = new HashMap<>();
     protected final Set<String> loadedResources = new HashSet<>();
 
     public MybatisApplicationOptions(MybatisPlatformOptions platform) {
         this.platform = platform;
-        this.typeAliasRegistry = new TypeAliasRegistry(platform.typeAliasRegistry);
+        this.typeAliasRegistry = new TypeAliasRegistry(platform.getTypeAliasRegistry());
+        this.props.putAll(platform.getVariables());
     }
 
     public DatasourceOptions getDatasource() {
@@ -79,5 +93,21 @@ public class MybatisApplicationOptions extends ApplicationOptions {
 
     public boolean isResourceLoaded(String resource) {
         return loadedResources.contains(resource);
+    }
+
+    public TypeAliasRegistry getTypeAliasRegistry() {
+        return typeAliasRegistry;
+    }
+
+    public void setTypeAliasRegistry(TypeAliasRegistry typeAliasRegistry) {
+        this.typeAliasRegistry = typeAliasRegistry;
+    }
+
+    public void addDatasourceOptions(DatasourceOptions datasource) {
+        this.datasourceOptionsRegistry.put(datasource.getId(), datasource);
+    }
+
+    public void addLettuceOptions(LettuceOptions lettuce) {
+        this.lettuceOptionsRegistry.put(lettuce.getId(), lettuce);
     }
 }

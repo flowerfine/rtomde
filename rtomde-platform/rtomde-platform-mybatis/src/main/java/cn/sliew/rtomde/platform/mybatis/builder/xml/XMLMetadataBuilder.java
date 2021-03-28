@@ -69,6 +69,7 @@ public class XMLMetadataBuilder {
             platform.setName(name);
             propertiesElement(root.evalNode("properties"));
             Properties settings = settingsAsProperties(root.evalNode("settings"));
+            platform.setSettings(settings);
             loadCustomVfs(settings);
             typeAliasesElement(root.evalNode("typeAliases"));
             // fixme page。如何处理分页问题，交由业务来处理？？？
