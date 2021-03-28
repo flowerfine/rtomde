@@ -44,7 +44,6 @@ public class XMLMapperBuilder extends BaseBuilder {
         if (!application.isResourceLoaded(resource)) {
             mapperElement(parser.evalNode("/mapper"));
             application.addLoadedResource(resource);
-            bindMapperForNamespace();
         }
         parsePendingResultMaps();
         parsePendingStatements();
@@ -62,7 +61,7 @@ public class XMLMapperBuilder extends BaseBuilder {
             }
             String application = context.getStringAttribute("application");
             if (!this.application.getId().equals(application)) {
-                throw new BuilderException("Mapper's application '" + application + "' cannot match Config's application '" + configuration.getApplication() + "'");
+                throw new BuilderException("Mapper's application '" + application + "' cannot match Config's application '" + this.application.getId() + "'");
             }
             builderAssistant.setCurrentNamespace(namespace);
             cacheElement(context.evalNode("cache"));
@@ -77,17 +76,17 @@ public class XMLMapperBuilder extends BaseBuilder {
 
     private void buildStatementFromContext(List<XNode> list) {
         for (XNode context : list) {
-            final XMLStatementBuilder statementParser = new XMLStatementBuilder(configuration, builderAssistant, context);
+            final XMLStatementBuilder statementParser = new XMLStatementBuilder(application, builderAssistant, context);
             try {
                 statementParser.parseStatementNode();
             } catch (IncompleteElementException e) {
-                configuration.addIncompleteStatement(statementParser);
+                application.addIncompleteStatement(statementParser);
             }
         }
     }
 
     private void parsePendingResultMaps() {
-        Collection<ResultMapResolver> incompleteResultMaps = configuration.getIncompleteResultMaps();
+        Collection<ResultMapResolver> incompleteResultMaps = application.getIncompleteResultMaps();
         synchronized (incompleteResultMaps) {
             Iterator<ResultMapResolver> iter = incompleteResultMaps.iterator();
             while (iter.hasNext()) {
@@ -102,7 +101,7 @@ public class XMLMapperBuilder extends BaseBuilder {
     }
 
     private void parsePendingStatements() {
-        Collection<XMLStatementBuilder> incompleteStatements = configuration.getIncompleteStatements();
+        Collection<XMLStatementBuilder> incompleteStatements = application.getIncompleteStatements();
         synchronized (incompleteStatements) {
             Iterator<XMLStatementBuilder> iter = incompleteStatements.iterator();
             while (iter.hasNext()) {
@@ -186,7 +185,7 @@ public class XMLMapperBuilder extends BaseBuilder {
         try {
             return resultMapResolver.resolve();
         } catch (IncompleteElementException e) {
-            configuration.addIncompleteResultMap(resultMapResolver);
+            application.addIncompleteResultMap(resultMapResolver);
             throw e;
         }
     }
@@ -199,22 +198,4 @@ public class XMLMapperBuilder extends BaseBuilder {
         }
     }
 
-    private void bindMapperForNamespace() {
-//        String namespace = builderAssistant.getCurrentNamespace();
-//        if (namespace != null) {
-//            Class<?> boundType = null;
-//            try {
-//                boundType = Resources.classForName(namespace);
-//            } catch (ClassNotFoundException e) {
-//                // ignore, bound type is not required
-//            }
-//            if (boundType != null && !configuration.hasMapper(boundType)) {
-//                // Spring may not know the real resource name so we set a flag
-//                // to prevent loading again this resource from the mapper interface
-//                // look at MapperAnnotationBuilder#loadXmlResource
-//                configuration.addLoadedResource("namespace:" + namespace);
-//                configuration.addMapper(boundType);
-//            }
-//        }
-    }
 }

@@ -175,7 +175,7 @@ public class XMLApplicationBuilder extends BaseBuilder {
                 if (url != null) {
                     ErrorContext.instance().resource(url);
                     InputStream inputStream = Resources.getUrlAsStream(url);
-                    XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, configuration, url, configuration.getSqlFragments());
+                    XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, application, url, application.getSqlFragments());
                     mapperParser.parse();
                 } else {
                     throw new BuilderException("A mapper element may only specify a url, resource or class, but not more than one.");

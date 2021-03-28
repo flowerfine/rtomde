@@ -2,6 +2,8 @@ package cn.sliew.rtomde.platform.mybatis.config;
 
 import cn.sliew.rtomde.config.ApplicationOptions;
 import cn.sliew.rtomde.config.ConfigOptions;
+import cn.sliew.rtomde.platform.mybatis.builder.ResultMapResolver;
+import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLStatementBuilder;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
 
@@ -48,10 +50,11 @@ public class MybatisApplicationOptions extends ApplicationOptions {
     private final ConcurrentMap<String, LettuceOptions> lettuceOptionsRegistry = new ConcurrentHashMap<>(2);
     private final ConcurrentMap<String, MybatisCacheOptions> cacheOptionsRegistry = new ConcurrentHashMap<>(2);
 
-
-
     protected final Map<String, XNode> sqlFragments = new HashMap<>();
     protected final Set<String> loadedResources = new HashSet<>();
+
+    protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
+    protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
 
     public MybatisApplicationOptions(MybatisPlatformOptions platform) {
         this.platform = platform;
@@ -109,5 +112,21 @@ public class MybatisApplicationOptions extends ApplicationOptions {
 
     public void addLettuceOptions(LettuceOptions lettuce) {
         this.lettuceOptionsRegistry.put(lettuce.getId(), lettuce);
+    }
+
+    public Collection<XMLStatementBuilder> getIncompleteStatements() {
+        return incompleteStatements;
+    }
+
+    public void addIncompleteStatement(XMLStatementBuilder incompleteStatement) {
+        incompleteStatements.add(incompleteStatement);
+    }
+
+    public Collection<ResultMapResolver> getIncompleteResultMaps() {
+        return incompleteResultMaps;
+    }
+
+    public void addIncompleteResultMap(ResultMapResolver resultMapResolver) {
+        incompleteResultMaps.add(resultMapResolver);
     }
 }

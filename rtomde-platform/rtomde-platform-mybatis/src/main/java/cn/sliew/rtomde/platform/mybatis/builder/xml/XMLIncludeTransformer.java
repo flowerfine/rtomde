@@ -3,9 +3,9 @@ package cn.sliew.rtomde.platform.mybatis.builder.xml;
 import cn.sliew.rtomde.platform.mybatis.builder.BuilderException;
 import cn.sliew.rtomde.platform.mybatis.builder.IncompleteElementException;
 import cn.sliew.rtomde.platform.mybatis.builder.MapperBuilderAssistant;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.parsing.PropertyParser;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -17,17 +17,17 @@ import java.util.Properties;
 
 public class XMLIncludeTransformer {
 
-    private final Configuration configuration;
+    private final MybatisApplicationOptions application;
     private final MapperBuilderAssistant builderAssistant;
 
-    public XMLIncludeTransformer(Configuration configuration, MapperBuilderAssistant builderAssistant) {
-        this.configuration = configuration;
+    public XMLIncludeTransformer(MybatisApplicationOptions application, MapperBuilderAssistant builderAssistant) {
+        this.application = application;
         this.builderAssistant = builderAssistant;
     }
 
     public void applyIncludes(Node source) {
         Properties variablesContext = new Properties();
-        Properties configurationVariables = configuration.getVariables();
+        Properties configurationVariables = application.getProps();
         Optional.ofNullable(configurationVariables).ifPresent(variablesContext::putAll);
         applyIncludes(source, variablesContext, false);
     }
@@ -75,7 +75,7 @@ public class XMLIncludeTransformer {
         refid = PropertyParser.parse(refid, variables);
         refid = builderAssistant.applyCurrentNamespace(refid, true);
         try {
-            XNode nodeToInclude = configuration.getSqlFragments().get(refid);
+            XNode nodeToInclude = application.getSqlFragments().get(refid);
             return nodeToInclude.getNode().cloneNode(true);
         } catch (IllegalArgumentException e) {
             throw new IncompleteElementException("Could not find SQL statement to include with refid '" + refid + "'", e);
