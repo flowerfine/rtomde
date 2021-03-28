@@ -3,6 +3,7 @@ package cn.sliew.rtomde.platform.mybatis.config;
 import cn.sliew.rtomde.config.ApplicationOptions;
 import cn.sliew.rtomde.config.ConfigOptions;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
+import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
 
 import java.util.*;
 
@@ -30,10 +31,19 @@ public class MybatisApplicationOptions extends ApplicationOptions {
      */
     protected Properties props = new Properties();
 
+    /**
+     * 支持应用级的类型别名
+     */
+    protected TypeAliasRegistry typeAliasRegistry;
+
 
     protected final Map<String, XNode> sqlFragments = new HashMap<>();
     protected final Set<String> loadedResources = new HashSet<>();
 
+    public MybatisApplicationOptions(MybatisPlatformOptions platform) {
+        this.platform = platform;
+        this.typeAliasRegistry = new TypeAliasRegistry(platform.typeAliasRegistry);
+    }
 
     public DatasourceOptions getDatasource() {
         return datasource;

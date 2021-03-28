@@ -72,6 +72,10 @@ public class TypeAliasRegistry {
         registerAlias("ResultSet", ResultSet.class);
     }
 
+    public TypeAliasRegistry(TypeAliasRegistry parent) {
+        this.typeAliases.putAll(parent.getTypeAliases());
+    }
+
     public boolean hasAlias(String string) {
         try {
             return resolveAlias(string) != null;

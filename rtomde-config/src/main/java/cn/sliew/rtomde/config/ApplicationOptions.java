@@ -71,7 +71,7 @@ public class ApplicationOptions extends AbstractOptions {
     /**
      * platform
      */
-    private PlatformOptions platform;
+    protected PlatformOptions platform;
 
     /**
      * The config options
