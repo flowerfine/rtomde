@@ -1,6 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.builder;
 
-import cn.sliew.rtomde.config.PlatformOptions;
+import cn.sliew.rtomde.platform.mybatis.builder.xml.BaseBuilder;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
@@ -9,9 +9,7 @@ import cn.sliew.rtomde.platform.mybatis.parsing.GenericTokenParser;
 import cn.sliew.rtomde.platform.mybatis.parsing.TokenHandler;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaClass;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
-import cn.sliew.rtomde.platform.mybatis.builder.xml.BaseBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +25,11 @@ public class SqlSourceBuilder extends BaseBuilder {
     }
 
     public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
-        ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(configuration, parameterType, additionalParameters);
+        ParameterMappingTokenHandler handler = new ParameterMappingTokenHandler(application, parameterType, additionalParameters);
         GenericTokenParser parser = new GenericTokenParser("#{", "}", handler);
         String sql;
-        if (configuration.isShrinkWhitespacesInSql()) {
+        MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+        if (platform.isShrinkWhitespacesInSql()) {
             sql = parser.parse(removeExtraWhitespaces(originalSql));
         } else {
             sql = parser.parse(originalSql);
@@ -58,10 +57,11 @@ public class SqlSourceBuilder extends BaseBuilder {
         private Class<?> parameterType;
         private MetaObject metaParameters;
 
-        public ParameterMappingTokenHandler(Configuration configuration, Class<?> parameterType, Map<String, Object> additionalParameters) {
-            super(configuration);
+        public ParameterMappingTokenHandler(MybatisApplicationOptions application, Class<?> parameterType, Map<String, Object> additionalParameters) {
+            super(application);
             this.parameterType = parameterType;
-            this.metaParameters = configuration.newMetaObject(additionalParameters);
+            MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+            this.metaParameters = platform.newMetaObject(additionalParameters);
         }
 
         public List<ParameterMapping> getParameterMappings() {

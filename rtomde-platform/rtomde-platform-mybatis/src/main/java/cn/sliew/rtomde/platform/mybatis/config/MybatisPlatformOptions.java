@@ -162,4 +162,12 @@ public class MybatisPlatformOptions extends PlatformOptions {
     public MetaObject newMetaObject(Object object) {
         return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
     }
+
+    public boolean isShrinkWhitespacesInSql() {
+        return shrinkWhitespacesInSql;
+    }
+
+    public void setShrinkWhitespacesInSql(boolean shrinkWhitespacesInSql) {
+        this.shrinkWhitespacesInSql = shrinkWhitespacesInSql;
+    }
 }
