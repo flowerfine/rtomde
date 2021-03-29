@@ -5,13 +5,11 @@ import cn.sliew.rtomde.platform.mybatis.cache.CacheKey;
 import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
 import cn.sliew.rtomde.platform.mybatis.mapping.Environment;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
-import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
 import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
 import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
 import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
-import cn.sliew.rtomde.platform.mybatis.type.TypeHandlerRegistry;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -28,8 +26,6 @@ public abstract class BaseExecutor implements Executor {
     protected Executor wrapper;
 
     protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
-    protected PerpetualCache localCache;
-    protected PerpetualCache localOutputParameterCache;
     protected Configuration configuration;
 
     protected int queryStack;
@@ -37,8 +33,6 @@ public abstract class BaseExecutor implements Executor {
 
     protected BaseExecutor(Configuration configuration) {
         this.deferredLoads = new ConcurrentLinkedQueue<>();
-        this.localCache = new PerpetualCache("LocalCache");
-        this.localOutputParameterCache = new PerpetualCache("LocalOutputParameterCache");
         this.closed = false;
         this.configuration = configuration;
         this.environment = configuration.getDefaultEnv();
@@ -53,8 +47,6 @@ public abstract class BaseExecutor implements Executor {
     @Override
     public void close() {
         deferredLoads = null;
-        localCache = null;
-        localOutputParameterCache = null;
         closed = true;
     }
 
@@ -66,24 +58,20 @@ public abstract class BaseExecutor implements Executor {
     @Override
     public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler) throws SQLException {
         BoundSql boundSql = ms.getBoundSql(parameter);
-        CacheKey key = createCacheKey(ms, parameter, rowBounds, boundSql);
-        return query(ms, parameter, rowBounds, resultHandler, key, boundSql);
+        return query(ms, parameter, rowBounds, resultHandler, boundSql);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
+    public <E> List<E> query(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         ErrorContext.instance().resource(ms.getResource()).activity("executing a query").object(ms.getId());
         if (closed) {
             throw new ExecutorException("Executor was closed.");
         }
-        if (queryStack == 0) {
-            clearLocalCache();
-        }
         List<E> list;
         try {
             queryStack++;
-            list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, key, boundSql);
+            list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, boundSql);
         } finally {
             queryStack--;
         }
@@ -109,54 +97,6 @@ public abstract class BaseExecutor implements Executor {
         }
     }
 
-    @Override
-    public CacheKey createCacheKey(MappedStatement ms, Object parameterObject, RowBounds rowBounds, BoundSql boundSql) {
-        if (closed) {
-            throw new ExecutorException("Executor was closed.");
-        }
-        CacheKey cacheKey = new CacheKey();
-        cacheKey.update(ms.getId());
-        cacheKey.update(rowBounds.getOffset());
-        cacheKey.update(rowBounds.getLimit());
-        cacheKey.update(boundSql.getSql());
-        List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
-        TypeHandlerRegistry typeHandlerRegistry = ms.getConfiguration().getTypeHandlerRegistry();
-        // mimic DefaultParameterHandler logic
-        for (ParameterMapping parameterMapping : parameterMappings) {
-            Object value;
-            String propertyName = parameterMapping.getProperty();
-            if (boundSql.hasAdditionalParameter(propertyName)) {
-                value = boundSql.getAdditionalParameter(propertyName);
-            } else if (parameterObject == null) {
-                value = null;
-            } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
-                value = parameterObject;
-            } else {
-                MetaObject metaObject = configuration.newMetaObject(parameterObject);
-                value = metaObject.getValue(propertyName);
-            }
-            cacheKey.update(value);
-        }
-        if (configuration.getEnvironment(null) != null) {
-            // issue #176
-            cacheKey.update(configuration.getEnvironment(null).getId());
-        }
-        return cacheKey;
-    }
-
-    @Override
-    public boolean isCached(MappedStatement ms, CacheKey key) {
-        return localCache.getObject(key) != null;
-    }
-
-    @Override
-    public void clearLocalCache() {
-        if (!closed) {
-            localCache.clear();
-            localOutputParameterCache.clear();
-        }
-    }
-
     protected abstract <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)
             throws SQLException;
 
@@ -170,16 +110,8 @@ public abstract class BaseExecutor implements Executor {
         }
     }
 
-    private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, CacheKey key, BoundSql boundSql) throws SQLException {
-        List<E> list;
-        localCache.putObject(key, EXECUTION_PLACEHOLDER);
-        try {
-            list = doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
-        } finally {
-            localCache.removeObject(key);
-        }
-        localCache.putObject(key, list);
-        return list;
+    private <E> List<E> queryFromDatabase(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
+        return doQuery(ms, parameter, rowBounds, resultHandler, boundSql);
     }
 
     protected Connection getConnection(String dataSourceId, Logger statementLog) throws SQLException {
