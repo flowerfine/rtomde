@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.mapping;
 
 import cn.sliew.rtomde.common.bytecode.BeanGenerator;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
 
 import java.util.*;
@@ -24,12 +24,12 @@ public class ResultMap {
         this.autoMapping = autoMapping;
     }
 
-    public static Builder builder(Configuration configuration) {
-        return new Builder(configuration);
+    public static Builder builder(MybatisApplicationOptions application) {
+        return new Builder(application);
     }
 
     public static class Builder {
-        private Configuration configuration;
+        private MybatisApplicationOptions application;
 
         private String id;
         private String type;
@@ -38,8 +38,8 @@ public class ResultMap {
         private Set<String> mappedProperties;
         private Boolean autoMapping;
 
-        public Builder(Configuration configuration) {
-            this.configuration = configuration;
+        public Builder(MybatisApplicationOptions application) {
+            this.application = application;
         }
 
         public Builder id(String id) {
@@ -81,7 +81,7 @@ public class ResultMap {
             // lock down collections
             this.resultMappings = Collections.unmodifiableList(resultMappings);
             this.mappedColumns = Collections.unmodifiableSet(mappedColumns);
-            TypeAliasRegistry typeAliasRegistry = configuration.getTypeAliasRegistry();
+            TypeAliasRegistry typeAliasRegistry = application.getTypeAliasRegistry();
             if (!typeAliasRegistry.hasAlias(this.type)) {
                 try (BeanGenerator resultBeanG = BeanGenerator.newInstance(this.getClass().getClassLoader())) {
                     resultBeanG.className(this.type);

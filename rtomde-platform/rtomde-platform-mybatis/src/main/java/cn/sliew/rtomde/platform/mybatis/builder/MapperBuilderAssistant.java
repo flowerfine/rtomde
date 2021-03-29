@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.builder;
 
+import cn.sliew.rtomde.platform.mybatis.builder.xml.BaseBuilder;
 import cn.sliew.rtomde.platform.mybatis.cache.CacheType;
-import cn.sliew.rtomde.platform.mybatis.config.LettuceOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisCacheOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
@@ -9,7 +9,6 @@ import cn.sliew.rtomde.platform.mybatis.mapping.*;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
-import cn.sliew.rtomde.platform.mybatis.builder.xml.BaseBuilder;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -65,41 +64,39 @@ public class MapperBuilderAssistant extends BaseBuilder {
 
     public MybatisCacheOptions addCache(String id, String type, String cacheRefId, Long expire, Long size, Properties props) {
         id = applyCurrentNamespace(id, false);
-        Environment environment = configuration.getEnvironment();
 
         MybatisCacheOptions options = new MybatisCacheOptions();
         options.setId(id);
         if (CacheType.LETTUCE.getName().equals(type)) {
-            LettuceOptions lettuce = environment.getLettuceOptionsById(cacheRefId);
-            if (lettuce == null) {
+            if (!application.hasLettuceOptions(cacheRefId)) {
                 throw new BuilderException("No lettuce cache for refid '" + cacheRefId + "' could be found.");
             }
-            options.setLettuce(lettuce);
+            options.setLettuce(application.getLettuceOptions(cacheRefId));
         } else {
             throw new BuilderException("Only suppoert lettuce cache, wrong cache type: " + type);
         }
         options.setExpire(Duration.ofSeconds(expire));
         options.setSize(size);
         options.setProperties(props);
-        environment.registerCacheOptions(options);
+        application.addCacheOptions(options);
         return options;
     }
 
     public ParameterMap addParameterMap(String id, String type, List<ParameterMapping> parameterMappings) {
         id = applyCurrentNamespace(id, false);
-        ParameterMap parameterMap = ParameterMap.builder(configuration)
+        ParameterMap parameterMap = ParameterMap.builder(application)
                 .id(id)
                 .type(type)
                 .parameterMappings(parameterMappings)
                 .build();
-        configuration.addParameterMap(parameterMap);
+        application.addParameterMap(parameterMap);
         return parameterMap;
     }
 
     public ParameterMapping buildParameterMapping(String property, Class<?> javaType, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandler) {
         Class<?> javaTypeClass = resolveParameterJavaType(javaType);
         TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
-        return ParameterMapping.builder(configuration)
+        return ParameterMapping.builder(application)
                 .property(property)
                 .javaType(javaTypeClass)
                 .jdbcType(jdbcType)
@@ -112,23 +109,23 @@ public class MapperBuilderAssistant extends BaseBuilder {
         extend = applyCurrentNamespace(extend, true);
 
         if (extend != null) {
-            if (!configuration.hasResultMap(extend)) {
+            if (!application.hasResultMap(extend)) {
                 throw new IncompleteElementException("Could not find a parent resultmap with id '" + extend + "'");
             }
-            ResultMap resultMap = configuration.getResultMap(extend);
+            ResultMap resultMap = application.getResultMap(extend);
             List<ResultMapping> extendedResultMappings = new ArrayList<>(resultMap.getResultMappings());
             extendedResultMappings.removeAll(resultMappings);
             resultMappings.addAll(extendedResultMappings);
         }
-        ResultMap resultMap = ResultMap.builder(configuration).id(id).type(type).resultMappings(resultMappings).autoMapping(autoMapping).build();
-        configuration.addResultMap(resultMap);
+        ResultMap resultMap = ResultMap.builder(application).id(id).type(type).resultMappings(resultMappings).autoMapping(autoMapping).build();
+        application.addResultMap(resultMap);
         return resultMap;
     }
 
     public ResultMapping buildResultMapping(String property, Class<?> javaType, String column, JdbcType jdbcType, Class<? extends TypeHandler<?>> typeHandler) {
         Class<?> javaTypeClass = resolveResultJavaType(javaType);
         TypeHandler<?> typeHandlerInstance = resolveTypeHandler(javaTypeClass, typeHandler);
-        return ResultMapping.builder(configuration)
+        return ResultMapping.builder(application)
                 .property(property)
                 .javaType(javaTypeClass)
                 .column(column)
@@ -141,7 +138,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         id = applyCurrentNamespace(id, false);
         ParameterMap statementParameterMap = getStatementParameterMap(parameterMap);
         ResultMap statementResultMap = getStatementResultMap(resultMap);
-        MappedStatement statement = MappedStatement.builder(configuration)
+        MappedStatement statement = MappedStatement.builder(application)
                 .resource(resource)
                 .id(id)
                 .dataSourceId(dataSourceId)
@@ -165,7 +162,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         ParameterMap parameterMap = null;
         if (parameterMapId != null) {
             try {
-                parameterMap = configuration.getParameterMap(parameterMapId);
+                parameterMap = application.getParameterMap(parameterMapId);
             } catch (IllegalArgumentException e) {
                 throw new IncompleteElementException("Could not find parameter map " + parameterMapId, e);
             }
@@ -178,7 +175,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
         ResultMap resultMap = null;
         if (resultMapId != null) {
             try {
-                resultMap = configuration.getResultMap(resultMapId);
+                resultMap = application.getResultMap(resultMapId);
             } catch (IllegalArgumentException e) {
                 throw new IncompleteElementException("Could not find result map " + resultMapId, e);
             }

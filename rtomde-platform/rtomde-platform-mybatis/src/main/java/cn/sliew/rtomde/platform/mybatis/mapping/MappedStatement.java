@@ -5,6 +5,7 @@ import cn.sliew.milky.cache.lettuce.LettuceCacheOptions;
 import cn.sliew.milky.common.log.Logger;
 import cn.sliew.milky.common.log.LoggerFactory;
 import cn.sliew.rtomde.platform.mybatis.cache.Cache;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisCacheOptions;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.session.Configuration;
@@ -14,7 +15,7 @@ import java.util.List;
 public final class MappedStatement {
 
     private final String resource;
-    private final Configuration configuration;
+    private final MybatisApplicationOptions application;
     private final String id;
     private final String dataSourceId;
     private final ParameterMap parameterMap;
@@ -26,9 +27,9 @@ public final class MappedStatement {
     private final Logger statementLog;
     private final LanguageDriver lang;
 
-    private MappedStatement(String resource, Configuration configuration, String id, String dataSourceId, ParameterMap parameterMap, ResultMap resultMap, SqlSource sqlSource, Integer timeout, Cache cache, Logger statementLog, LanguageDriver lang) {
+    private MappedStatement(String resource, MybatisApplicationOptions application, String id, String dataSourceId, ParameterMap parameterMap, ResultMap resultMap, SqlSource sqlSource, Integer timeout, Cache cache, Logger statementLog, LanguageDriver lang) {
         this.resource = resource;
-        this.configuration = configuration;
+        this.application = application;
         this.id = id;
         this.dataSourceId = dataSourceId;
         this.parameterMap = parameterMap;
@@ -40,13 +41,13 @@ public final class MappedStatement {
         this.lang = lang;
     }
 
-    public static Builder builder(Configuration configuration) {
-        return new Builder(configuration);
+    public static Builder builder(MybatisApplicationOptions application) {
+        return new Builder(application);
     }
 
     public static class Builder {
         private String resource;
-        private Configuration configuration;
+        private MybatisApplicationOptions application;
         private String id;
         private String dataSourceId;
         private ParameterMap parameterMap;
@@ -58,8 +59,8 @@ public final class MappedStatement {
         private Logger statementLog;
         private LanguageDriver lang;
 
-        private Builder(Configuration configuration) {
-            this.configuration = configuration;
+        private Builder(MybatisApplicationOptions application) {
+            this.application = application;
         }
 
         public Builder resource(String resource) {
@@ -109,7 +110,7 @@ public final class MappedStatement {
 
         public MappedStatement build() {
             String logId = id;
-            if (configuration.getLogPrefix() != null) {
+            if (application.getLogPrefix() != null) {
                 logId = configuration.getLogPrefix() + id;
             }
             this.statementLog = LoggerFactory.getLogger(logId);
@@ -122,7 +123,7 @@ public final class MappedStatement {
             LettuceCacheFactory factory = new LettuceCacheFactory();
             LettuceCacheOptions lettuceCacheOptions = new LettuceCacheOptions();
 
-            return new MappedStatement(resource, configuration, id, dataSourceId, parameterMap, resultMap, sqlSource, timeout, cacheRef, statementLog, lang);
+            return new MappedStatement(resource, application, id, dataSourceId, parameterMap, resultMap, sqlSource, timeout, cacheRef, statementLog, lang);
         }
     }
 
@@ -130,8 +131,8 @@ public final class MappedStatement {
         return resource;
     }
 
-    public Configuration getConfiguration() {
-        return configuration;
+    public MybatisApplicationOptions getApplication() {
+        return application;
     }
 
     public String getId() {
@@ -174,7 +175,7 @@ public final class MappedStatement {
         BoundSql boundSql = sqlSource.getBoundSql(parameterObject);
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         if (parameterMappings == null || parameterMappings.isEmpty()) {
-            boundSql = new BoundSql(configuration, boundSql.getSql(), parameterMap.getParameterMappings(), parameterObject);
+            boundSql = new BoundSql(application, boundSql.getSql(), parameterMap.getParameterMappings(), parameterObject);
         }
         return boundSql;
     }

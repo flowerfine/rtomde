@@ -4,6 +4,8 @@ import cn.sliew.rtomde.config.ApplicationOptions;
 import cn.sliew.rtomde.config.ConfigOptions;
 import cn.sliew.rtomde.platform.mybatis.builder.ResultMapResolver;
 import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLStatementBuilder;
+import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMap;
+import cn.sliew.rtomde.platform.mybatis.mapping.ResultMap;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
 
@@ -20,16 +22,6 @@ import java.util.concurrent.ConcurrentMap;
 public class MybatisApplicationOptions extends ApplicationOptions {
 
     private static final long serialVersionUID = 29825088458293280L;
-
-    /**
-     * application datasource
-     */
-    private DatasourceOptions datasource;
-
-    /**
-     * application lettuce
-     */
-    private LettuceOptions lettuce;
 
     /**
      * application properties
@@ -53,6 +45,9 @@ public class MybatisApplicationOptions extends ApplicationOptions {
     protected final Map<String, XNode> sqlFragments = new HashMap<>();
     protected final Set<String> loadedResources = new HashSet<>();
 
+    protected final Map<String, ResultMap> resultMaps = new HashMap<>();
+    protected final Map<String, ParameterMap> parameterMaps = new HashMap<>();
+
     protected final Collection<XMLStatementBuilder> incompleteStatements = new LinkedList<>();
     protected final Collection<ResultMapResolver> incompleteResultMaps = new LinkedList<>();
 
@@ -60,22 +55,6 @@ public class MybatisApplicationOptions extends ApplicationOptions {
         this.platform = platform;
         this.typeAliasRegistry = new TypeAliasRegistry(platform.getTypeAliasRegistry());
         this.props.putAll(platform.getVariables());
-    }
-
-    public DatasourceOptions getDatasource() {
-        return datasource;
-    }
-
-    public void setDatasource(DatasourceOptions datasource) {
-        this.datasource = datasource;
-    }
-
-    public LettuceOptions getLettuce() {
-        return lettuce;
-    }
-
-    public void setLettuce(LettuceOptions lettuce) {
-        this.lettuce = lettuce;
     }
 
     public Properties getProps() {
@@ -106,14 +85,6 @@ public class MybatisApplicationOptions extends ApplicationOptions {
         this.typeAliasRegistry = typeAliasRegistry;
     }
 
-    public void addDatasourceOptions(DatasourceOptions datasource) {
-        this.datasourceOptionsRegistry.put(datasource.getId(), datasource);
-    }
-
-    public void addLettuceOptions(LettuceOptions lettuce) {
-        this.lettuceOptionsRegistry.put(lettuce.getId(), lettuce);
-    }
-
     public Collection<XMLStatementBuilder> getIncompleteStatements() {
         return incompleteStatements;
     }
@@ -129,4 +100,106 @@ public class MybatisApplicationOptions extends ApplicationOptions {
     public void addIncompleteResultMap(ResultMapResolver resultMapResolver) {
         incompleteResultMaps.add(resultMapResolver);
     }
+
+    public void addResultMap(ResultMap rm) {
+        resultMaps.put(rm.getId(), rm);
+    }
+
+    public Collection<String> getResultMapNames() {
+        return resultMaps.keySet();
+    }
+
+    public Collection<ResultMap> getResultMaps() {
+        return resultMaps.values();
+    }
+
+    public ResultMap getResultMap(String id) {
+        return resultMaps.get(id);
+    }
+
+    public boolean hasResultMap(String id) {
+        return resultMaps.containsKey(id);
+    }
+
+    public void addParameterMap(ParameterMap pm) {
+        parameterMaps.put(pm.getId(), pm);
+    }
+
+    public Collection<String> getParameterMapNames() {
+        return parameterMaps.keySet();
+    }
+
+    public Collection<ParameterMap> getParameterMaps() {
+        return parameterMaps.values();
+    }
+
+    public ParameterMap getParameterMap(String id) {
+        return parameterMaps.get(id);
+    }
+
+    public boolean hasParameterMap(String id) {
+        return parameterMaps.containsKey(id);
+    }
+
+    public void addDatasourceOptions(DatasourceOptions options) {
+        this.datasourceOptionsRegistry.put(options.getId(), options);
+    }
+
+    public Collection<String> getDatasourceOptionsNames() {
+        return this.datasourceOptionsRegistry.keySet();
+    }
+
+    public Collection<DatasourceOptions> getDatasourceOptionsMaps() {
+        return this.datasourceOptionsRegistry.values();
+    }
+
+    public DatasourceOptions getDatasourceOptions(String id) {
+        return this.datasourceOptionsRegistry.get(id);
+    }
+
+    public boolean hasDatasourceOptions(String id) {
+        return this.datasourceOptionsRegistry.containsKey(id);
+    }
+
+    public void addLettuceOptions(LettuceOptions options) {
+        this.lettuceOptionsRegistry.put(options.getId(), options);
+    }
+
+    public Collection<String> getLettuceOptionsNames() {
+        return this.lettuceOptionsRegistry.keySet();
+    }
+
+    public Collection<LettuceOptions> getLettuceOptionsMaps() {
+        return this.lettuceOptionsRegistry.values();
+    }
+
+    public LettuceOptions getLettuceOptions(String id) {
+        return this.lettuceOptionsRegistry.get(id);
+    }
+
+    public boolean hasLettuceOptions(String id) {
+        return this.lettuceOptionsRegistry.containsKey(id);
+    }
+
+    public void addCacheOptions(MybatisCacheOptions options) {
+        this.cacheOptionsRegistry.put(options.getId(), options);
+    }
+
+    public Collection<String> getCacheOptionsNames() {
+        return this.cacheOptionsRegistry.keySet();
+    }
+
+    public Collection<MybatisCacheOptions> getCacheOptionsMaps() {
+        return this.cacheOptionsRegistry.values();
+    }
+
+    public MybatisCacheOptions getCacheOptions(String id) {
+        return this.cacheOptionsRegistry.get(id);
+    }
+
+    public boolean hasCacheOptions(String id) {
+        return this.cacheOptionsRegistry.containsKey(id);
+    }
+
+
 }

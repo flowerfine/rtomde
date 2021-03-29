@@ -95,7 +95,7 @@ public class SqlSourceBuilder extends BaseBuilder {
                     propertyType = Object.class;
                 }
             }
-            ParameterMapping.Builder builder = ParameterMapping.builder(configuration).property(property).javaType(propertyType);
+            ParameterMapping.Builder builder = ParameterMapping.builder(application).property(property).javaType(propertyType);
             Class<?> javaType = propertyType;
             String typeHandlerAlias = null;
             for (Map.Entry<String, String> entry : propertiesMap.entrySet()) {
