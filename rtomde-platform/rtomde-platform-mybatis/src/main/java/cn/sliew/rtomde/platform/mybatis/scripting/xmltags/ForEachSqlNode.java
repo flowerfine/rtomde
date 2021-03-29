@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.scripting.xmltags;
 
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.parsing.GenericTokenParser;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 
 import java.util.Map;
 
@@ -16,9 +16,9 @@ public class ForEachSqlNode implements SqlNode {
     private final String separator;
     private final String item;
     private final String index;
-    private final Configuration configuration;
+    private final MybatisApplicationOptions application;
 
-    public ForEachSqlNode(Configuration configuration, SqlNode contents, String collectionExpression, String index, String item, String open, String close, String separator) {
+    public ForEachSqlNode(MybatisApplicationOptions application, SqlNode contents, String collectionExpression, String index, String item, String open, String close, String separator) {
         this.evaluator = new ExpressionEvaluator();
         this.collectionExpression = collectionExpression;
         this.contents = contents;
@@ -27,7 +27,7 @@ public class ForEachSqlNode implements SqlNode {
         this.separator = separator;
         this.index = index;
         this.item = item;
-        this.configuration = configuration;
+        this.application = application;
     }
 
     @Override
@@ -58,7 +58,7 @@ public class ForEachSqlNode implements SqlNode {
                 applyIndex(context, i, uniqueNumber);
                 applyItem(context, o, uniqueNumber);
             }
-            contents.apply(new FilteredDynamicContext(configuration, context, index, item, uniqueNumber));
+            contents.apply(new FilteredDynamicContext(application, context, index, item, uniqueNumber));
             if (first) {
                 first = !((PrefixedContext) context).isPrefixApplied();
             }
@@ -107,8 +107,8 @@ public class ForEachSqlNode implements SqlNode {
         private final String itemIndex;
         private final String item;
 
-        public FilteredDynamicContext(Configuration configuration, DynamicContext delegate, String itemIndex, String item, int i) {
-            super(configuration, null);
+        public FilteredDynamicContext(MybatisApplicationOptions application, DynamicContext delegate, String itemIndex, String item, int i) {
+            super(application, null);
             this.delegate = delegate;
             this.index = i;
             this.itemIndex = itemIndex;
@@ -157,7 +157,7 @@ public class ForEachSqlNode implements SqlNode {
         private boolean prefixApplied;
 
         public PrefixedContext(DynamicContext delegate, String prefix) {
-            super(configuration, null);
+            super(application, null);
             this.delegate = delegate;
             this.prefix = prefix;
             this.prefixApplied = false;

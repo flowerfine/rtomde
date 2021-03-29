@@ -1,6 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.scripting.xmltags;
 
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 
 import java.util.*;
 
@@ -11,19 +11,19 @@ public class TrimSqlNode implements SqlNode {
     private final String suffix;
     private final List<String> prefixesToOverride;
     private final List<String> suffixesToOverride;
-    private final Configuration configuration;
+    private final MybatisApplicationOptions application;
 
-    public TrimSqlNode(Configuration configuration, SqlNode contents, String prefix, String prefixesToOverride, String suffix, String suffixesToOverride) {
-        this(configuration, contents, prefix, parseOverrides(prefixesToOverride), suffix, parseOverrides(suffixesToOverride));
+    public TrimSqlNode(MybatisApplicationOptions application, SqlNode contents, String prefix, String prefixesToOverride, String suffix, String suffixesToOverride) {
+        this(application, contents, prefix, parseOverrides(prefixesToOverride), suffix, parseOverrides(suffixesToOverride));
     }
 
-    protected TrimSqlNode(Configuration configuration, SqlNode contents, String prefix, List<String> prefixesToOverride, String suffix, List<String> suffixesToOverride) {
+    protected TrimSqlNode(MybatisApplicationOptions application, SqlNode contents, String prefix, List<String> prefixesToOverride, String suffix, List<String> suffixesToOverride) {
         this.contents = contents;
         this.prefix = prefix;
         this.prefixesToOverride = prefixesToOverride;
         this.suffix = suffix;
         this.suffixesToOverride = suffixesToOverride;
-        this.configuration = configuration;
+        this.application = application;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class TrimSqlNode implements SqlNode {
         private StringBuilder sqlBuffer;
 
         public FilteredDynamicContext(DynamicContext delegate) {
-            super(configuration, null);
+            super(application, null);
             this.delegate = delegate;
             this.prefixApplied = false;
             this.suffixApplied = false;

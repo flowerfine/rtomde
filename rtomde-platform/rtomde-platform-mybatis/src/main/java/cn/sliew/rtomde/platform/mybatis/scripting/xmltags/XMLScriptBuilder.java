@@ -113,7 +113,7 @@ public class XMLScriptBuilder extends BaseBuilder {
             String prefixOverrides = nodeToHandle.getStringAttribute("prefixOverrides");
             String suffix = nodeToHandle.getStringAttribute("suffix");
             String suffixOverrides = nodeToHandle.getStringAttribute("suffixOverrides");
-            TrimSqlNode trim = new TrimSqlNode(configuration, mixedSqlNode, prefix, prefixOverrides, suffix, suffixOverrides);
+            TrimSqlNode trim = new TrimSqlNode(application, mixedSqlNode, prefix, prefixOverrides, suffix, suffixOverrides);
             targetContents.add(trim);
         }
     }
@@ -126,7 +126,7 @@ public class XMLScriptBuilder extends BaseBuilder {
         @Override
         public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
             MixedSqlNode mixedSqlNode = parseDynamicTags(nodeToHandle);
-            WhereSqlNode where = new WhereSqlNode(configuration, mixedSqlNode);
+            WhereSqlNode where = new WhereSqlNode(application, mixedSqlNode);
             targetContents.add(where);
         }
     }
@@ -139,7 +139,7 @@ public class XMLScriptBuilder extends BaseBuilder {
         @Override
         public void handleNode(XNode nodeToHandle, List<SqlNode> targetContents) {
             MixedSqlNode mixedSqlNode = parseDynamicTags(nodeToHandle);
-            SetSqlNode set = new SetSqlNode(configuration, mixedSqlNode);
+            SetSqlNode set = new SetSqlNode(application, mixedSqlNode);
             targetContents.add(set);
         }
     }
@@ -158,7 +158,7 @@ public class XMLScriptBuilder extends BaseBuilder {
             String open = nodeToHandle.getStringAttribute("open");
             String close = nodeToHandle.getStringAttribute("close");
             String separator = nodeToHandle.getStringAttribute("separator");
-            ForEachSqlNode forEachSqlNode = new ForEachSqlNode(configuration, mixedSqlNode, collection, index, item, open, close, separator);
+            ForEachSqlNode forEachSqlNode = new ForEachSqlNode(application, mixedSqlNode, collection, index, item, open, close, separator);
             targetContents.add(forEachSqlNode);
         }
     }
