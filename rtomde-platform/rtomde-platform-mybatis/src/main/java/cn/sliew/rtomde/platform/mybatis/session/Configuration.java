@@ -6,7 +6,6 @@ import cn.sliew.rtomde.platform.mybatis.builder.IncompleteElementException;
 import cn.sliew.rtomde.platform.mybatis.builder.ResultMapResolver;
 import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLStatementBuilder;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
-import cn.sliew.rtomde.platform.mybatis.executor.CachingExecutor;
 import cn.sliew.rtomde.platform.mybatis.executor.Executor;
 import cn.sliew.rtomde.platform.mybatis.executor.SimpleExecutor;
 import cn.sliew.rtomde.platform.mybatis.executor.parameter.ParameterHandler;
@@ -29,7 +28,6 @@ import cn.sliew.rtomde.platform.mybatis.scripting.xmltags.XMLLanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.type.*;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 public class Configuration {
@@ -507,7 +505,6 @@ public class Configuration {
 
     public Executor newExecutor() {
         Executor executor = new SimpleExecutor(this);
-        executor = new CachingExecutor(executor);
         executor = (Executor) interceptorChain.pluginAll(executor);
         return executor;
     }

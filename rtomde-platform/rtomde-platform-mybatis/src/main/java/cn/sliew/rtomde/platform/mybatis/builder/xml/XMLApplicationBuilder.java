@@ -1,5 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.builder.xml;
 
+import cn.sliew.rtomde.platform.mybatis.builder.BaseBuilder;
 import cn.sliew.rtomde.platform.mybatis.builder.BuilderException;
 import cn.sliew.rtomde.platform.mybatis.config.DatasourceOptions;
 import cn.sliew.rtomde.platform.mybatis.config.LettuceOptions;

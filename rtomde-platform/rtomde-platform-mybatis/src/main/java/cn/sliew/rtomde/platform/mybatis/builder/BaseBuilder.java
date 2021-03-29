@@ -1,6 +1,8 @@
 package cn.sliew.rtomde.platform.mybatis.builder;
 
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.builder.BuilderException;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
 import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
@@ -11,19 +13,18 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public abstract class BaseBuilder {
-    protected final Configuration configuration;
+public class BaseBuilder {
+
+    protected final MybatisApplicationOptions application;
     protected final TypeAliasRegistry typeAliasRegistry;
     protected final TypeHandlerRegistry typeHandlerRegistry;
 
-    public BaseBuilder(Configuration configuration) {
-        this.configuration = configuration;
-        this.typeAliasRegistry = this.configuration.getTypeAliasRegistry();
-        this.typeHandlerRegistry = this.configuration.getTypeHandlerRegistry();
-    }
+    public BaseBuilder(MybatisApplicationOptions application) {
+        this.application = application;
+        this.typeAliasRegistry = application.getTypeAliasRegistry();
 
-    public Configuration getConfiguration() {
-        return configuration;
+        MybatisPlatformOptions platform = (MybatisPlatformOptions) this.application.getPlatform();
+        this.typeHandlerRegistry = platform.getTypeHandlerRegistry();
     }
 
     protected Pattern parseExpression(String regex, String defaultValue) {
@@ -106,4 +107,5 @@ public abstract class BaseBuilder {
     protected <T> Class<? extends T> resolveAlias(String alias) {
         return typeAliasRegistry.resolveAlias(alias);
     }
+
 }

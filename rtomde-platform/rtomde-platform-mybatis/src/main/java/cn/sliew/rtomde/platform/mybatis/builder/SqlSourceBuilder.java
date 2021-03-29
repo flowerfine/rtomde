@@ -1,6 +1,5 @@
 package cn.sliew.rtomde.platform.mybatis.builder;
 
-import cn.sliew.rtomde.platform.mybatis.builder.xml.BaseBuilder;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;

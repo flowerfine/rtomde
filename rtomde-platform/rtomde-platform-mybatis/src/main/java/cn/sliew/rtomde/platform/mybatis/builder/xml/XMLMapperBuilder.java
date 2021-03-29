@@ -9,7 +9,6 @@ import cn.sliew.rtomde.platform.mybatis.mapping.ResultMap;
 import cn.sliew.rtomde.platform.mybatis.mapping.ResultMapping;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.parsing.XPathParser;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
 
@@ -115,9 +114,6 @@ public class XMLMapperBuilder extends BaseBuilder {
         }
     }
 
-    /**
-     * 需要在 {@link Configuration} 中记录当前使用的 {@link MybatisCacheOptions}
-     */
     private void cacheElement(XNode context) {
         if (context != null) {
             String id = context.getStringAttribute("id");

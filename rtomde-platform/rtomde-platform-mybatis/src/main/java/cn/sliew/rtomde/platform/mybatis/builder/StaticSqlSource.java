@@ -4,7 +4,6 @@ import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
 import cn.sliew.rtomde.platform.mybatis.mapping.SqlSource;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 
 import java.util.List;
 

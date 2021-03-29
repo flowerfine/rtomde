@@ -1,13 +1,10 @@
 package cn.sliew.rtomde.platform.mybatis.executor;
 
 import cn.sliew.milky.common.log.Logger;
-import cn.sliew.rtomde.platform.mybatis.cache.CacheKey;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.log.ConnectionLogger;
 import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
-import cn.sliew.rtomde.platform.mybatis.mapping.Environment;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
-import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
-import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
 import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
 
@@ -16,37 +13,29 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import static cn.sliew.rtomde.platform.mybatis.executor.ExecutionPlaceholder.EXECUTION_PLACEHOLDER;
 
 public abstract class BaseExecutor implements Executor {
 
-    private Environment environment;
     protected Executor wrapper;
 
-    protected ConcurrentLinkedQueue<DeferredLoad> deferredLoads;
-    protected Configuration configuration;
+    protected MybatisApplicationOptions application;
 
     protected int queryStack;
     private boolean closed;
 
-    protected BaseExecutor(Configuration configuration) {
-        this.deferredLoads = new ConcurrentLinkedQueue<>();
+    protected BaseExecutor(MybatisApplicationOptions application) {
         this.closed = false;
-        this.configuration = configuration;
-        this.environment = configuration.getDefaultEnv();
+        this.application = application;
         this.wrapper = this;
     }
 
     @Override
     public DataSource getDataSource(String dataSourceId) {
-        return this.environment.getDataSource(dataSourceId);
+        return this.application.getDataSource(dataSourceId);
     }
 
     @Override
     public void close() {
-        deferredLoads = null;
         closed = true;
     }
 
@@ -68,33 +57,7 @@ public abstract class BaseExecutor implements Executor {
         if (closed) {
             throw new ExecutorException("Executor was closed.");
         }
-        List<E> list;
-        try {
-            queryStack++;
-            list = queryFromDatabase(ms, parameter, rowBounds, resultHandler, boundSql);
-        } finally {
-            queryStack--;
-        }
-        if (queryStack == 0) {
-            for (DeferredLoad deferredLoad : deferredLoads) {
-                deferredLoad.load();
-            }
-            deferredLoads.clear();
-        }
-        return list;
-    }
-
-    @Override
-    public void deferLoad(MappedStatement ms, MetaObject resultObject, String property, CacheKey key, Class<?> targetType) {
-        if (closed) {
-            throw new ExecutorException("Executor was closed.");
-        }
-        DeferredLoad deferredLoad = new DeferredLoad(resultObject, property, key, localCache, configuration, targetType);
-        if (deferredLoad.canLoad()) {
-            deferredLoad.load();
-        } else {
-            deferredLoads.add(new DeferredLoad(resultObject, property, key, localCache, configuration, targetType));
-        }
+        return queryFromDatabase(ms, parameter, rowBounds, resultHandler, boundSql);
     }
 
     protected abstract <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql)
@@ -126,46 +89,6 @@ public abstract class BaseExecutor implements Executor {
     @Override
     public void setExecutorWrapper(Executor wrapper) {
         this.wrapper = wrapper;
-    }
-
-    private static class DeferredLoad {
-
-        private final MetaObject resultObject;
-        private final String property;
-        private final Class<?> targetType;
-        private final CacheKey key;
-        private final PerpetualCache localCache;
-        private final ObjectFactory objectFactory;
-        private final ResultExtractor resultExtractor;
-
-        // issue #781
-        public DeferredLoad(MetaObject resultObject,
-                            String property,
-                            CacheKey key,
-                            PerpetualCache localCache,
-                            Configuration configuration,
-                            Class<?> targetType) {
-            this.resultObject = resultObject;
-            this.property = property;
-            this.key = key;
-            this.localCache = localCache;
-            this.objectFactory = configuration.getObjectFactory();
-            this.resultExtractor = new ResultExtractor(configuration, objectFactory);
-            this.targetType = targetType;
-        }
-
-        public boolean canLoad() {
-            return localCache.getObject(key) != null && localCache.getObject(key) != EXECUTION_PLACEHOLDER;
-        }
-
-        public void load() {
-            @SuppressWarnings("unchecked")
-            // we suppose we get back a List
-            List<Object> list = (List<Object>) localCache.getObject(key);
-            Object value = resultExtractor.extractObjectFromList(list, targetType);
-            resultObject.setValue(property, value);
-        }
-
     }
 
 }

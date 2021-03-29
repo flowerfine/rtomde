@@ -1,13 +1,16 @@
 package cn.sliew.rtomde.platform.mybatis.executor.statement;
 
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.executor.Executor;
 import cn.sliew.rtomde.platform.mybatis.executor.ExecutorException;
 import cn.sliew.rtomde.platform.mybatis.executor.parameter.ParameterHandler;
+import cn.sliew.rtomde.platform.mybatis.executor.resultset.ResultSetHandler;
 import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
 import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
+import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
 import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandlerRegistry;
 
@@ -17,7 +20,7 @@ import java.sql.Statement;
 
 public abstract class BaseStatementHandler implements StatementHandler {
 
-    protected final Configuration configuration;
+    protected final MybatisApplicationOptions application;
     protected final ObjectFactory objectFactory;
     protected final TypeHandlerRegistry typeHandlerRegistry;
     protected final ResultSetHandler resultSetHandler;
@@ -30,13 +33,14 @@ public abstract class BaseStatementHandler implements StatementHandler {
     protected BoundSql boundSql;
 
     protected BaseStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-        this.configuration = mappedStatement.getConfiguration();
+        this.application = mappedStatement.getApplication();
         this.executor = executor;
         this.mappedStatement = mappedStatement;
         this.rowBounds = rowBounds;
 
-        this.typeHandlerRegistry = configuration.getTypeHandlerRegistry();
-        this.objectFactory = configuration.getObjectFactory();
+        MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+        this.typeHandlerRegistry = platform.getTypeHandlerRegistry();
+        this.objectFactory = platform.getObjectFactory();
 
         if (boundSql == null) { // issue #435, get the key before calculating the statement
             boundSql = mappedStatement.getBoundSql(parameterObject);
@@ -44,8 +48,8 @@ public abstract class BaseStatementHandler implements StatementHandler {
 
         this.boundSql = boundSql;
 
-        this.parameterHandler = configuration.newParameterHandler(mappedStatement, parameterObject, boundSql);
-        this.resultSetHandler = configuration.newResultSetHandler(mappedStatement, rowBounds, resultHandler);
+        this.parameterHandler = platform.newParameterHandler(mappedStatement, parameterObject, boundSql);
+        this.resultSetHandler = platform.newResultSetHandler(mappedStatement, rowBounds, resultHandler);
     }
 
     @Override
@@ -86,8 +90,8 @@ public abstract class BaseStatementHandler implements StatementHandler {
         Integer queryTimeout = null;
         if (mappedStatement.getTimeout() != null) {
             queryTimeout = mappedStatement.getTimeout();
-        } else if (configuration.getDefaultStatementTimeout() != null) {
-            queryTimeout = configuration.getDefaultStatementTimeout();
+        } else if (application.getDefaultStatementTimeout() != null) {
+            queryTimeout = application.getDefaultStatementTimeout();
         }
         if (queryTimeout != null) {
             stmt.setQueryTimeout(queryTimeout);

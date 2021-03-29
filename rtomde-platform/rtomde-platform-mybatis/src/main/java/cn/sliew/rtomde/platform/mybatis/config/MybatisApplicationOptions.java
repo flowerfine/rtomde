@@ -5,6 +5,8 @@ import cn.sliew.rtomde.config.ConfigOptions;
 import cn.sliew.rtomde.platform.mybatis.builder.IncompleteElementException;
 import cn.sliew.rtomde.platform.mybatis.builder.ResultMapResolver;
 import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLStatementBuilder;
+import cn.sliew.rtomde.platform.mybatis.executor.Executor;
+import cn.sliew.rtomde.platform.mybatis.executor.SimpleExecutor;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMap;
 import cn.sliew.rtomde.platform.mybatis.mapping.ResultMap;
@@ -31,6 +33,7 @@ public class MybatisApplicationOptions extends ApplicationOptions {
     protected Properties props = new Properties();
 
     protected String logPrefix;
+    protected Integer defaultStatementTimeout = 3;
 
     /**
      * 支持应用级的类型别名
@@ -204,6 +207,10 @@ public class MybatisApplicationOptions extends ApplicationOptions {
         return parameterMaps.containsKey(id);
     }
 
+    public DataSource getDataSource(String id) {
+        return dataSourceRegistry.get(id);
+    }
+
     public void addDatasourceOptions(DatasourceOptions options) {
         this.datasourceOptionsRegistry.put(options.getId(), options);
     }
@@ -270,5 +277,17 @@ public class MybatisApplicationOptions extends ApplicationOptions {
 
     public void setLogPrefix(String logPrefix) {
         this.logPrefix = logPrefix;
+    }
+
+    public Integer getDefaultStatementTimeout() {
+        return defaultStatementTimeout;
+    }
+
+    public void setDefaultStatementTimeout(Integer defaultStatementTimeout) {
+        this.defaultStatementTimeout = defaultStatementTimeout;
+    }
+
+    public Executor newExecutor() {
+        return new SimpleExecutor(this);
     }
 }

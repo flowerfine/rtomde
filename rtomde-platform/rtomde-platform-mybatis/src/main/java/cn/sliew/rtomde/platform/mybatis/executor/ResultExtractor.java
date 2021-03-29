@@ -1,18 +1,19 @@
 package cn.sliew.rtomde.platform.mybatis.executor;
 
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
 import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 
 import java.lang.reflect.Array;
 import java.util.List;
 
 public class ResultExtractor {
-    private final Configuration configuration;
+    private final MybatisApplicationOptions application;
     private final ObjectFactory objectFactory;
 
-    public ResultExtractor(Configuration configuration, ObjectFactory objectFactory) {
-        this.configuration = configuration;
+    public ResultExtractor(MybatisApplicationOptions application, ObjectFactory objectFactory) {
+        this.application = application;
         this.objectFactory = objectFactory;
     }
 
@@ -22,7 +23,8 @@ public class ResultExtractor {
             value = list;
         } else if (targetType != null && objectFactory.isCollection(targetType)) {
             value = objectFactory.create(targetType);
-            MetaObject metaObject = configuration.newMetaObject(value);
+            MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+            MetaObject metaObject = platform.newMetaObject(value);
             metaObject.addAll(list);
         } else if (targetType != null && targetType.isArray()) {
             Class<?> arrayComponentType = targetType.getComponentType();

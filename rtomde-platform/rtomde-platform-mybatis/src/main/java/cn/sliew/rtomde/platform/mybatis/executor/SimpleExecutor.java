@@ -1,10 +1,12 @@
 package cn.sliew.rtomde.platform.mybatis.executor;
 
 import cn.sliew.milky.common.log.Logger;
+import cn.sliew.rtomde.config.PlatformOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.statement.StatementHandler;
 import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
 import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
 
@@ -15,8 +17,8 @@ import java.util.List;
 
 public class SimpleExecutor extends BaseExecutor {
 
-    public SimpleExecutor(Configuration configuration) {
-        super(configuration);
+    public SimpleExecutor(MybatisApplicationOptions application) {
+        super(application);
     }
 
 
@@ -24,8 +26,8 @@ public class SimpleExecutor extends BaseExecutor {
     public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException {
         Statement stmt = null;
         try {
-            Configuration configuration = ms.getConfiguration();
-            StatementHandler handler = configuration.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
+            MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+            StatementHandler handler = platform.newStatementHandler(wrapper, ms, parameter, rowBounds, resultHandler, boundSql);
             stmt = prepareStatement(handler, ms.getStatementLog());
             return handler.query(stmt, resultHandler);
         } finally {

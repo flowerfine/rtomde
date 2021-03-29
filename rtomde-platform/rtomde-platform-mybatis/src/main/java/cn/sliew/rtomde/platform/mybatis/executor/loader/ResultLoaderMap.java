@@ -178,7 +178,7 @@ public class ResultLoaderMap {
 
                 this.metaResultObject = config.newMetaObject(userObject);
                 this.resultLoader = new ResultLoader(config, new ClosedExecutor(), ms, this.mappedParameter,
-                        metaResultObject.getSetterType(this.property), null, null);
+                        metaResultObject.getSetterType(this.property), null);
             }
 
             /* We are using a new executor because we may be (and likely are) on a new thread
@@ -188,7 +188,7 @@ public class ResultLoaderMap {
             if (this.serializationCheck == null) {
                 final ResultLoader old = this.resultLoader;
                 this.resultLoader = new ResultLoader(old.configuration, new ClosedExecutor(), old.mappedStatement,
-                        old.parameterObject, old.targetType, old.cacheKey, old.boundSql);
+                        old.parameterObject, old.targetType, old.boundSql);
             }
 
             this.metaResultObject.setValue(property, this.resultLoader.loadResult());

@@ -2,13 +2,14 @@ package cn.sliew.rtomde.platform.mybatis.executor.loader.cglib;
 
 import cn.sliew.milky.common.log.Logger;
 import cn.sliew.milky.common.log.LoggerFactory;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.loader.*;
 import cn.sliew.rtomde.platform.mybatis.io.Resources;
 import cn.sliew.rtomde.platform.mybatis.reflection.ExceptionUtil;
 import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
 import cn.sliew.rtomde.platform.mybatis.reflection.property.PropertyCopier;
 import cn.sliew.rtomde.platform.mybatis.reflection.property.PropertyNamer;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import net.sf.cglib.proxy.Callback;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.MethodInterceptor;
@@ -33,8 +34,8 @@ public class CglibProxyFactory implements ProxyFactory {
     }
 
     @Override
-    public Object createProxy(Object target, ResultLoaderMap lazyLoader, Configuration configuration, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
-        return EnhancedResultObjectProxyImpl.createProxy(target, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
+    public Object createProxy(Object target, ResultLoaderMap lazyLoader, MybatisApplicationOptions application, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
+        return EnhancedResultObjectProxyImpl.createProxy(target, lazyLoader, application, objectFactory, constructorArgTypes, constructorArgs);
     }
 
     public Object createDeserializationProxy(Object target, Map<String, ResultLoaderMap.LoadPair> unloadedProperties, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
@@ -77,19 +78,20 @@ public class CglibProxyFactory implements ProxyFactory {
         private final List<Class<?>> constructorArgTypes;
         private final List<Object> constructorArgs;
 
-        private EnhancedResultObjectProxyImpl(Class<?> type, ResultLoaderMap lazyLoader, Configuration configuration, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
+        private EnhancedResultObjectProxyImpl(Class<?> type, ResultLoaderMap lazyLoader, MybatisApplicationOptions application, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
             this.type = type;
             this.lazyLoader = lazyLoader;
-            this.aggressive = configuration.isAggressiveLazyLoading();
-            this.lazyLoadTriggerMethods = configuration.getLazyLoadTriggerMethods();
+            MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+            this.aggressive = platform.isAggressiveLazyLoading();
+            this.lazyLoadTriggerMethods = platform.getLazyLoadTriggerMethods();
             this.objectFactory = objectFactory;
             this.constructorArgTypes = constructorArgTypes;
             this.constructorArgs = constructorArgs;
         }
 
-        public static Object createProxy(Object target, ResultLoaderMap lazyLoader, Configuration configuration, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
+        public static Object createProxy(Object target, ResultLoaderMap lazyLoader, MybatisApplicationOptions application, ObjectFactory objectFactory, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
             final Class<?> type = target.getClass();
-            EnhancedResultObjectProxyImpl callback = new EnhancedResultObjectProxyImpl(type, lazyLoader, configuration, objectFactory, constructorArgTypes, constructorArgs);
+            EnhancedResultObjectProxyImpl callback = new EnhancedResultObjectProxyImpl(type, lazyLoader, application, objectFactory, constructorArgTypes, constructorArgs);
             Object enhanced = crateProxy(type, callback, constructorArgTypes, constructorArgs);
             PropertyCopier.copyBeanProperties(type, target, enhanced);
             return enhanced;
