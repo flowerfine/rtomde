@@ -9,6 +9,7 @@ import cn.sliew.rtomde.platform.mybatis.io.VFS;
 import cn.sliew.rtomde.platform.mybatis.plugin.Interceptor;
 import cn.sliew.rtomde.platform.mybatis.plugin.InterceptorChain;
 import cn.sliew.rtomde.platform.mybatis.reflection.DefaultReflectorFactory;
+import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
 import cn.sliew.rtomde.platform.mybatis.reflection.ReflectorFactory;
 import cn.sliew.rtomde.platform.mybatis.reflection.factory.DefaultObjectFactory;
 import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
@@ -142,10 +143,6 @@ public class MybatisPlatformOptions extends PlatformOptions {
         return languageRegistry;
     }
 
-    public Configuration toMybatisConfiguration() {
-        return null;
-    }
-
     public boolean isUseColumnLabel() {
         return useColumnLabel;
     }
@@ -160,5 +157,9 @@ public class MybatisPlatformOptions extends PlatformOptions {
 
     public void setSettings(Properties settings) {
         this.settings = settings;
+    }
+
+    public MetaObject newMetaObject(Object object) {
+        return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
     }
 }

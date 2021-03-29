@@ -1,7 +1,8 @@
 package cn.sliew.rtomde.platform.mybatis.scripting.xmltags;
 
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import ognl.OgnlContext;
 import ognl.OgnlRuntime;
 import ognl.PropertyAccessor;
@@ -25,13 +26,15 @@ public class DynamicContext {
 
     /**
      * fixme 需要_dataSourceId
-     * @param configuration
+     *
+     * @param application
      * @param parameterObject
      */
-    public DynamicContext(Configuration configuration, Object parameterObject) {
+    public DynamicContext(MybatisApplicationOptions application, Object parameterObject) {
         if (parameterObject != null && !(parameterObject instanceof Map)) {
-            MetaObject metaObject = configuration.newMetaObject(parameterObject);
-            boolean existsTypeHandler = configuration.getTypeHandlerRegistry().hasTypeHandler(parameterObject.getClass());
+            MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+            MetaObject metaObject = platform.newMetaObject(parameterObject);
+            boolean existsTypeHandler = platform.getTypeHandlerRegistry().hasTypeHandler(parameterObject.getClass());
             bindings = new ContextMap(metaObject, existsTypeHandler);
         } else {
             bindings = new ContextMap(null, false);

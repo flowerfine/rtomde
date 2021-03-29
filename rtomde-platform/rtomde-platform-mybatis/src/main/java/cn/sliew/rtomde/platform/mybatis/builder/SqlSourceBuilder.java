@@ -1,5 +1,8 @@
 package cn.sliew.rtomde.platform.mybatis.builder;
 
+import cn.sliew.rtomde.config.PlatformOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
 import cn.sliew.rtomde.platform.mybatis.mapping.SqlSource;
 import cn.sliew.rtomde.platform.mybatis.parsing.GenericTokenParser;
@@ -8,6 +11,7 @@ import cn.sliew.rtomde.platform.mybatis.reflection.MetaClass;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
 import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
+import cn.sliew.rtomde.platform.mybatis.builder.xml.BaseBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +22,8 @@ public class SqlSourceBuilder extends BaseBuilder {
 
     private static final String PARAMETER_PROPERTIES = "javaType,jdbcType,resultMap,typeHandler,jdbcTypeName";
 
-    public SqlSourceBuilder(Configuration configuration) {
-        super(configuration);
+    public SqlSourceBuilder(MybatisApplicationOptions application) {
+        super(application);
     }
 
     public SqlSource parse(String originalSql, Class<?> parameterType, Map<String, Object> additionalParameters) {
@@ -31,7 +35,7 @@ public class SqlSourceBuilder extends BaseBuilder {
         } else {
             sql = parser.parse(originalSql);
         }
-        return new StaticSqlSource(configuration, sql, handler.getParameterMappings());
+        return new StaticSqlSource(application, sql, handler.getParameterMappings());
     }
 
     public static String removeExtraWhitespaces(String original) {
@@ -83,7 +87,8 @@ public class SqlSourceBuilder extends BaseBuilder {
             } else if (property == null || Map.class.isAssignableFrom(parameterType)) {
                 propertyType = Object.class;
             } else {
-                MetaClass metaClass = MetaClass.forClass(parameterType, configuration.getReflectorFactory());
+                MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+                MetaClass metaClass = MetaClass.forClass(parameterType, platform.getReflectorFactory());
                 if (metaClass.hasGetter(property)) {
                     propertyType = metaClass.getGetterType(property);
                 } else {

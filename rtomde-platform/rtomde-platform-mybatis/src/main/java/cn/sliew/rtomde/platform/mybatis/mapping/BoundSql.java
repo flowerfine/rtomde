@@ -1,8 +1,9 @@
 package cn.sliew.rtomde.platform.mybatis.mapping;
 
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
 import cn.sliew.rtomde.platform.mybatis.reflection.property.PropertyTokenizer;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,12 +25,13 @@ public class BoundSql {
     private final Map<String, Object> additionalParameters;
     private final MetaObject metaParameters;
 
-    public BoundSql(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Object parameterObject) {
+    public BoundSql(MybatisApplicationOptions application, String sql, List<ParameterMapping> parameterMappings, Object parameterObject) {
         this.sql = sql;
         this.parameterMappings = parameterMappings;
         this.parameterObject = parameterObject;
         this.additionalParameters = new HashMap<>();
-        this.metaParameters = configuration.newMetaObject(additionalParameters);
+        MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+        this.metaParameters = platform.newMetaObject(additionalParameters);
     }
 
     public String getSql() {

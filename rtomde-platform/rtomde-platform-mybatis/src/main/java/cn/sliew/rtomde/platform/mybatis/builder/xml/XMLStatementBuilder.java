@@ -29,7 +29,7 @@ public class XMLStatementBuilder extends BaseBuilder {
 
         MybatisPlatformOptions platform = (MybatisPlatformOptions) this.application.getPlatform();
         LanguageDriver langDriver = platform.getLanguageRegistry().getDefaultDriver();
-        SqlSource sqlSource = langDriver.createSqlSource(configuration, context, null);
+        SqlSource sqlSource = langDriver.createSqlSource(application, context, null);
         String parameterMap = context.getStringAttribute("parameterMap");
         String resultMap = context.getStringAttribute("resultMap");
         Integer timeout = context.getIntAttribute("timeout");

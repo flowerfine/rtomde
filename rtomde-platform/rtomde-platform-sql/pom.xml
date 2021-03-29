@@ -5,16 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>cn.sliew</groupId>
-        <artifactId>rtomde</artifactId>
+        <artifactId>rtomde-platform</artifactId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>rtomde-platform</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>rtomde-platform-sql</module>
-        <module>rtomde-platform-mybatis</module>
-
-    </modules>
+    <artifactId>rtomde-platform-sql</artifactId>
 
 </project>

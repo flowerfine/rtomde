@@ -1,11 +1,11 @@
 package cn.sliew.rtomde.platform.mybatis.scripting.xmltags;
 
-import cn.sliew.rtomde.platform.mybatis.builder.BaseBuilder;
 import cn.sliew.rtomde.platform.mybatis.builder.BuilderException;
+import cn.sliew.rtomde.platform.mybatis.builder.xml.BaseBuilder;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.mapping.SqlSource;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.scripting.defaults.RawSqlSource;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -21,12 +21,12 @@ public class XMLScriptBuilder extends BaseBuilder {
     private final Class<?> parameterType;
     private final Map<String, NodeHandler> nodeHandlerMap = new HashMap<>();
 
-    public XMLScriptBuilder(Configuration configuration, XNode context) {
-        this(configuration, context, null);
+    public XMLScriptBuilder(MybatisApplicationOptions application, XNode context) {
+        this(application, context, null);
     }
 
-    public XMLScriptBuilder(Configuration configuration, XNode context, Class<?> parameterType) {
-        super(configuration);
+    public XMLScriptBuilder(MybatisApplicationOptions application, XNode context, Class<?> parameterType) {
+        super(application);
         this.context = context;
         this.parameterType = parameterType;
         initNodeHandlerMap();
