@@ -7,7 +7,6 @@ import cn.sliew.rtomde.platform.mybatis.executor.ExecutorException;
 import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
 import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
 
