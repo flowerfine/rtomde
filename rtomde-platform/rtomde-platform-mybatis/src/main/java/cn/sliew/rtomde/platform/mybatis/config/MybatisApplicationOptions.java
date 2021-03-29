@@ -2,8 +2,10 @@ package cn.sliew.rtomde.platform.mybatis.config;
 
 import cn.sliew.rtomde.config.ApplicationOptions;
 import cn.sliew.rtomde.config.ConfigOptions;
+import cn.sliew.rtomde.platform.mybatis.builder.IncompleteElementException;
 import cn.sliew.rtomde.platform.mybatis.builder.ResultMapResolver;
 import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLStatementBuilder;
+import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMap;
 import cn.sliew.rtomde.platform.mybatis.mapping.ResultMap;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
@@ -28,6 +30,8 @@ public class MybatisApplicationOptions extends ApplicationOptions {
      */
     protected Properties props = new Properties();
 
+    protected String logPrefix;
+
     /**
      * 支持应用级的类型别名
      */
@@ -45,6 +49,7 @@ public class MybatisApplicationOptions extends ApplicationOptions {
     protected final Map<String, XNode> sqlFragments = new HashMap<>();
     protected final Set<String> loadedResources = new HashSet<>();
 
+    protected final Map<String, MappedStatement> mappedStatements = new HashMap<>();
     protected final Map<String, ResultMap> resultMaps = new HashMap<>();
     protected final Map<String, ParameterMap> parameterMaps = new HashMap<>();
 
@@ -99,6 +104,64 @@ public class MybatisApplicationOptions extends ApplicationOptions {
 
     public void addIncompleteResultMap(ResultMapResolver resultMapResolver) {
         incompleteResultMaps.add(resultMapResolver);
+    }
+
+    public void addMappedStatement(MappedStatement ms) {
+        mappedStatements.put(ms.getId(), ms);
+    }
+
+    public Collection<String> getMappedStatementNames() {
+        buildAllStatements();
+        return mappedStatements.keySet();
+    }
+
+    public Collection<MappedStatement> getMappedStatements() {
+        buildAllStatements();
+        return mappedStatements.values();
+    }
+
+    /*
+     * Parses all the unprocessed statement nodes in the cache. It is recommended
+     * to call this method once all the mappers are added as it provides fail-fast
+     * statement validation.
+     */
+    protected void buildAllStatements() {
+        parsePendingResultMaps();
+        if (!incompleteStatements.isEmpty()) {
+            synchronized (incompleteStatements) {
+                incompleteStatements.removeIf(x -> {
+                    x.parseStatementNode();
+                    return true;
+                });
+            }
+        }
+    }
+
+    private void parsePendingResultMaps() {
+        if (incompleteResultMaps.isEmpty()) {
+            return;
+        }
+        synchronized (incompleteResultMaps) {
+            boolean resolved;
+            IncompleteElementException ex = null;
+            do {
+                resolved = false;
+                Iterator<ResultMapResolver> iterator = incompleteResultMaps.iterator();
+                while (iterator.hasNext()) {
+                    try {
+                        iterator.next().resolve();
+                        iterator.remove();
+                        resolved = true;
+                    } catch (IncompleteElementException e) {
+                        ex = e;
+                    }
+                }
+            } while (resolved);
+            if (!incompleteResultMaps.isEmpty() && ex != null) {
+                // At least one result map is unresolvable.
+                throw ex;
+            }
+        }
     }
 
     public void addResultMap(ResultMap rm) {
@@ -201,5 +264,11 @@ public class MybatisApplicationOptions extends ApplicationOptions {
         return this.cacheOptionsRegistry.containsKey(id);
     }
 
+    public String getLogPrefix() {
+        return logPrefix;
+    }
 
+    public void setLogPrefix(String logPrefix) {
+        this.logPrefix = logPrefix;
+    }
 }

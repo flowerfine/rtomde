@@ -149,7 +149,7 @@ public class MapperBuilderAssistant extends BaseBuilder {
                 .cacheRef(cacheRef)
                 .lang(lang)
                 .build();
-        configuration.addMappedStatement(statement);
+        application.addMappedStatement(statement);
         return statement;
     }
 

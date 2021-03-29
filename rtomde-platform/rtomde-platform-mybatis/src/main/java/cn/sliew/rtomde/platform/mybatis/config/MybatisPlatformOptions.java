@@ -15,7 +15,9 @@ import cn.sliew.rtomde.platform.mybatis.reflection.factory.DefaultObjectFactory;
 import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
 import cn.sliew.rtomde.platform.mybatis.reflection.wrapper.DefaultObjectWrapperFactory;
 import cn.sliew.rtomde.platform.mybatis.reflection.wrapper.ObjectWrapperFactory;
+import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriverRegistry;
+import cn.sliew.rtomde.platform.mybatis.scripting.xmltags.XMLLanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.session.AutoMappingBehavior;
 import cn.sliew.rtomde.platform.mybatis.session.AutoMappingUnknownColumnBehavior;
 import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
@@ -47,7 +49,6 @@ public class MybatisPlatformOptions extends PlatformOptions {
     protected boolean returnInstanceForEmptyRow;
     protected boolean shrinkWhitespacesInSql;
 
-    protected String logPrefix;
     protected Class<? extends Logger> logImpl = Slf4JLogger.class;
     protected Class<? extends VFS> vfsImpl;
     protected Class<?> defaultSqlProviderType;
@@ -139,10 +140,6 @@ public class MybatisPlatformOptions extends PlatformOptions {
         return proxyFactory;
     }
 
-    public LanguageDriverRegistry getLanguageRegistry() {
-        return languageRegistry;
-    }
-
     public boolean isUseColumnLabel() {
         return useColumnLabel;
     }
@@ -170,4 +167,29 @@ public class MybatisPlatformOptions extends PlatformOptions {
     public void setShrinkWhitespacesInSql(boolean shrinkWhitespacesInSql) {
         this.shrinkWhitespacesInSql = shrinkWhitespacesInSql;
     }
+
+    public LanguageDriverRegistry getLanguageRegistry() {
+        return languageRegistry;
+    }
+
+    public void setDefaultScriptingLanguage(Class<? extends LanguageDriver> driver) {
+        if (driver == null) {
+            driver = XMLLanguageDriver.class;
+        }
+        getLanguageRegistry().setDefaultDriverClass(driver);
+    }
+
+    public LanguageDriver getDefaultScriptingLanguageInstance() {
+        return languageRegistry.getDefaultDriver();
+    }
+
+    /**
+     * Gets the language driver.
+     *
+     * @return the language driver
+     */
+    public LanguageDriver getLanguageDriver() {
+        return languageRegistry.getDefaultDriver();
+    }
+
 }
