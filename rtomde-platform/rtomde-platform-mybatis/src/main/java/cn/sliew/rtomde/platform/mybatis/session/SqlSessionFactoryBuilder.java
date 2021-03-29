@@ -1,6 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.session;
 
 import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLApplicationBuilder;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.exceptions.ExceptionFactory;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.session.defaults.DefaultSqlSessionFactory;
@@ -46,8 +47,8 @@ public class SqlSessionFactoryBuilder {
         }
     }
 
-    public SqlSessionFactory build(Configuration config) {
-        return new DefaultSqlSessionFactory(config);
+    public SqlSessionFactory build(MybatisApplicationOptions application) {
+        return new DefaultSqlSessionFactory(application);
     }
 
 }

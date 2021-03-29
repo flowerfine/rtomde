@@ -1,12 +1,13 @@
 package cn.sliew.rtomde.platform.mybatis.scripting.defaults;
 
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.executor.parameter.ParameterHandler;
 import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
 import cn.sliew.rtomde.platform.mybatis.type.TypeException;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
@@ -23,12 +24,13 @@ public class DefaultParameterHandler implements ParameterHandler {
     private final MappedStatement mappedStatement;
     private final Object parameterObject;
     private final BoundSql boundSql;
-    private final Configuration configuration;
+    private final MybatisApplicationOptions application;
 
     public DefaultParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
         this.mappedStatement = mappedStatement;
-        this.configuration = mappedStatement.getConfiguration();
-        this.typeHandlerRegistry = mappedStatement.getConfiguration().getTypeHandlerRegistry();
+        this.application = mappedStatement.getApplication();
+        MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+        this.typeHandlerRegistry = platform.getTypeHandlerRegistry();
         this.parameterObject = parameterObject;
         this.boundSql = boundSql;
     }
@@ -54,13 +56,15 @@ public class DefaultParameterHandler implements ParameterHandler {
                 } else if (typeHandlerRegistry.hasTypeHandler(parameterObject.getClass())) {
                     value = parameterObject;
                 } else {
-                    MetaObject metaObject = configuration.newMetaObject(parameterObject);
+                    MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+                    MetaObject metaObject = platform.newMetaObject(parameterObject);
                     value = metaObject.getValue(propertyName);
                 }
                 TypeHandler typeHandler = parameterMapping.getTypeHandler();
                 JdbcType jdbcType = parameterMapping.getJdbcType();
                 if (value == null && jdbcType == null) {
-                    jdbcType = configuration.getJdbcTypeForNull();
+                    MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+                    jdbcType = platform.getJdbcTypeForNull();
                 }
                 try {
                     typeHandler.setParameter(ps, i + 1, value, jdbcType);

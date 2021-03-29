@@ -1,5 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.session.defaults;
 
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.exceptions.ExceptionFactory;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.executor.Executor;
@@ -9,10 +10,10 @@ import cn.sliew.rtomde.platform.mybatis.session.SqlSessionFactory;
 
 public class DefaultSqlSessionFactory implements SqlSessionFactory {
 
-    private final Configuration configuration;
+    private final MybatisApplicationOptions application;
 
-    public DefaultSqlSessionFactory(Configuration configuration) {
-        this.configuration = configuration;
+    public DefaultSqlSessionFactory(MybatisApplicationOptions application) {
+        this.application = application;
     }
 
     @Override
@@ -21,13 +22,13 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     }
 
     @Override
-    public Configuration getConfiguration() {
-        return configuration;
+    public MybatisApplicationOptions getApplication() {
+        return application;
     }
 
     private SqlSession openSessionFromDataSource() {
         try {
-            Executor executor = configuration.newExecutor();
+            Executor executor = application.newExecutor();
             return new DefaultSqlSession(configuration, executor);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);

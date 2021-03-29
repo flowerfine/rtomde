@@ -192,4 +192,12 @@ public class MybatisPlatformOptions extends PlatformOptions {
         return languageRegistry.getDefaultDriver();
     }
 
+    public JdbcType getJdbcTypeForNull() {
+        return jdbcTypeForNull;
+    }
+
+    public void setJdbcTypeForNull(JdbcType jdbcTypeForNull) {
+        this.jdbcTypeForNull = jdbcTypeForNull;
+    }
+
 }
