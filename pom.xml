@@ -27,7 +27,6 @@
         <module>rtomde-jdbc-spring-boot</module>
 
         <module>rtomde-container</module>
-        <module>rtomde-cache</module>
     </modules>
 
     <properties>
