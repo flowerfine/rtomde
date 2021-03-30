@@ -4,8 +4,6 @@ import cn.sliew.milky.common.log.Logger;
 import cn.sliew.milky.common.log.Slf4JLogger;
 import cn.sliew.rtomde.config.PlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.Executor;
-import cn.sliew.rtomde.platform.mybatis.executor.loader.ProxyFactory;
-import cn.sliew.rtomde.platform.mybatis.executor.loader.javassist.JavassistProxyFactory;
 import cn.sliew.rtomde.platform.mybatis.executor.parameter.ParameterHandler;
 import cn.sliew.rtomde.platform.mybatis.executor.resultset.DefaultResultSetHandler;
 import cn.sliew.rtomde.platform.mybatis.executor.resultset.ResultSetHandler;
@@ -74,7 +72,6 @@ public class MybatisPlatformOptions extends PlatformOptions {
     protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
 
     protected boolean lazyLoadingEnabled = false;
-    protected ProxyFactory proxyFactory = new JavassistProxyFactory(); // #224 Using internal Javassist instead of OGNL
 
     /**
      * Configuration factory class.
@@ -144,10 +141,6 @@ public class MybatisPlatformOptions extends PlatformOptions {
 
     public InterceptorChain getInterceptorChain() {
         return interceptorChain;
-    }
-
-    public ProxyFactory getProxyFactory() {
-        return proxyFactory;
     }
 
     public boolean isUseColumnLabel() {
@@ -302,6 +295,14 @@ public class MybatisPlatformOptions extends PlatformOptions {
 
     public void setLazyLoadTriggerMethods(Set<String> lazyLoadTriggerMethods) {
         this.lazyLoadTriggerMethods = lazyLoadTriggerMethods;
+    }
+
+    public Class<?> getConfigurationFactory() {
+        return configurationFactory;
+    }
+
+    public void setConfigurationFactory(Class<?> configurationFactory) {
+        this.configurationFactory = configurationFactory;
     }
 
 }
