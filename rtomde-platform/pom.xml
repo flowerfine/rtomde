@@ -13,7 +13,6 @@
 
     <modules>
         <module>rtomde-platform-mybatis</module>
-        <module>rtomde-platform-executor</module>
     </modules>
 
     <dependencyManagement>
