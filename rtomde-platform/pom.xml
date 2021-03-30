@@ -13,14 +13,20 @@
 
     <modules>
         <module>rtomde-platform-mybatis</module>
+        <module>rtomde-platform-engine</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>cn.sliew</groupId>
+                <artifactId>rtomde-platform-engine</artifactId>
+                <version>${project.parent.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.sliew</groupId>
                 <artifactId>rtomde-platform-mybatis</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <version>${project.parent.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
