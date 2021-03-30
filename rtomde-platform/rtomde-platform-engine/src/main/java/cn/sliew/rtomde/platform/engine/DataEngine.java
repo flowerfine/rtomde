@@ -6,13 +6,17 @@ public interface DataEngine {
 
     String getVersion();
 
-    DataApplication registerApplication(ApplicationDiscoveryRequest request);
+    DataApplication registerApplication(ApplicationRegistryRequest request);
 
-    DataApplication discoverApplication();
+    DataApplication discoverApplication(ApplicationDiscoveryRequest request);
 
-    DataResource registerResource();
+    DataApplication configureApplication(ApplicationConfigurationRequest request);
 
-    DataResource discoverResource();
+    DataResource registerResource(ResourceRegistryRequest request);
+
+    DataResource discoverResource(ResourceDiscoveryRequest request);
+
+    DataResource configureResource(ResourceConfigurationRequest request);
 
     void execute();
 
