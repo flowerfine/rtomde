@@ -123,6 +123,17 @@ public class MybatisApplicationOptions extends ApplicationOptions {
         return mappedStatements.values();
     }
 
+    public MappedStatement getMappedStatement(String id) {
+        return this.getMappedStatement(id, true);
+    }
+
+    public MappedStatement getMappedStatement(String id, boolean validateIncompleteStatements) {
+        if (validateIncompleteStatements) {
+            buildAllStatements();
+        }
+        return mappedStatements.get(id);
+    }
+
     /*
      * Parses all the unprocessed statement nodes in the cache. It is recommended
      * to call this method once all the mappers are added as it provides fail-fast

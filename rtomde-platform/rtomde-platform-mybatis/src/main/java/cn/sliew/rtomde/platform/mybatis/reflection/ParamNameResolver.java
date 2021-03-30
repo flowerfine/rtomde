@@ -1,8 +1,10 @@
 package cn.sliew.rtomde.platform.mybatis.reflection;
 
+import cn.sliew.rtomde.platform.mybatis.binding.ParamMap;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMap;
 import cn.sliew.rtomde.platform.mybatis.mapping.ParameterMapping;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
 import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
 
@@ -29,9 +31,10 @@ public class ParamNameResolver {
      */
     private final SortedMap<Integer, String> names;
 
-    public ParamNameResolver(Configuration config, String id) {
-        this.useActualParamName = config.isUseActualParamName();
-        ParameterMap parameterMap = config.getMappedStatement(id).getParameterMap();
+    public ParamNameResolver(MybatisApplicationOptions application, String id) {
+        MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
+        this.useActualParamName = platform.isUseActualParamName();
+        ParameterMap parameterMap = application.getMappedStatement(id).getParameterMap();
         List<ParameterMapping> parameterMappings = parameterMap.getParameterMappings();
         final SortedMap<Integer, String> map = new TreeMap<>();
         int paramCount = parameterMappings.size();

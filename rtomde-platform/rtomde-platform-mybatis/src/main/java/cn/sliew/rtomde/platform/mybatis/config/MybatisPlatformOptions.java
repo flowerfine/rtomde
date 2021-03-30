@@ -305,4 +305,13 @@ public class MybatisPlatformOptions extends PlatformOptions {
         this.configurationFactory = configurationFactory;
     }
 
+    public boolean isUseActualParamName() {
+        return useActualParamName;
+    }
+
+    public void setUseActualParamName(boolean useActualParamName) {
+        this.useActualParamName = useActualParamName;
+    }
+
+
 }
