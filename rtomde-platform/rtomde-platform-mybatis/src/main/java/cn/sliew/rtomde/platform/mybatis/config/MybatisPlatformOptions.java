@@ -22,6 +22,7 @@ import cn.sliew.rtomde.platform.mybatis.reflection.wrapper.DefaultObjectWrapperF
 import cn.sliew.rtomde.platform.mybatis.reflection.wrapper.ObjectWrapperFactory;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriverRegistry;
+import cn.sliew.rtomde.platform.mybatis.scripting.defaults.RawLanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.scripting.xmltags.XMLLanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.session.AutoMappingBehavior;
 import cn.sliew.rtomde.platform.mybatis.session.AutoMappingUnknownColumnBehavior;
@@ -71,6 +72,12 @@ public class MybatisPlatformOptions extends PlatformOptions {
         LoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
         this.environment = System.getenv("ENV");
         this.variables = props;
+
+        typeAliasRegistry.registerAlias("XML", XMLLanguageDriver.class);
+        typeAliasRegistry.registerAlias("RAW", RawLanguageDriver.class);
+
+        languageRegistry.setDefaultDriverClass(XMLLanguageDriver.class);
+        languageRegistry.register(RawLanguageDriver.class);
     }
 
     public void settings(Properties props) {
@@ -85,6 +92,7 @@ public class MybatisPlatformOptions extends PlatformOptions {
         this.setReturnInstanceForEmptyRow(booleanValueOf(props.getProperty("returnInstanceForEmptyRow"), false));
         this.setShrinkWhitespacesInSql(booleanValueOf(props.getProperty("shrinkWhitespacesInSql"), false));
 
+        this.setVfsImpl(resolveClass(props.getProperty("vfsImpl")));
         this.setJdbcTypeForNull(JdbcType.valueOf(props.getProperty("jdbcTypeForNull", "OTHER")));
         this.setLazyLoadTriggerMethods(stringSetValueOf(props.getProperty("lazyLoadTriggerMethods"), "equals,clone,hashCode,toString"));
 

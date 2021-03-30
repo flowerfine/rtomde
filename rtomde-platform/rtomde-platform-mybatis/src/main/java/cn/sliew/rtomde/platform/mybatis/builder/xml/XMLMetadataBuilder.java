@@ -67,9 +67,7 @@ public class XMLMetadataBuilder {
             String name = root.getStringAttribute("name");
             platform.setName(name);
             propertiesElement(root.evalNode("properties"));
-            Properties settings = settingsAsProperties(root.evalNode("settings"));
-            platform.settings(settings);
-            loadCustomVfs(settings);
+            settingsAsProperties(root.evalNode("settings"));
             typeAliasesElement(root.evalNode("typeAliases"));
             // fixme page。如何处理分页问题，交由业务来处理？？？
 //            pluginElement(root.evalNode("plugins"));
@@ -91,12 +89,8 @@ public class XMLMetadataBuilder {
                 throw new BuilderException("The setting " + key + " is not known.  Make sure you spelled it correctly (case sensitive).");
             }
         }
+        platform.settings(props);
         return props;
-    }
-
-    private void loadCustomVfs(Properties props) {
-        Class<? extends VFS> vfsImpl = resolveClass(props.getProperty("vfsImpl"));
-        platform.setVfsImpl(vfsImpl);
     }
 
     private void typeAliasesElement(XNode parent) {

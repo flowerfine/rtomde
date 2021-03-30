@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE metadata
+        PUBLIC "-//sliew.cn//DTD Metadata 1.0//EN"
+        "http://sliew.cn/dtd/mybatis-metadata-1.dtd">
+
+<metadata name="mybatis">
+
+    <properties resource="cn/sliew/rtomde/platform/mybatis/builder/jdbc.properties">
+        <property name="prop1" value="aaaa"/>
+        <property name="jdbcTypeForNull" value="NULL"/>
+    </properties>
+
+    <settings>
+        <setting name="safeRowBoundsEnabled" value="true"/>
+        <setting name="safeResultHandlerEnabled" value="false"/>
+        <setting name="aggressiveLazyLoading" value="true"/>
+        <setting name="multipleResultSetsEnabled" value="false"/>
+        <setting name="useColumnLabel" value="false"/>
+        <setting name="callSettersOnNulls" value="true"/>
+        <setting name="shrinkWhitespacesInSql" value="true"/>
+
+        <setting name="vfsImpl" value="cn.sliew.rtomde.platform.mybatis.io.JBoss6VFS"/>
+        <setting name="jdbcTypeForNull" value="${jdbcTypeForNull}"/>
+        <setting name="lazyLoadTriggerMethods" value="equals,clone,hashCode,toString,xxx"/>
+
+        <setting name="autoMappingBehavior" value="NONE"/>
+        <setting name="autoMappingUnknownColumnBehavior" value="WARNING"/>
+
+<!--        <setting name="defaultStatementTimeout" value="10"/>-->
+        <setting name="defaultScriptingLanguage" value="cn.sliew.rtomde.platform.mybatis.scripting.defaults.RawLanguageDriver"/>
+        <setting name="defaultEnumTypeHandler" value="cn.sliew.rtomde.platform.mybatis.type.EnumOrdinalTypeHandler"/>
+    </settings>
+
+    <typeAliases>
+        <typeAlias alias="BlogAuthor" type="cn.sliew.rtomde.platform.mybatis.domain.blog.Author"/>
+        <typeAlias type="cn.sliew.rtomde.platform.mybatis.domain.blog.Blog"/>
+        <typeAlias type="cn.sliew.rtomde.platform.mybatis.domain.blog.Post"/>
+    </typeAliases>
+
+    <typeHandlers>
+        <typeHandler javaType="String" handler="cn.sliew.rtomde.platform.mybatis.builder.CustomStringTypeHandler"/>
+        <typeHandler javaType="String" jdbcType="VARCHAR" handler="cn.sliew.rtomde.platform.mybatis.builder.CustomStringTypeHandler"/>
+        <typeHandler handler="cn.sliew.rtomde.platform.mybatis.builder.CustomLongTypeHandler"/>
+    </typeHandlers>
+
+<!--    <plugins>-->
+<!--        <plugin interceptor="org.apache.ibatis.builder.ExamplePlugin">-->
+<!--            <property name="pluginProperty" value="100"/>-->
+<!--        </plugin>-->
+<!--    </plugins>-->
+
+</metadata>
