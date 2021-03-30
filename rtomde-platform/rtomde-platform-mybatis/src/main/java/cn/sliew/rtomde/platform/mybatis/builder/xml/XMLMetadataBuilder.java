@@ -7,7 +7,6 @@ import cn.sliew.rtomde.platform.mybatis.io.Resources;
 import cn.sliew.rtomde.platform.mybatis.io.VFS;
 import cn.sliew.rtomde.platform.mybatis.parsing.XNode;
 import cn.sliew.rtomde.platform.mybatis.parsing.XPathParser;
-import cn.sliew.rtomde.platform.mybatis.plugin.Interceptor;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaClass;
 import cn.sliew.rtomde.platform.mybatis.reflection.ReflectorFactory;
 import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
@@ -69,11 +68,11 @@ public class XMLMetadataBuilder {
             platform.setName(name);
             propertiesElement(root.evalNode("properties"));
             Properties settings = settingsAsProperties(root.evalNode("settings"));
-            platform.setSettings(settings);
+            platform.settings(settings);
             loadCustomVfs(settings);
             typeAliasesElement(root.evalNode("typeAliases"));
             // fixme page。如何处理分页问题，交由业务来处理？？？
-            pluginElement(root.evalNode("plugins"));
+//            pluginElement(root.evalNode("plugins"));
             typeHandlerElement(root.evalNode("typeHandlers"));
         } catch (Exception e) {
             throw new BuilderException("Error parsing SQL Mapper Configuration. Cause: " + e, e);
@@ -119,17 +118,17 @@ public class XMLMetadataBuilder {
         }
     }
 
-    private void pluginElement(XNode parent) throws Exception {
-        if (parent != null) {
-            for (XNode child : parent.getChildren()) {
-                String interceptor = child.getStringAttribute("interceptor");
-                Properties properties = child.getChildrenAsProperties();
-                Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).getDeclaredConstructor().newInstance();
-                interceptorInstance.setProperties(properties);
-                platform.addInterceptor(interceptorInstance);
-            }
-        }
-    }
+//    private void pluginElement(XNode parent) throws Exception {
+//        if (parent != null) {
+//            for (XNode child : parent.getChildren()) {
+//                String interceptor = child.getStringAttribute("interceptor");
+//                Properties properties = child.getChildrenAsProperties();
+//                Interceptor interceptorInstance = (Interceptor) resolveClass(interceptor).getDeclaredConstructor().newInstance();
+//                interceptorInstance.setProperties(properties);
+//                platform.addInterceptor(interceptorInstance);
+//            }
+//        }
+//    }
 
     private void propertiesElement(XNode context) throws Exception {
         if (context != null) {

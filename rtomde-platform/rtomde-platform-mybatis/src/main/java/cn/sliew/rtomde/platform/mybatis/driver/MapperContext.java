@@ -3,7 +3,7 @@ package cn.sliew.rtomde.platform.mybatis.driver;
 import cn.sliew.milky.cache.lettuce.LettuceCacheFactory;
 import cn.sliew.milky.cache.ohc.OhcCacheFactory;
 import cn.sliew.milky.common.chain.ContextMap;
-import cn.sliew.milky.common.log.LoggerFactory;
+import cn.sliew.milky.log.LoggerFactory;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
 import io.github.resilience4j.bulkhead.BulkheadRegistry;
 import io.github.resilience4j.bulkhead.internal.InMemoryBulkheadRegistry;

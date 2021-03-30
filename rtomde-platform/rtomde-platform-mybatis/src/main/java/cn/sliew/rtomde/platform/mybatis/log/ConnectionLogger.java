@@ -1,6 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.log;
 
-import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.log.Logger;
 import cn.sliew.rtomde.platform.mybatis.reflection.ExceptionUtil;
 
 import java.lang.reflect.InvocationHandler;

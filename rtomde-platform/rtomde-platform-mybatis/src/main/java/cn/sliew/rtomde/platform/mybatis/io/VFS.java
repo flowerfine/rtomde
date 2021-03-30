@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.io;
 
-import cn.sliew.milky.common.log.Logger;
-import cn.sliew.milky.common.log.LoggerFactory;
+import cn.sliew.milky.log.Logger;
+import cn.sliew.milky.log.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;

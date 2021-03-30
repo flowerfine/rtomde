@@ -1,6 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.executor;
 
-import cn.sliew.milky.common.log.Logger;
+import cn.sliew.milky.log.Logger;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.log.ConnectionLogger;
 import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;

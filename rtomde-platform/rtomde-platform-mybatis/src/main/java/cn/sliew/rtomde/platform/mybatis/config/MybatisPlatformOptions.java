@@ -1,8 +1,9 @@
 package cn.sliew.rtomde.platform.mybatis.config;
 
-import cn.sliew.milky.common.log.Logger;
-import cn.sliew.milky.common.log.Slf4JLogger;
+import cn.sliew.milky.log.Log4J2LoggerFactory;
+import cn.sliew.milky.log.LoggerFactory;
 import cn.sliew.rtomde.config.PlatformOptions;
+import cn.sliew.rtomde.platform.mybatis.builder.BuilderException;
 import cn.sliew.rtomde.platform.mybatis.executor.Executor;
 import cn.sliew.rtomde.platform.mybatis.executor.parameter.ParameterHandler;
 import cn.sliew.rtomde.platform.mybatis.executor.resultset.DefaultResultSetHandler;
@@ -12,8 +13,6 @@ import cn.sliew.rtomde.platform.mybatis.executor.statement.StatementHandler;
 import cn.sliew.rtomde.platform.mybatis.io.VFS;
 import cn.sliew.rtomde.platform.mybatis.mapping.BoundSql;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
-import cn.sliew.rtomde.platform.mybatis.plugin.Interceptor;
-import cn.sliew.rtomde.platform.mybatis.plugin.InterceptorChain;
 import cn.sliew.rtomde.platform.mybatis.reflection.DefaultReflectorFactory;
 import cn.sliew.rtomde.platform.mybatis.reflection.MetaObject;
 import cn.sliew.rtomde.platform.mybatis.reflection.ReflectorFactory;
@@ -28,18 +27,13 @@ import cn.sliew.rtomde.platform.mybatis.session.AutoMappingBehavior;
 import cn.sliew.rtomde.platform.mybatis.session.AutoMappingUnknownColumnBehavior;
 import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
 import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
-import cn.sliew.rtomde.platform.mybatis.type.JdbcType;
-import cn.sliew.rtomde.platform.mybatis.type.TypeAliasRegistry;
-import cn.sliew.rtomde.platform.mybatis.type.TypeHandlerRegistry;
+import cn.sliew.rtomde.platform.mybatis.type.*;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-/**
- * todo 更换log实现
- */
 public class MybatisPlatformOptions extends PlatformOptions {
 
     private static final long serialVersionUID = -2816717900936922789L;
@@ -57,9 +51,7 @@ public class MybatisPlatformOptions extends PlatformOptions {
     protected boolean returnInstanceForEmptyRow;
     protected boolean shrinkWhitespacesInSql;
 
-    protected Class<? extends Logger> logImpl = Slf4JLogger.class;
     protected Class<? extends VFS> vfsImpl;
-    protected Class<?> defaultSqlProviderType;
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
     protected Set<String> lazyLoadTriggerMethods = new HashSet<>(Arrays.asList("equals", "clone", "hashCode", "toString"));
 
@@ -71,198 +63,49 @@ public class MybatisPlatformOptions extends PlatformOptions {
     protected ObjectFactory objectFactory = new DefaultObjectFactory();
     protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
 
-    protected boolean lazyLoadingEnabled = false;
-
-    /**
-     * Configuration factory class.
-     * Used to create Configuration for loading deserialized unread properties.
-     *
-     * @see <a href='https://github.com/mybatis/old-google-code-issues/issues/300'>Issue 300 (google code)</a>
-     */
-    protected Class<?> configurationFactory;
-
-    protected final InterceptorChain interceptorChain = new InterceptorChain();
     protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
     protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
     protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
-
     public MybatisPlatformOptions(Properties props) {
+        LoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
         this.environment = System.getenv("ENV");
         this.variables = props;
     }
 
-    public Class<? extends VFS> getVfsImpl() {
-        return this.vfsImpl;
-    }
+    public void settings(Properties props) {
+        this.settings = props;
+        this.setSafeRowBoundsEnabled(booleanValueOf(props.getProperty("safeRowBoundsEnabled"), false));
+        this.setSafeResultHandlerEnabled(booleanValueOf(props.getProperty("safeResultHandlerEnabled"), true));
+        this.setAggressiveLazyLoading(booleanValueOf(props.getProperty("aggressiveLazyLoading"), false));
+        this.setMultipleResultSetsEnabled(booleanValueOf(props.getProperty("multipleResultSetsEnabled"), true));
+        this.setUseColumnLabel(booleanValueOf(props.getProperty("useColumnLabel"), true));
+        this.setCallSettersOnNulls(booleanValueOf(props.getProperty("callSettersOnNulls"), false));
+        this.setUseActualParamName(booleanValueOf(props.getProperty("useActualParamName"), true));
+        this.setReturnInstanceForEmptyRow(booleanValueOf(props.getProperty("returnInstanceForEmptyRow"), false));
+        this.setShrinkWhitespacesInSql(booleanValueOf(props.getProperty("shrinkWhitespacesInSql"), false));
 
-    public void setVfsImpl(Class<? extends VFS> vfsImpl) {
-        if (vfsImpl != null) {
-            this.vfsImpl = vfsImpl;
-            VFS.addImplClass(this.vfsImpl);
-        }
-    }
+        this.setJdbcTypeForNull(JdbcType.valueOf(props.getProperty("jdbcTypeForNull", "OTHER")));
+        this.setLazyLoadTriggerMethods(stringSetValueOf(props.getProperty("lazyLoadTriggerMethods"), "equals,clone,hashCode,toString"));
 
-    public void addInterceptor(Interceptor interceptor) {
-        interceptorChain.addInterceptor(interceptor);
+        this.setAutoMappingBehavior(AutoMappingBehavior.valueOf(props.getProperty("autoMappingBehavior", "PARTIAL")));
+        this.setAutoMappingUnknownColumnBehavior(AutoMappingUnknownColumnBehavior.valueOf(props.getProperty("autoMappingUnknownColumnBehavior", "NONE")));
+
+//        this.setDefaultStatementTimeout(integerValueOf(props.getProperty("defaultStatementTimeout"), null));
+        this.setDefaultScriptingLanguage(resolveClass(props.getProperty("defaultScriptingLanguage")));
+        this.setDefaultEnumTypeHandler(resolveClass(props.getProperty("defaultEnumTypeHandler")));
     }
 
     public String getEnvironment() {
         return environment;
     }
 
-    public void setVariables(Properties variables) {
-        this.variables = variables;
+    public boolean isSafeRowBoundsEnabled() {
+        return safeRowBoundsEnabled;
     }
 
-    public Properties getVariables() {
-        return variables;
-    }
-
-    public TypeHandlerRegistry getTypeHandlerRegistry() {
-        return typeHandlerRegistry;
-    }
-
-    public TypeAliasRegistry getTypeAliasRegistry() {
-        return typeAliasRegistry;
-    }
-
-    public ObjectFactory getObjectFactory() {
-        return objectFactory;
-    }
-
-    public ObjectWrapperFactory getObjectWrapperFactory() {
-        return objectWrapperFactory;
-    }
-
-    public ReflectorFactory getReflectorFactory() {
-        return reflectorFactory;
-    }
-
-    public InterceptorChain getInterceptorChain() {
-        return interceptorChain;
-    }
-
-    public boolean isUseColumnLabel() {
-        return useColumnLabel;
-    }
-
-    public void setUseColumnLabel(boolean useColumnLabel) {
-        this.useColumnLabel = useColumnLabel;
-    }
-
-    public Properties getSettings() {
-        return settings;
-    }
-
-    public void setSettings(Properties settings) {
-        this.settings = settings;
-    }
-
-    public MetaObject newMetaObject(Object object) {
-        return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
-    }
-
-    public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
-        ParameterHandler parameterHandler = mappedStatement.getLang().createParameterHandler(mappedStatement, parameterObject, boundSql);
-        parameterHandler = (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
-        return parameterHandler;
-    }
-
-    public ResultSetHandler newResultSetHandler(MappedStatement mappedStatement, RowBounds rowBounds, ResultHandler resultHandler) {
-        ResultSetHandler resultSetHandler = new DefaultResultSetHandler(mappedStatement, resultHandler, rowBounds);
-        resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
-        return resultSetHandler;
-    }
-
-    public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
-        StatementHandler statementHandler = new PreparedStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
-        statementHandler = (StatementHandler) interceptorChain.pluginAll(statementHandler);
-        return statementHandler;
-    }
-
-    public boolean isShrinkWhitespacesInSql() {
-        return shrinkWhitespacesInSql;
-    }
-
-    public void setShrinkWhitespacesInSql(boolean shrinkWhitespacesInSql) {
-        this.shrinkWhitespacesInSql = shrinkWhitespacesInSql;
-    }
-
-    public LanguageDriverRegistry getLanguageRegistry() {
-        return languageRegistry;
-    }
-
-    public void setDefaultScriptingLanguage(Class<? extends LanguageDriver> driver) {
-        if (driver == null) {
-            driver = XMLLanguageDriver.class;
-        }
-        getLanguageRegistry().setDefaultDriverClass(driver);
-    }
-
-    public LanguageDriver getDefaultScriptingLanguageInstance() {
-        return languageRegistry.getDefaultDriver();
-    }
-
-    /**
-     * Gets the language driver.
-     *
-     * @return the language driver
-     */
-    public LanguageDriver getLanguageDriver() {
-        return languageRegistry.getDefaultDriver();
-    }
-
-    public JdbcType getJdbcTypeForNull() {
-        return jdbcTypeForNull;
-    }
-
-    public void setJdbcTypeForNull(JdbcType jdbcTypeForNull) {
-        this.jdbcTypeForNull = jdbcTypeForNull;
-    }
-
-    public boolean isReturnInstanceForEmptyRow() {
-        return returnInstanceForEmptyRow;
-    }
-
-    public void setReturnInstanceForEmptyRow(boolean returnEmptyInstance) {
-        this.returnInstanceForEmptyRow = returnEmptyInstance;
-    }
-
-    public AutoMappingBehavior getAutoMappingBehavior() {
-        return autoMappingBehavior;
-    }
-
-    public void setAutoMappingBehavior(AutoMappingBehavior autoMappingBehavior) {
-        this.autoMappingBehavior = autoMappingBehavior;
-    }
-
-    public boolean isCallSettersOnNulls() {
-        return callSettersOnNulls;
-    }
-
-    public void setCallSettersOnNulls(boolean callSettersOnNulls) {
-        this.callSettersOnNulls = callSettersOnNulls;
-    }
-
-    /**
-     * Gets the auto mapping unknown column behavior.
-     *
-     * @return the auto mapping unknown column behavior
-     * @since 3.4.0
-     */
-    public AutoMappingUnknownColumnBehavior getAutoMappingUnknownColumnBehavior() {
-        return autoMappingUnknownColumnBehavior;
-    }
-
-    /**
-     * Sets the auto mapping unknown column behavior.
-     *
-     * @param autoMappingUnknownColumnBehavior the new auto mapping unknown column behavior
-     * @since 3.4.0
-     */
-    public void setAutoMappingUnknownColumnBehavior(AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior) {
-        this.autoMappingUnknownColumnBehavior = autoMappingUnknownColumnBehavior;
+    public void setSafeRowBoundsEnabled(boolean safeRowBoundsEnabled) {
+        this.safeRowBoundsEnabled = safeRowBoundsEnabled;
     }
 
     public boolean isSafeResultHandlerEnabled() {
@@ -289,20 +132,20 @@ public class MybatisPlatformOptions extends PlatformOptions {
         this.multipleResultSetsEnabled = multipleResultSetsEnabled;
     }
 
-    public Set<String> getLazyLoadTriggerMethods() {
-        return lazyLoadTriggerMethods;
+    public boolean isUseColumnLabel() {
+        return useColumnLabel;
     }
 
-    public void setLazyLoadTriggerMethods(Set<String> lazyLoadTriggerMethods) {
-        this.lazyLoadTriggerMethods = lazyLoadTriggerMethods;
+    public void setUseColumnLabel(boolean useColumnLabel) {
+        this.useColumnLabel = useColumnLabel;
     }
 
-    public Class<?> getConfigurationFactory() {
-        return configurationFactory;
+    public boolean isCallSettersOnNulls() {
+        return callSettersOnNulls;
     }
 
-    public void setConfigurationFactory(Class<?> configurationFactory) {
-        this.configurationFactory = configurationFactory;
+    public void setCallSettersOnNulls(boolean callSettersOnNulls) {
+        this.callSettersOnNulls = callSettersOnNulls;
     }
 
     public boolean isUseActualParamName() {
@@ -313,5 +156,183 @@ public class MybatisPlatformOptions extends PlatformOptions {
         this.useActualParamName = useActualParamName;
     }
 
+    public boolean isReturnInstanceForEmptyRow() {
+        return returnInstanceForEmptyRow;
+    }
+
+    public void setReturnInstanceForEmptyRow(boolean returnEmptyInstance) {
+        this.returnInstanceForEmptyRow = returnEmptyInstance;
+    }
+
+    public boolean isShrinkWhitespacesInSql() {
+        return shrinkWhitespacesInSql;
+    }
+
+    public void setShrinkWhitespacesInSql(boolean shrinkWhitespacesInSql) {
+        this.shrinkWhitespacesInSql = shrinkWhitespacesInSql;
+    }
+
+    public void setVfsImpl(Class<? extends VFS> vfsImpl) {
+        if (vfsImpl != null) {
+            this.vfsImpl = vfsImpl;
+            VFS.addImplClass(this.vfsImpl);
+        }
+    }
+
+    public Class<? extends VFS> getVfsImpl() {
+        return this.vfsImpl;
+    }
+
+    public void setJdbcTypeForNull(JdbcType jdbcTypeForNull) {
+        this.jdbcTypeForNull = jdbcTypeForNull;
+    }
+
+    public JdbcType getJdbcTypeForNull() {
+        return jdbcTypeForNull;
+    }
+
+    public void setLazyLoadTriggerMethods(Set<String> lazyLoadTriggerMethods) {
+        this.lazyLoadTriggerMethods = lazyLoadTriggerMethods;
+    }
+
+    public Set<String> getLazyLoadTriggerMethods() {
+        return lazyLoadTriggerMethods;
+    }
+
+    public void setAutoMappingBehavior(AutoMappingBehavior autoMappingBehavior) {
+        this.autoMappingBehavior = autoMappingBehavior;
+    }
+
+    public AutoMappingBehavior getAutoMappingBehavior() {
+        return autoMappingBehavior;
+    }
+
+    /**
+     * Sets the auto mapping unknown column behavior.
+     *
+     * @param autoMappingUnknownColumnBehavior the new auto mapping unknown column behavior
+     * @since 3.4.0
+     */
+    public void setAutoMappingUnknownColumnBehavior(AutoMappingUnknownColumnBehavior autoMappingUnknownColumnBehavior) {
+        this.autoMappingUnknownColumnBehavior = autoMappingUnknownColumnBehavior;
+    }
+
+    /**
+     * Gets the auto mapping unknown column behavior.
+     *
+     * @return the auto mapping unknown column behavior
+     * @since 3.4.0
+     */
+    public AutoMappingUnknownColumnBehavior getAutoMappingUnknownColumnBehavior() {
+        return autoMappingUnknownColumnBehavior;
+    }
+
+    /**
+     * Set a default {@link TypeHandler} class for {@link Enum}.
+     * A default {@link TypeHandler} is {@link EnumTypeHandler}.
+     * @param typeHandler a type handler class for {@link Enum}
+     * @since 3.4.5
+     */
+    public void setDefaultEnumTypeHandler(Class<? extends TypeHandler> typeHandler) {
+        if (typeHandler != null) {
+            getTypeHandlerRegistry().setDefaultEnumTypeHandler(typeHandler);
+        }
+    }
+
+    public void setVariables(Properties variables) {
+        this.variables = variables;
+    }
+
+    public Properties getVariables() {
+        return variables;
+    }
+
+    public ObjectFactory getObjectFactory() {
+        return objectFactory;
+    }
+
+    public ObjectWrapperFactory getObjectWrapperFactory() {
+        return objectWrapperFactory;
+    }
+
+    public TypeHandlerRegistry getTypeHandlerRegistry() {
+        return typeHandlerRegistry;
+    }
+
+    public TypeAliasRegistry getTypeAliasRegistry() {
+        return typeAliasRegistry;
+    }
+
+    public ReflectorFactory getReflectorFactory() {
+        return reflectorFactory;
+    }
+
+    public LanguageDriverRegistry getLanguageRegistry() {
+        return languageRegistry;
+    }
+
+    public void setDefaultScriptingLanguage(Class<? extends LanguageDriver> driver) {
+        if (driver == null) {
+            driver = XMLLanguageDriver.class;
+        }
+        getLanguageRegistry().setDefaultDriverClass(driver);
+    }
+
+    public LanguageDriver getDefaultScriptingLanguageInstance() {
+        return languageRegistry.getDefaultDriver();
+    }
+
+    /**
+     * Gets the language driver.
+     *
+     * @return the language driver
+     */
+    public LanguageDriver getLanguageDriver() {
+        return languageRegistry.getDefaultDriver();
+    }
+
+    public MetaObject newMetaObject(Object object) {
+        return MetaObject.forObject(object, objectFactory, objectWrapperFactory, reflectorFactory);
+    }
+
+    public ParameterHandler newParameterHandler(MappedStatement mappedStatement, Object parameterObject, BoundSql boundSql) {
+        return mappedStatement.getLang().createParameterHandler(mappedStatement, parameterObject, boundSql);
+    }
+
+    public ResultSetHandler newResultSetHandler(MappedStatement mappedStatement, RowBounds rowBounds, ResultHandler resultHandler) {
+        return new DefaultResultSetHandler(mappedStatement, resultHandler, rowBounds);
+    }
+
+    public StatementHandler newStatementHandler(Executor executor, MappedStatement mappedStatement, Object parameterObject, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) {
+        return new PreparedStatementHandler(executor, mappedStatement, parameterObject, rowBounds, resultHandler, boundSql);
+    }
+
+    private Boolean booleanValueOf(String value, Boolean defaultValue) {
+        return value == null ? defaultValue : Boolean.valueOf(value);
+    }
+
+    private Integer integerValueOf(String value, Integer defaultValue) {
+        return value == null ? defaultValue : Integer.valueOf(value);
+    }
+
+    private Set<String> stringSetValueOf(String value, String defaultValue) {
+        value = value == null ? defaultValue : value;
+        return new HashSet<>(Arrays.asList(value.split(",")));
+    }
+
+    private <T> Class<? extends T> resolveClass(String alias) {
+        if (alias == null) {
+            return null;
+        }
+        try {
+            return resolveAlias(alias);
+        } catch (Exception e) {
+            throw new BuilderException("Error resolving class. Cause: " + e, e);
+        }
+    }
+
+    private <T> Class<? extends T> resolveAlias(String alias) {
+        return typeAliasRegistry.resolveAlias(alias);
+    }
 
 }

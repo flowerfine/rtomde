@@ -1,7 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.executor;
 
-import cn.sliew.milky.common.log.Logger;
-import cn.sliew.rtomde.config.PlatformOptions;
+import cn.sliew.milky.log.Logger;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.statement.StatementHandler;
