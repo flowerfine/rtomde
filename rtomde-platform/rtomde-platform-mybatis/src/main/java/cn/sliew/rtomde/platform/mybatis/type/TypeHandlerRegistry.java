@@ -1,5 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.type;
 
+import cn.sliew.rtomde.platform.mybatis.binding.ParamMap;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.io.Resources;
 
@@ -187,7 +188,7 @@ public final class TypeHandlerRegistry {
 
     @SuppressWarnings("unchecked")
     private <T> TypeHandler<T> getTypeHandler(Type type, JdbcType jdbcType) {
-        if (MapperMethod.ParamMap.class.equals(type)) {
+        if (ParamMap.class.equals(type)) {
             return null;
         }
         Map<JdbcType, TypeHandler<?>> jdbcHandlerMap = getJdbcHandlerMap(type);
