@@ -11,5 +11,8 @@
     <artifactId>rtomde-platform-engine</artifactId>
     <packaging>jar</packaging>
 
+    <dependencies>
+
+    </dependencies>
 
 </project>
