@@ -1,5 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.session;
 
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+
 import java.io.Closeable;
 import java.util.List;
 
@@ -96,14 +98,9 @@ public interface SqlSession extends Closeable {
     void close();
 
     /**
-     * Clears local session cache.
-     */
-    void clearCache();
-
-    /**
      * Retrieves current configuration.
      *
      * @return Configuration
      */
-    Configuration getConfiguration();
+    MybatisApplicationOptions getApplication();
 }

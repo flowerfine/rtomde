@@ -1,20 +1,17 @@
 package cn.sliew.rtomde.platform.mybatis.session.defaults;
 
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.exceptions.ExceptionFactory;
 import cn.sliew.rtomde.platform.mybatis.exceptions.TooManyResultsException;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.executor.Executor;
-import cn.sliew.rtomde.platform.mybatis.executor.result.DefaultMapResultHandler;
-import cn.sliew.rtomde.platform.mybatis.executor.result.DefaultResultContext;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
 import cn.sliew.rtomde.platform.mybatis.reflection.ParamNameResolver;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
 import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
 import cn.sliew.rtomde.platform.mybatis.session.SqlSession;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * The default implementation for {@link SqlSession}.
@@ -22,11 +19,11 @@ import java.util.Map;
  */
 public class DefaultSqlSession implements SqlSession {
 
-    private final Configuration configuration;
+    private final MybatisApplicationOptions application;
     private final Executor executor;
 
-    public DefaultSqlSession(Configuration configuration, Executor executor) {
-        this.configuration = configuration;
+    public DefaultSqlSession(MybatisApplicationOptions application, Executor executor) {
+        this.application = application;
         this.executor = executor;
     }
 
@@ -49,29 +46,6 @@ public class DefaultSqlSession implements SqlSession {
     }
 
     @Override
-    public <K, V> Map<K, V> selectMap(String statement, String mapKey) {
-        return this.selectMap(statement, null, mapKey, RowBounds.DEFAULT);
-    }
-
-    @Override
-    public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey) {
-        return this.selectMap(statement, parameter, mapKey, RowBounds.DEFAULT);
-    }
-
-    @Override
-    public <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds) {
-        final List<? extends V> list = selectList(statement, parameter, rowBounds);
-        final DefaultMapResultHandler<K, V> mapResultHandler = new DefaultMapResultHandler<>(mapKey,
-                configuration.getObjectFactory(), configuration.getObjectWrapperFactory(), configuration.getReflectorFactory());
-        final DefaultResultContext<V> context = new DefaultResultContext<>();
-        for (V o : list) {
-            context.nextResultObject(o);
-            mapResultHandler.handleResult(context);
-        }
-        return mapResultHandler.getMappedResults();
-    }
-
-    @Override
     public <E> List<E> selectList(String statement) {
         return this.selectList(statement, null);
     }
@@ -84,7 +58,7 @@ public class DefaultSqlSession implements SqlSession {
     @Override
     public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
         try {
-            MappedStatement ms = configuration.getMappedStatement(statement);
+            MappedStatement ms = application.getMappedStatement(statement);
             return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
@@ -106,7 +80,7 @@ public class DefaultSqlSession implements SqlSession {
     @Override
     public void select(String statement, Object parameter, RowBounds rowBounds, ResultHandler handler) {
         try {
-            MappedStatement ms = configuration.getMappedStatement(statement);
+            MappedStatement ms = application.getMappedStatement(statement);
             executor.query(ms, wrapCollection(parameter), rowBounds, handler);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
@@ -125,13 +99,8 @@ public class DefaultSqlSession implements SqlSession {
     }
 
     @Override
-    public Configuration getConfiguration() {
-        return configuration;
-    }
-
-    @Override
-    public void clearCache() {
-        executor.clearLocalCache();
+    public MybatisApplicationOptions getApplication() {
+        return application;
     }
 
     private Object wrapCollection(final Object object) {
