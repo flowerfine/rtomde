@@ -67,7 +67,9 @@ public class MybatisAutoConfiguration implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    public SqlSessionFactory sqlSessionFactory(SqlSessionFactoryBean factory) throws Exception {
+    public SqlSessionFactory sqlSessionFactory() throws Exception {
+        SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
+
         if (StringUtils.hasText(this.properties.getMetadataLocation())) {
             factory.setMetadataLocation(this.resourceLoader.getResource(this.properties.getMetadataLocation()));
         }
@@ -128,8 +130,8 @@ public class MybatisAutoConfiguration implements InitializingBean {
         factory.setPlatform(platform);
     }
 
-//    @Bean
-//    @ConditionalOnMissingBean
+    @Bean
+    @ConditionalOnMissingBean
     public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }

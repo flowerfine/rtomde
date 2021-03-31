@@ -28,7 +28,6 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
 import org.springframework.core.type.classreading.MetadataReaderFactory;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
@@ -48,7 +47,6 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 /**
  * todo 后续提供一个 {@code DataEngine}，现在先这样玩吧。
  */
-@Component
 public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SqlSessionFactoryBean.class);
@@ -377,6 +375,9 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
     @Override
     public SqlSessionFactory getObject() throws Exception {
+        if (this.sqlSessionFactory == null) {
+            afterPropertiesSet();
+        }
         return this.sqlSessionFactory;
     }
 
