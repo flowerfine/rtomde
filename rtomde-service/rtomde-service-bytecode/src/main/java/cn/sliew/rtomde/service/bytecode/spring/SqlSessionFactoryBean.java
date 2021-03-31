@@ -1,22 +1,18 @@
 package cn.sliew.rtomde.service.bytecode.spring;
 
-import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLConfigBuilder;
 import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLMapperBuilder;
-import cn.sliew.rtomde.platform.mybatis.cache.Cache;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.io.Resources;
 import cn.sliew.rtomde.platform.mybatis.io.VFS;
-import cn.sliew.rtomde.platform.mybatis.mapping.DatabaseIdProvider;
-import cn.sliew.rtomde.platform.mybatis.plugin.Interceptor;
 import cn.sliew.rtomde.platform.mybatis.reflection.factory.ObjectFactory;
 import cn.sliew.rtomde.platform.mybatis.reflection.wrapper.ObjectWrapperFactory;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
-import cn.sliew.rtomde.platform.mybatis.session.Configuration;
 import cn.sliew.rtomde.platform.mybatis.session.SqlSessionFactory;
 import cn.sliew.rtomde.platform.mybatis.session.SqlSessionFactoryBuilder;
-import cn.sliew.rtomde.type.TypeHandler;
-import org.mybatis.logging.Logger;
-import org.mybatis.logging.LoggerFactory;
+import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
+import cn.sliew.rtomde.service.bytecode.logging.Logger;
+import cn.sliew.rtomde.service.bytecode.logging.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationEvent;
@@ -66,7 +62,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
     private Resource configLocation;
 
-    private Configuration configuration;
+    private MybatisApplicationOptions application;
 
     private Resource[] mapperLocations;
 
@@ -79,8 +75,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     private String environment;
 
     private boolean failFast;
-
-    private Interceptor[] plugins;
 
     private TypeHandler<?>[] typeHandlers;
 
@@ -99,12 +93,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
     private Class<? extends LanguageDriver> defaultScriptingLanguageDriver;
 
-    // issue #19. No default provider.
-    private DatabaseIdProvider databaseIdProvider;
-
     private Class<? extends VFS> vfs;
-
-    private Cache cache;
 
     private ObjectFactory objectFactory;
 
@@ -129,24 +118,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     }
 
     /**
-     * Gets the DatabaseIdProvider
-     *
-     * @return a specified DatabaseIdProvider
-     */
-    public DatabaseIdProvider getDatabaseIdProvider() {
-        return databaseIdProvider;
-    }
-
-    /**
-     * Sets the DatabaseIdProvider. As of version 1.2.2 this variable is not initialized by default.
-     *
-     * @param databaseIdProvider a DatabaseIdProvider
-     */
-    public void setDatabaseIdProvider(DatabaseIdProvider databaseIdProvider) {
-        this.databaseIdProvider = databaseIdProvider;
-    }
-
-    /**
      * Gets the VFS.
      *
      * @return a specified VFS
@@ -162,34 +133,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
      */
     public void setVfs(Class<? extends VFS> vfs) {
         this.vfs = vfs;
-    }
-
-    /**
-     * Gets the Cache.
-     *
-     * @return a specified Cache
-     */
-    public Cache getCache() {
-        return this.cache;
-    }
-
-    /**
-     * Sets the Cache.
-     *
-     * @param cache a Cache
-     */
-    public void setCache(Cache cache) {
-        this.cache = cache;
-    }
-
-    /**
-     * Mybatis plugin list.
-     *
-     * @param plugins list of plugins
-     * @since 1.0.1
-     */
-    public void setPlugins(Interceptor... plugins) {
-        this.plugins = plugins;
     }
 
     /**
@@ -282,13 +225,13 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     }
 
     /**
-     * Set a customized MyBatis configuration.
+     * Set a customized MyBatis application config.
      *
-     * @param configuration MyBatis configuration
+     * @param application MyBatis application config.
      * @since 1.3.0
      */
-    public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
+    public void setApplication(MybatisApplicationOptions application) {
+        this.application = application;
     }
 
     /**
@@ -362,7 +305,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     @Override
     public void afterPropertiesSet() throws Exception {
         notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
-        state((configuration == null && configLocation == null) || !(configuration != null && configLocation != null),
+        state((application == null && configLocation == null) || !(application != null && configLocation != null),
                 "Property 'configuration' and 'configLocation' can not specified with together");
 
         this.sqlSessionFactory = buildSqlSessionFactory();
@@ -380,7 +323,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
      */
     protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
 
-        final Configuration targetConfiguration;
+        final MybatisApplicationOptions targetConfiguration;
 
         XMLConfigBuilder xmlConfigBuilder = null;
         if (this.configuration != null) {
@@ -527,7 +470,7 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     public void onApplicationEvent(ApplicationEvent event) {
         if (failFast && event instanceof ContextRefreshedEvent) {
             // fail-fast -> check all statements are completed
-            this.sqlSessionFactory.getConfiguration().getMappedStatementNames();
+            this.sqlSessionFactory.getApplication().getMappedStatementNames();
         }
     }
 

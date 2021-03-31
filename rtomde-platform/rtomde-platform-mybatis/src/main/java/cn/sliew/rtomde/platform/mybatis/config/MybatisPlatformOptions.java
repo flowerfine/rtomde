@@ -40,7 +40,7 @@ public class MybatisPlatformOptions extends PlatformOptions {
 
     private static final long serialVersionUID = -2816717900936922789L;
 
-    private final String environment;
+    private String environment;
     private Properties settings;
 
     protected boolean safeRowBoundsEnabled;
@@ -122,6 +122,10 @@ public class MybatisPlatformOptions extends PlatformOptions {
 //        this.setDefaultStatementTimeout(integerValueOf(props.getProperty("defaultStatementTimeout"), null));
         this.setDefaultScriptingLanguage(resolveClass(props.getProperty("defaultScriptingLanguage")));
         this.setDefaultEnumTypeHandler(resolveClass(props.getProperty("defaultEnumTypeHandler")));
+    }
+
+    public void setEnvironment(String environment) {
+        this.environment = environment;
     }
 
     public String getEnvironment() {
@@ -276,8 +280,24 @@ public class MybatisPlatformOptions extends PlatformOptions {
         return variables;
     }
 
+    public void setReflectorFactory(ReflectorFactory reflectorFactory) {
+        this.reflectorFactory = reflectorFactory;
+    }
+
+    public ReflectorFactory getReflectorFactory() {
+        return reflectorFactory;
+    }
+
+    public void setObjectFactory(ObjectFactory objectFactory) {
+        this.objectFactory = objectFactory;
+    }
+
     public ObjectFactory getObjectFactory() {
         return objectFactory;
+    }
+
+    public void setObjectWrapperFactory(ObjectWrapperFactory objectWrapperFactory) {
+        this.objectWrapperFactory = objectWrapperFactory;
     }
 
     public ObjectWrapperFactory getObjectWrapperFactory() {
@@ -290,10 +310,6 @@ public class MybatisPlatformOptions extends PlatformOptions {
 
     public TypeAliasRegistry getTypeAliasRegistry() {
         return typeAliasRegistry;
-    }
-
-    public ReflectorFactory getReflectorFactory() {
-        return reflectorFactory;
     }
 
     public LanguageDriverRegistry getLanguageRegistry() {

@@ -16,6 +16,9 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * todo 增加settings配置。logPrefix，statementTimeout
+ */
 public class XMLApplicationBuilder extends BaseBuilder {
 
     private boolean parsed;
