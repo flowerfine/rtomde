@@ -219,6 +219,13 @@ public class MybatisApplicationOptions extends ApplicationOptions {
     }
 
     public DataSource getDataSource(String id) {
+        if (dataSourceRegistry.containsKey(id)) {
+            return dataSourceRegistry.get(id);
+        }
+        if (datasourceOptionsRegistry.containsKey(id)) {
+            DatasourceOptions datasourceOptions = datasourceOptionsRegistry.get(id);
+
+        }
         return dataSourceRegistry.get(id);
     }
 
