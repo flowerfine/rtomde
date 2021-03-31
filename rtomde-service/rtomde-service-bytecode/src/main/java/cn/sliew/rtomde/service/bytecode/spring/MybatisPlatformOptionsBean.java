@@ -2,6 +2,7 @@ package cn.sliew.rtomde.service.bytecode.spring;
 
 import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLApplicationBuilder;
 import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLMetadataBuilder;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.io.Resources;
@@ -14,7 +15,10 @@ import cn.sliew.rtomde.service.bytecode.logging.Logger;
 import cn.sliew.rtomde.service.bytecode.logging.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.NestedIOException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -40,7 +44,7 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 /**
  * todo 后续提供一个 {@code DataEngine}，现在先这样玩吧。
  */
-public class MybatisPlatformOptionsBean implements FactoryBean<MybatisPlatformOptions>, InitializingBean {
+public class MybatisPlatformOptionsBean implements FactoryBean<MybatisPlatformOptions>, InitializingBean, ApplicationListener<ApplicationEvent> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SqlSessionFactoryBean.class);
 
@@ -58,6 +62,8 @@ public class MybatisPlatformOptionsBean implements FactoryBean<MybatisPlatformOp
     private MybatisPlatformOptions platform;
 
     private Resource[] applicationLocations;
+
+    private boolean failFast;
 
     private TypeHandler<?>[] typeHandlers;
 
@@ -134,6 +140,16 @@ public class MybatisPlatformOptionsBean implements FactoryBean<MybatisPlatformOp
     }
 
     /**
+     * If true, a final check is done on Configuration to assure that all mapped statements are fully loaded and there is
+     * no one still pending to resolve includes. Defaults to false.
+     *
+     * @param failFast enable failFast
+     */
+    public void setFailFast(boolean failFast) {
+        this.failFast = failFast;
+    }
+
+    /**
      * Set type handlers. They must be annotated with {@code MappedTypes} and optionally with {@code MappedJdbcTypes}
      *
      * @param typeHandlers Type handler list
@@ -141,7 +157,6 @@ public class MybatisPlatformOptionsBean implements FactoryBean<MybatisPlatformOp
     public void setTypeHandlers(TypeHandler<?>... typeHandlers) {
         this.typeHandlers = typeHandlers;
     }
-
 
     /**
      * Packages to search for type handlers.
@@ -260,7 +275,7 @@ public class MybatisPlatformOptionsBean implements FactoryBean<MybatisPlatformOp
                 targetPlatform.getVariables().putAll(this.platformProperties);
             }
         } else if (this.metadataLocation != null) {
-            xmlMetadataBuilder = new XMLMetadataBuilder(this.metadataLocation.getInputStream(), this.platformProperties);
+            xmlMetadataBuilder = new XMLMetadataBuilder(this.metadataLocation.getInputStream(), environment, this.platformProperties);
             targetPlatform = xmlMetadataBuilder.parse();
         } else {
             LOGGER.debug(
@@ -365,6 +380,17 @@ public class MybatisPlatformOptionsBean implements FactoryBean<MybatisPlatformOp
     @Override
     public Class<? extends MybatisPlatformOptions> getObjectType() {
         return this.targetPlatform == null ? MybatisPlatformOptions.class : this.targetPlatform.getClass();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        if (failFast && event instanceof ContextRefreshedEvent) {
+            // fail-fast -> check all statements are completed
+            this.targetPlatform.getAllApplicationOptions().forEach(MybatisApplicationOptions::getMappedStatementNames);
+        }
     }
 
     private Set<Class<?>> scanClasses(String packagePatterns, Class<?> assignableType) throws IOException {

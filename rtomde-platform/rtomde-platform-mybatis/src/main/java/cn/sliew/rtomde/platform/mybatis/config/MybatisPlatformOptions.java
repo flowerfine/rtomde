@@ -31,10 +31,7 @@ import cn.sliew.rtomde.platform.mybatis.session.ResultHandler;
 import cn.sliew.rtomde.platform.mybatis.session.RowBounds;
 import cn.sliew.rtomde.platform.mybatis.type.*;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -346,6 +343,10 @@ public class MybatisPlatformOptions extends PlatformOptions {
 
     public MybatisApplicationOptions getApplicationOptions(String id) {
         return this.applicationRegistry.get(id);
+    }
+
+    public Collection<MybatisApplicationOptions> getAllApplicationOptions() {
+        return this.applicationRegistry.values();
     }
 
     public MetaObject newMetaObject(Object object) {
