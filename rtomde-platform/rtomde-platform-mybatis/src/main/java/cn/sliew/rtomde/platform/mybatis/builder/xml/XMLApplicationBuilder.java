@@ -47,7 +47,7 @@ public class XMLApplicationBuilder extends BaseBuilder {
     }
 
     /**
-     * fixme 远程读取mapper文件
+     * todo 远程读取mapper文件
      */
     private void parseApplication(XNode root) {
         try {
@@ -67,19 +67,9 @@ public class XMLApplicationBuilder extends BaseBuilder {
         }
     }
 
-    private void propertiesElement(XNode context) throws Exception {
+    private void propertiesElement(XNode context) {
         if (context != null) {
             Properties defaults = context.getChildrenAsProperties();
-            String resource = context.getStringAttribute("resource");
-            String url = context.getStringAttribute("url");
-            if (resource != null && url != null) {
-                throw new BuilderException("The properties element cannot specify both a URL and a resource based property file reference.  Please specify one or the other.");
-            }
-            if (resource != null) {
-                defaults.putAll(Resources.getResourceAsProperties(resource));
-            } else if (url != null) {
-                defaults.putAll(Resources.getUrlAsProperties(url));
-            }
             Properties props = application.getProps();
             if (props != null) {
                 defaults.putAll(props);

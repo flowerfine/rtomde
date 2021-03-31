@@ -50,6 +50,7 @@ public class XMLApplicationBuilderTest extends MilkyTestCase {
             assertThat(application.getTypeAliasRegistry().getTypeAliases().get("arraylist")).isEqualTo(ArrayList.class);
             assertThat(application.getTypeAliasRegistry().getTypeAliases().get("linkedlist")).isEqualTo(LinkedList.class);
 
+            assertNotNull(application.getDataSource("data_service"));
 
         }
     }
