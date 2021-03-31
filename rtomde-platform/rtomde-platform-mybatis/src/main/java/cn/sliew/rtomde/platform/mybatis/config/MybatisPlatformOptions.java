@@ -2,6 +2,7 @@ package cn.sliew.rtomde.platform.mybatis.config;
 
 import cn.sliew.milky.log.Log4J2LoggerFactory;
 import cn.sliew.milky.log.LoggerFactory;
+import cn.sliew.rtomde.common.utils.StringUtils;
 import cn.sliew.rtomde.config.PlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.builder.BuilderException;
 import cn.sliew.rtomde.platform.mybatis.executor.Executor;
@@ -70,7 +71,11 @@ public class MybatisPlatformOptions extends PlatformOptions {
 
     public MybatisPlatformOptions(Properties props) {
         LoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
-        this.environment = System.getenv("ENV");
+        String env = System.getenv("ENV");
+        if (StringUtils.isEmpty(env)) {
+            env = "dev";
+        }
+        this.environment = env;
         this.variables = props;
 
         typeAliasRegistry.registerAlias("XML", XMLLanguageDriver.class);

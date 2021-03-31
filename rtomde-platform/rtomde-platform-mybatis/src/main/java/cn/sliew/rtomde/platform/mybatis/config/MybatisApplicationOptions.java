@@ -30,7 +30,7 @@ public class MybatisApplicationOptions extends ApplicationOptions {
     /**
      * application properties
      */
-    protected Properties props = new Properties();
+    protected Properties props;
 
     protected String logPrefix;
     protected Integer defaultStatementTimeout = 3;
@@ -62,7 +62,7 @@ public class MybatisApplicationOptions extends ApplicationOptions {
     public MybatisApplicationOptions(MybatisPlatformOptions platform) {
         this.platform = platform;
         this.typeAliasRegistry = new TypeAliasRegistry(platform.getTypeAliasRegistry());
-        this.props.putAll(platform.getVariables());
+        this.props = platform.getVariables();
     }
 
     public Properties getProps() {
