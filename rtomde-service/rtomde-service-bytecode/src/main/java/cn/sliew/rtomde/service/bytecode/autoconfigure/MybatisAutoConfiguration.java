@@ -29,7 +29,7 @@ import java.util.stream.Stream;
 
 @Configuration
 @ConditionalOnClass({SqlSessionFactory.class, SqlSessionFactoryBean.class})
-@EnableConfigurationProperties({MybatisPlatformProperties.class})
+@EnableConfigurationProperties(MybatisPlatformProperties.class)
 public class MybatisAutoConfiguration implements InitializingBean {
 
     private final MybatisPlatformProperties properties;
@@ -67,7 +67,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    public SqlSessionFactory sqlSessionFactory() throws Exception {
+    public SqlSessionFactory sqlSessionFactory123() throws Exception {
         SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
 
         if (StringUtils.hasText(this.properties.getMetadataLocation())) {
@@ -132,7 +132,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
-        return new SqlSessionTemplate(sqlSessionFactory);
+    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory123) {
+        return new SqlSessionTemplate(sqlSessionFactory123);
     }
 }

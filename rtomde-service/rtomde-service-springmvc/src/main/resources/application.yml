@@ -16,7 +16,9 @@ management:
     tags:
       application: ${spring.application.name}
 
-mybatis:
-  config-location: classpath:mybatis-config.xml
-  mapper-locations: classpath:mapper/**/*.xml
+platform.mybatis:
   environment: dev
+  metadata-location: classpath:metadata-config.xml
+  checkMetadataLocation: true
+  applicationLocations: classpath:application-config.xml
+
