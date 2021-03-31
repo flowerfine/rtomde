@@ -124,7 +124,7 @@ public class XMLMetadataBuilderTest extends MilkyTestCase {
         try (InputStream inputStream = Resources.getResourceAsStream(resource)) {
             Properties props = new Properties();
             props.put("prop2", "cccc");
-            XMLMetadataBuilder builder = new XMLMetadataBuilder(inputStream, props);
+            XMLMetadataBuilder builder = new XMLMetadataBuilder(inputStream, null, props);
             MybatisPlatformOptions platform = builder.parse();
 
             assertThat(platform.isSafeRowBoundsEnabled()).isTrue();
@@ -157,7 +157,6 @@ public class XMLMetadataBuilderTest extends MilkyTestCase {
             assertThat(platform.getTypeHandlerRegistry().getTypeHandler(RoundingMode.class)).isInstanceOf(EnumOrdinalTypeHandler.class);
         }
     }
-
 
 
 }

@@ -28,26 +28,34 @@ public class XMLMetadataBuilder {
     private final MybatisPlatformOptions platform;
 
     public XMLMetadataBuilder(Reader reader) {
-        this(reader, null);
+        this(reader, null, null);
     }
 
-    public XMLMetadataBuilder(Reader reader, Properties props) {
-        this(new XPathParser(reader, true, props, new XMLMapperEntityResolver()), props);
+    public XMLMetadataBuilder(Reader reader, String environment) {
+        this(reader, environment, null);
+    }
+
+    public XMLMetadataBuilder(Reader reader, String environment, Properties props) {
+        this(new XPathParser(reader, true, props, new XMLMapperEntityResolver()), environment, props);
     }
 
     public XMLMetadataBuilder(InputStream inputStream) {
-        this(inputStream, null);
+        this(inputStream, null, null);
     }
 
-    public XMLMetadataBuilder(InputStream inputStream, Properties props) {
-        this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), props);
+    public XMLMetadataBuilder(InputStream inputStream, String environment) {
+        this(inputStream, environment, null);
     }
 
-    private XMLMetadataBuilder(XPathParser parser, Properties props) {
+    public XMLMetadataBuilder(InputStream inputStream, String environment, Properties props) {
+        this(new XPathParser(inputStream, true, props, new XMLMapperEntityResolver()), environment, props);
+    }
+
+    private XMLMetadataBuilder(XPathParser parser, String environment, Properties props) {
         ErrorContext.instance().resource("Mybatis Platform Options");
         this.parsed = false;
         this.parser = parser;
-        this.platform = new MybatisPlatformOptions(props);
+        this.platform = new MybatisPlatformOptions(environment, props);
         this.typeAliasRegistry = platform.getTypeAliasRegistry();
         this.typeHandlerRegistry = platform.getTypeHandlerRegistry();
         this.reflectorFactory = platform.getReflectorFactory();

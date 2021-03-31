@@ -35,13 +35,15 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class MybatisPlatformOptions extends PlatformOptions {
 
     private static final long serialVersionUID = -2816717900936922789L;
 
-    private String environment;
-    private Properties settings;
+    protected String environment;
+    protected Properties settings;
 
     protected boolean safeRowBoundsEnabled;
     protected boolean safeResultHandlerEnabled = true;
@@ -68,6 +70,8 @@ public class MybatisPlatformOptions extends PlatformOptions {
     protected final TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry(this);
     protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
     protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
+
+    protected final ConcurrentMap<String, MybatisApplicationOptions> applicationRegistry = new ConcurrentHashMap<>(2);
 
     public MybatisPlatformOptions() {
         this(null, new Properties());
@@ -334,6 +338,14 @@ public class MybatisPlatformOptions extends PlatformOptions {
      */
     public LanguageDriver getLanguageDriver() {
         return languageRegistry.getDefaultDriver();
+    }
+
+    public void addApplicationOptions(MybatisApplicationOptions options) {
+        this.applicationRegistry.put(options.getId(), options);
+    }
+
+    public MybatisApplicationOptions getApplicationOptions(String id) {
+        return this.applicationRegistry.get(id);
     }
 
     public MetaObject newMetaObject(Object object) {

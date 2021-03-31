@@ -23,6 +23,7 @@ public class XMLApplicationBuilder extends BaseBuilder {
 
     private boolean parsed;
     private final XPathParser parser;
+    private final MybatisPlatformOptions platform;
 
     public XMLApplicationBuilder(Reader reader, MybatisPlatformOptions platform) {
         this(new XPathParser(reader, true, platform.getVariables(), new XMLMapperEntityResolver()), platform);
@@ -34,6 +35,7 @@ public class XMLApplicationBuilder extends BaseBuilder {
 
     private XMLApplicationBuilder(XPathParser parser, MybatisPlatformOptions platform) {
         super(new MybatisApplicationOptions(platform));
+        this.platform = platform;
         application.setPlatform(platform);
         ErrorContext.instance().resource("SQL Mapper Application Configuration");
         this.parsed = false;
@@ -46,6 +48,7 @@ public class XMLApplicationBuilder extends BaseBuilder {
         }
         parsed = true;
         parseApplication(parser.evalNode("/application"));
+        this.platform.addApplicationOptions(application);
         return application;
     }
 
@@ -105,7 +108,6 @@ public class XMLApplicationBuilder extends BaseBuilder {
         if (context != null) {
             for (XNode envNode : context.getChildren()) {
                 String envId = envNode.getStringAttribute("id");
-                MybatisPlatformOptions platform = (MybatisPlatformOptions) application.getPlatform();
                 if (!platform.getEnvironment().equals(envId)) {
                     continue;
                 }

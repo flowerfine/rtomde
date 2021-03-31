@@ -1,6 +1,7 @@
 package cn.sliew.rtomde.platform.mybatis.session;
 
 import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.reflection.ExceptionUtil;
 
 import java.io.InputStream;
@@ -60,8 +61,8 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
         return new SqlSessionManager(sqlSessionFactory);
     }
 
-    public void startManagedSession() {
-        this.localSqlSession.set(openSession());
+    public void startManagedSession(String application) {
+        this.localSqlSession.set(openSession(application));
     }
 
     public boolean isManagedSessionStarted() {
@@ -69,13 +70,19 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
     }
 
     @Override
-    public SqlSession openSession() {
-        return sqlSessionFactory.openSession();
+    public SqlSession openSession(String application) {
+        return sqlSessionFactory.openSession(application);
     }
 
     @Override
     public MybatisApplicationOptions getApplication() {
-        return sqlSessionFactory.getApplication();
+        final SqlSession sqlSession = localSqlSession.get();
+        return sqlSession.getApplication();
+    }
+
+    @Override
+    public MybatisPlatformOptions getPlatform() {
+        return sqlSessionFactory.getPlatform();
     }
 
     @Override
@@ -146,7 +153,8 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
                     throw ExceptionUtil.unwrapThrowable(t);
                 }
             } else {
-                try (SqlSession autoSqlSession = openSession()) {
+                // 方法的第一个参数需要是application
+                try (SqlSession autoSqlSession = openSession((String) args[0])) {
                     try {
                         return method.invoke(autoSqlSession, args);
                     } catch (Throwable t) {

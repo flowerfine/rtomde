@@ -21,7 +21,7 @@ public class PlainMapperInvokerTest extends MilkyTestCase {
     private void beforeEach() throws Exception {
         String metadata = "cn/sliew/rtomde/platform/mybatis/builder/MinimalMapperConfig.xml";
         try (InputStream inputStream = Resources.getResourceAsStream(metadata)) {
-            XMLMetadataBuilder builder = new XMLMetadataBuilder(inputStream);
+            XMLMetadataBuilder builder = new XMLMetadataBuilder(inputStream, "dev");
             platform = builder.parse();
         }
         String applicationConfig = "cn/sliew/rtomde/platform/mybatis/builder/ApplicationConfig.xml";
@@ -36,7 +36,7 @@ public class PlainMapperInvokerTest extends MilkyTestCase {
         MapperMethod mapperMethod = new MapperMethod(application, "cn.sliew.rtomde.platform.mybatis.builder.SysUserMapper.selectByPrimaryKey");
         PlainMapperInvoker invoker = new PlainMapperInvoker(mapperMethod);
 
-        DefaultSqlSessionFactory sqlSessionFactory = new DefaultSqlSessionFactory(application);
-        Object invoke = invoker.invoke(sqlSessionFactory.openSession(), "cn.sliew.rtomde.platform.mybatis.builder.SysUserMapper.selectByPrimaryKey", new Object[]{1L});
+        DefaultSqlSessionFactory sqlSessionFactory = new DefaultSqlSessionFactory(platform);
+        Object invoke = invoker.invoke(sqlSessionFactory.openSession("rtomde"), "cn.sliew.rtomde.platform.mybatis.builder.SysUserMapper.selectByPrimaryKey", new Object[]{1L});
     }
 }

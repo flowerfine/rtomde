@@ -1,7 +1,6 @@
 package cn.sliew.rtomde.platform.mybatis.session;
 
-import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLApplicationBuilder;
-import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLMetadataBuilder;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.exceptions.ExceptionFactory;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
@@ -17,13 +16,21 @@ import java.util.Properties;
  */
 public class SqlSessionFactoryBuilder {
 
-    public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
-        return build(reader, new MybatisPlatformOptions(environment, properties));
+    public SqlSessionFactory build(Reader reader) {
+        return build(reader, null, null);
     }
 
-    public SqlSessionFactory build(Reader reader, MybatisPlatformOptions platform) {
+    public SqlSessionFactory build(Reader reader, String environment) {
+        return build(reader, environment, null);
+    }
+
+    public SqlSessionFactory build(Reader reader, Properties properties) {
+        return build(reader, null, properties);
+    }
+
+    public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
         try {
-            XMLApplicationBuilder parser = new XMLApplicationBuilder(reader, platform);
+            XMLMetadataBuilder parser = new XMLMetadataBuilder(reader, environment, properties);
             return build(parser.parse());
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error building SqlSession.", e);
@@ -37,13 +44,21 @@ public class SqlSessionFactoryBuilder {
         }
     }
 
-    public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
-        return build(inputStream, new MybatisPlatformOptions(environment, properties));
+    public SqlSessionFactory build(InputStream inputStream) {
+        return build(inputStream, null, null);
     }
 
-    public SqlSessionFactory build(InputStream inputStream, MybatisPlatformOptions platform) {
+    public SqlSessionFactory build(InputStream inputStream, String environment) {
+        return build(inputStream, environment, null);
+    }
+
+    public SqlSessionFactory build(InputStream inputStream, Properties properties) {
+        return build(inputStream, null, properties);
+    }
+
+    public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
         try {
-            XMLApplicationBuilder parser = new XMLApplicationBuilder(inputStream, platform);
+            XMLMetadataBuilder parser = new XMLMetadataBuilder(inputStream, environment, properties);
             return build(parser.parse());
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error building SqlSession.", e);
@@ -57,8 +72,8 @@ public class SqlSessionFactoryBuilder {
         }
     }
 
-    public SqlSessionFactory build(MybatisApplicationOptions application) {
-        return new DefaultSqlSessionFactory(application);
+    public SqlSessionFactory build(MybatisPlatformOptions platform) {
+        return new DefaultSqlSessionFactory(platform);
     }
 
 }
