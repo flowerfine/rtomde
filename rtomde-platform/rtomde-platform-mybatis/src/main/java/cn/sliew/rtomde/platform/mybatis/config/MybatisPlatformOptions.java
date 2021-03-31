@@ -69,13 +69,28 @@ public class MybatisPlatformOptions extends PlatformOptions {
     protected final TypeAliasRegistry typeAliasRegistry = new TypeAliasRegistry();
     protected final LanguageDriverRegistry languageRegistry = new LanguageDriverRegistry();
 
+    public MybatisPlatformOptions() {
+        this(null, new Properties());
+    }
+
+    public MybatisPlatformOptions(String environment) {
+        this(environment, new Properties());
+    }
+
     public MybatisPlatformOptions(Properties props) {
+        this(null, props);
+    }
+
+    public MybatisPlatformOptions(String environment, Properties props) {
         LoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
-        String env = System.getenv("ENV");
-        if (StringUtils.isEmpty(env)) {
-            env = "dev";
+
+        if (StringUtils.isEmpty(environment)) {
+            environment = System.getenv("ENV");
+            if (StringUtils.isEmpty(environment)) {
+                environment = "dev";
+            }
         }
-        this.environment = env;
+        this.environment = environment;
         this.variables = props;
 
         typeAliasRegistry.registerAlias("XML", XMLLanguageDriver.class);
@@ -243,6 +258,7 @@ public class MybatisPlatformOptions extends PlatformOptions {
     /**
      * Set a default {@link TypeHandler} class for {@link Enum}.
      * A default {@link TypeHandler} is {@link EnumTypeHandler}.
+     *
      * @param typeHandler a type handler class for {@link Enum}
      * @since 3.4.5
      */

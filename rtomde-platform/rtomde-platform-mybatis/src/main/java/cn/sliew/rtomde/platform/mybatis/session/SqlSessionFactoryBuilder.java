@@ -10,11 +10,16 @@ import cn.sliew.rtomde.platform.mybatis.session.defaults.DefaultSqlSessionFactor
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Properties;
 
 /**
  * Builds {@link SqlSession} instances.
  */
 public class SqlSessionFactoryBuilder {
+
+    public SqlSessionFactory build(Reader reader, String environment, Properties properties) {
+        return build(reader, new MybatisPlatformOptions(environment, properties));
+    }
 
     public SqlSessionFactory build(Reader reader, MybatisPlatformOptions platform) {
         try {
@@ -30,6 +35,10 @@ public class SqlSessionFactoryBuilder {
                 // Intentionally ignore. Prefer previous error.
             }
         }
+    }
+
+    public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
+        return build(inputStream, new MybatisPlatformOptions(environment, properties));
     }
 
     public SqlSessionFactory build(InputStream inputStream, MybatisPlatformOptions platform) {
