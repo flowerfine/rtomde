@@ -32,6 +32,10 @@
         </environment>
     </environments>
 
+    <mappers>
+        <mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-platform/rtomde-platform-mybatis/src/test/java/cn/sliew/rtomde/platform/mybatis/builder/SysUserMapper.xml"/>
+    </mappers>
+
 </application>
 
 

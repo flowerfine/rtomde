@@ -50,5 +50,5 @@ id CDATA #REQUIRED
 
 <!ELEMENT mapper EMPTY>
 <!ATTLIST mapper
-url CDATA #IMPLIED
+url CDATA #REQUIRED
 >

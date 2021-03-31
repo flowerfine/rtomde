@@ -169,7 +169,7 @@ public class XMLApplicationBuilder extends BaseBuilder {
                     XMLMapperBuilder mapperParser = new XMLMapperBuilder(inputStream, application, url, application.getSqlFragments());
                     mapperParser.parse();
                 } else {
-                    throw new BuilderException("A mapper element may only specify a url, resource or class, but not more than one.");
+                    throw new BuilderException("A mapper element must specify a url.");
                 }
             }
         }

@@ -54,14 +54,15 @@ public class XMLMapperBuilder extends BaseBuilder {
 
     private void mapperElement(XNode context) {
         try {
-            String namespace = context.getStringAttribute("namespace");
-            if (namespace == null || namespace.isEmpty()) {
-                throw new BuilderException("Mapper's namespace cannot be empty");
-            }
             String application = context.getStringAttribute("application");
             if (!this.application.getId().equals(application)) {
                 throw new BuilderException("Mapper's application '" + application + "' cannot match Config's application '" + this.application.getId() + "'");
             }
+            String namespace = context.getStringAttribute("namespace");
+            if (namespace == null || namespace.isEmpty()) {
+                throw new BuilderException("Mapper's namespace cannot be empty");
+            }
+
             builderAssistant.setCurrentNamespace(namespace);
             cacheElement(context.evalNode("cache"));
             parameterMapElement(context.evalNodes("/mapper/parameterMap"));
