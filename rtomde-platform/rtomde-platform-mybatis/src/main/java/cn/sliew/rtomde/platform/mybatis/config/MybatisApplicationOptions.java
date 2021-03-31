@@ -5,6 +5,9 @@ import cn.sliew.rtomde.config.ConfigOptions;
 import cn.sliew.rtomde.platform.mybatis.builder.IncompleteElementException;
 import cn.sliew.rtomde.platform.mybatis.builder.ResultMapResolver;
 import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLStatementBuilder;
+import cn.sliew.rtomde.platform.mybatis.datasource.DataSourceException;
+import cn.sliew.rtomde.platform.mybatis.datasource.DataSourceFactory;
+import cn.sliew.rtomde.platform.mybatis.datasource.hikaricp.HikaricpDataSourceFactory;
 import cn.sliew.rtomde.platform.mybatis.executor.Executor;
 import cn.sliew.rtomde.platform.mybatis.executor.SimpleExecutor;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
@@ -40,10 +43,7 @@ public class MybatisApplicationOptions extends ApplicationOptions {
      */
     protected TypeAliasRegistry typeAliasRegistry;
 
-    /**
-     * dataSourceId -> DataSource
-     */
-    private final ConcurrentMap<String, DataSource> dataSourceRegistry = new ConcurrentHashMap<>(2);
+    private final DataSourceFactory dataSourceFactory = new HikaricpDataSourceFactory();
 
     private final ConcurrentMap<String, DatasourceOptions> datasourceOptionsRegistry = new ConcurrentHashMap<>(2);
     private final ConcurrentMap<String, LettuceOptions> lettuceOptionsRegistry = new ConcurrentHashMap<>(2);
@@ -219,14 +219,11 @@ public class MybatisApplicationOptions extends ApplicationOptions {
     }
 
     public DataSource getDataSource(String id) {
-        if (dataSourceRegistry.containsKey(id)) {
-            return dataSourceRegistry.get(id);
-        }
         if (datasourceOptionsRegistry.containsKey(id)) {
-            DatasourceOptions datasourceOptions = datasourceOptionsRegistry.get(id);
-
+            DatasourceOptions datasourceOptions = getDatasourceOptions(id);
+            return dataSourceFactory.getDataSource(datasourceOptions);
         }
-        return dataSourceRegistry.get(id);
+        throw new DataSourceException(String.format("unknown datasource id for %s", id));
     }
 
     public void addDatasourceOptions(DatasourceOptions options) {
