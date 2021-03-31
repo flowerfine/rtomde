@@ -121,7 +121,8 @@ public class XMLMapperBuilder extends BaseBuilder {
             String type = context.getStringAttribute("type");
             String refId = context.getStringAttribute("refId");
             Long expire = context.getLongAttribute("expire", 30000L);
-            Long size = context.getLongAttribute("size", 30000L);
+            Long size = context.getLongAttribute("size", 500L);
+            size = Math.min(size, 500L); // size不会大于500L
             Properties props = context.getChildrenAsProperties();
             builderAssistant.addCache(id, type, refId, expire, size, props);
         }

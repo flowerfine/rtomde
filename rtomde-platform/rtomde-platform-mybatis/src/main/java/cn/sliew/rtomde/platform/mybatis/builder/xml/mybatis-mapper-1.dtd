@@ -11,7 +11,7 @@ id CDATA #REQUIRED
 type (lettuce) #REQUIRED
 refId CDATA #REQUIRED
 expire CDATA "30000"
-size CDATA "1000"
+size CDATA "500L"
 >
 
 <!ELEMENT parameterMap (parameter+)?>
