@@ -10,7 +10,7 @@ namespace CDATA #REQUIRED
 id CDATA #REQUIRED
 type (lettuce) #REQUIRED
 refId CDATA #REQUIRED
-expire CDATA "30000"
+expire CDATA "30"
 size CDATA "500"
 >
 

@@ -31,7 +31,9 @@
 
 	<cache id="boss_board_redis" type="lettuce" refId="boss_board"/>
 
-	<select id="selectByPrimaryKey" dataSourceId="data_service" parameterMap="UserParamMap" resultMap="UserResultMap" cacheRef="boss_board_redis">
+	<select id="selectByPrimaryKey" dataSourceId="data_service" parameterMap="UserParamMap"
+			resultMap="UserResultMap" cacheRef="boss_board_redis"
+	        timeout="1">
 		select <include refid="Base_Column_List"/>
 		from sys_user
 		where id = #{id}
