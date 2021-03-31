@@ -4,8 +4,8 @@ import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.scripting.LanguageDriver;
 import cn.sliew.rtomde.platform.mybatis.session.SqlSessionFactory;
 import cn.sliew.rtomde.platform.mybatis.type.TypeHandler;
-import cn.sliew.rtomde.service.bytecode.spring.MybatisPlatformOptionsBean;
 import cn.sliew.rtomde.service.bytecode.spring.SqlSessionFactoryBean;
+import cn.sliew.rtomde.service.bytecode.spring.SqlSessionTemplate;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.ObjectProvider;
@@ -67,8 +67,8 @@ public class MybatisAutoConfiguration implements InitializingBean {
 
     @Bean
     @ConditionalOnMissingBean
-    public MybatisPlatformOptions mybatisPlatformOptions() throws Exception {
-        MybatisPlatformOptionsBean factory = new MybatisPlatformOptionsBean();
+    public SqlSessionFactory sqlSessionFactory() throws Exception {
+        SqlSessionFactoryBean factory = new SqlSessionFactoryBean();
 
         if (StringUtils.hasText(this.properties.getMetadataLocation())) {
             factory.setMetadataLocation(this.resourceLoader.getResource(this.properties.getMetadataLocation()));
@@ -116,7 +116,7 @@ public class MybatisAutoConfiguration implements InitializingBean {
         return factory.getObject();
     }
 
-    private void applyPlatform(MybatisPlatformOptionsBean factory) {
+    private void applyPlatform(SqlSessionFactoryBean factory) {
         MybatisPlatformOptions platform = this.properties.getPlatform();
 
         if (platform == null && !StringUtils.hasText(this.properties.getMetadataLocation())) {
@@ -130,14 +130,9 @@ public class MybatisAutoConfiguration implements InitializingBean {
         factory.setPlatform(platform);
     }
 
-//    @Bean
-//    @ConditionalOnMissingBean
-//    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
-//        ExecutorType executorType = this.properties.getExecutorType();
-//        if (executorType != null) {
-//            return new SqlSessionTemplate(sqlSessionFactory, executorType);
-//        } else {
-//            return new SqlSessionTemplate(sqlSessionFactory);
-//        }
-//    }
+    @Bean
+    @ConditionalOnMissingBean
+    public SqlSessionTemplate sqlSessionTemplate(SqlSessionFactory sqlSessionFactory) {
+        return new SqlSessionTemplate(sqlSessionFactory);
+    }
 }

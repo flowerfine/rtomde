@@ -144,7 +144,7 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
      */
     @Override
     public MybatisApplicationOptions getApplication() {
-        return this.sqlSessionFactory.getApplication();
+        return this.sqlSessionProxy.getApplication();
     }
 
     /**
@@ -178,9 +178,12 @@ public class SqlSessionTemplate implements SqlSession, DisposableBean {
      * {@code PersistenceExceptionTranslator}.
      */
     private class SqlSessionInterceptor implements InvocationHandler {
+        /**
+         * todo 第一个参数需要是application
+         */
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-            SqlSession sqlSession = getSqlSession(SqlSessionTemplate.this.sqlSessionFactory);
+            SqlSession sqlSession = getSqlSession(SqlSessionTemplate.this.sqlSessionFactory, (String) args[0]);
             try {
                 return method.invoke(sqlSession, args);
             } catch (Throwable t) {

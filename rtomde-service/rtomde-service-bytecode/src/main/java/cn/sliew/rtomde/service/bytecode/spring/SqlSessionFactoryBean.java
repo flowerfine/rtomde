@@ -1,7 +1,9 @@
 package cn.sliew.rtomde.service.bytecode.spring;
 
-import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLMapperBuilder;
+import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLApplicationBuilder;
+import cn.sliew.rtomde.platform.mybatis.builder.xml.XMLMetadataBuilder;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.executor.ErrorContext;
 import cn.sliew.rtomde.platform.mybatis.io.Resources;
 import cn.sliew.rtomde.platform.mybatis.io.VFS;
@@ -43,15 +45,7 @@ import static org.springframework.util.StringUtils.hasLength;
 import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
- * {@code FactoryBean} that creates a MyBatis {@code SqlSessionFactory}. This is the usual way to set up a shared
- * MyBatis {@code SqlSessionFactory} in a Spring application context; the SqlSessionFactory can then be passed to
- * MyBatis-based DAOs via dependency injection.
- * <p>
- * Either {@code DataSourceTransactionManager} or {@code JtaTransactionManager} can be used for transaction demarcation
- * in combination with a {@code SqlSessionFactory}. JTA should be used for transactions which span multiple databases or
- * when container managed transactions (CMT) are being used.
- *
- * @see #setConfigLocation
+ * todo 后续提供一个 {@code DataEngine}，现在先这样玩吧。
  */
 public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, InitializingBean, ApplicationListener<ApplicationEvent> {
 
@@ -60,19 +54,19 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     private static final ResourcePatternResolver RESOURCE_PATTERN_RESOLVER = new PathMatchingResourcePatternResolver();
     private static final MetadataReaderFactory METADATA_READER_FACTORY = new CachingMetadataReaderFactory();
 
-    private Resource configLocation;
-
-    private MybatisApplicationOptions application;
-
-    private Resource[] mapperLocations;
-
-    private Properties configurationProperties;
-
     private SqlSessionFactoryBuilder sqlSessionFactoryBuilder = new SqlSessionFactoryBuilder();
 
     private SqlSessionFactory sqlSessionFactory;
 
+    private Resource metadataLocation;
+
     private String environment;
+
+    private Properties platformProperties;
+
+    private MybatisPlatformOptions platform;
+
+    private Resource[] applicationLocations;
 
     private boolean failFast;
 
@@ -87,8 +81,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
 
     private String typeAliasesPackage;
 
-    private Class<?> typeAliasesSuperType;
-
     private LanguageDriver[] scriptingLanguageDrivers;
 
     private Class<? extends LanguageDriver> defaultScriptingLanguageDriver;
@@ -100,86 +92,87 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     private ObjectWrapperFactory objectWrapperFactory;
 
     /**
-     * Sets the ObjectFactory.
+     * Set the location of the {@code MybatisPlatformOptions} xml config file. A typical value is
+     * "WEB-INF/mybatis-metadata.xml".
      *
-     * @param objectFactory a custom ObjectFactory
+     * @param metadataLocation a location the MyBatis Platform metadata xml config file
      */
-    public void setObjectFactory(ObjectFactory objectFactory) {
-        this.objectFactory = objectFactory;
+    public void setMetadataLocation(Resource metadataLocation) {
+        this.metadataLocation = metadataLocation;
     }
 
     /**
-     * Sets the ObjectWrapperFactory.
+     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis config file. This is
+     * used only as a placeholder name. The default value is {@code SqlSessionFactoryBean.class.getSimpleName()}.
      *
-     * @param objectWrapperFactory a specified ObjectWrapperFactory
+     * @param environment the environment name
      */
-    public void setObjectWrapperFactory(ObjectWrapperFactory objectWrapperFactory) {
-        this.objectWrapperFactory = objectWrapperFactory;
+    public void setEnvironment(String environment) {
+        this.environment = environment;
     }
 
     /**
-     * Gets the VFS.
+     * Set optional properties to be passed into the Mybatis Platform metadata config, as alternative to a
+     * {@code &lt;properties&gt;} tag in the metadata xml file. This will be used to resolve placeholders in the
+     * config file.
      *
-     * @return a specified VFS
+     * @param platformProperties optional properties for the Mybatis Platform
      */
-    public Class<? extends VFS> getVfs() {
-        return this.vfs;
+    public void setPlatformProperties(Properties platformProperties) {
+        this.platformProperties = platformProperties;
     }
 
     /**
-     * Sets the VFS.
+     * Set a customized MyBatis Platform config.
      *
-     * @param vfs a VFS
+     * @param platform MyBatis Platform config.
      */
-    public void setVfs(Class<? extends VFS> vfs) {
-        this.vfs = vfs;
+    public void setPlatform(MybatisPlatformOptions platform) {
+        this.platform = platform;
     }
 
     /**
-     * Packages to search for type aliases.
-     *
+     * Set locations of MyBatis Platform application files that are going to be merged into the {@code MybatisApplicationOptions} config
+     * at runtime.
      * <p>
-     * Since 2.0.1, allow to specify a wildcard such as {@code com.example.*.model}.
+     * This property being based on Spring's resource abstraction also allows for specifying resource patterns here: e.g.
+     * "classpath*:application/*-application.xml".
      *
-     * @param typeAliasesPackage package to scan for domain objects
-     * @since 1.0.1
+     * @param applicationLocations location of MyBatis Platform application files
      */
-    public void setTypeAliasesPackage(String typeAliasesPackage) {
-        this.typeAliasesPackage = typeAliasesPackage;
+    public void setApplicationLocations(Resource... applicationLocations) {
+        this.applicationLocations = applicationLocations;
     }
 
     /**
-     * Super class which domain objects have to extend to have a type alias created. No effect if there is no package to
-     * scan configured.
+     * If true, a final check is done on Configuration to assure that all mapped statements are fully loaded and there is
+     * no one still pending to resolve includes. Defaults to false.
      *
-     * @param typeAliasesSuperType super class for domain objects
-     * @since 1.1.2
+     * @param failFast enable failFast
      */
-    public void setTypeAliasesSuperType(Class<?> typeAliasesSuperType) {
-        this.typeAliasesSuperType = typeAliasesSuperType;
-    }
-
-    /**
-     * Packages to search for type handlers.
-     *
-     * <p>
-     * Since 2.0.1, allow to specify a wildcard such as {@code com.example.*.typehandler}.
-     *
-     * @param typeHandlersPackage package to scan for type handlers
-     * @since 1.0.1
-     */
-    public void setTypeHandlersPackage(String typeHandlersPackage) {
-        this.typeHandlersPackage = typeHandlersPackage;
+    public void setFailFast(boolean failFast) {
+        this.failFast = failFast;
     }
 
     /**
      * Set type handlers. They must be annotated with {@code MappedTypes} and optionally with {@code MappedJdbcTypes}
      *
      * @param typeHandlers Type handler list
-     * @since 1.0.1
      */
     public void setTypeHandlers(TypeHandler<?>... typeHandlers) {
         this.typeHandlers = typeHandlers;
+    }
+
+    /**
+     * Packages to search for type handlers.
+     *
+     * <p>
+     * Allow to specify a wildcard such as {@code com.example.*.typehandler}.
+     *
+     * @param typeHandlersPackage package to scan for type handlers
+     */
+    public void setTypeHandlersPackage(String typeHandlersPackage) {
+        this.typeHandlersPackage = typeHandlersPackage;
     }
 
     /**
@@ -197,88 +190,21 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
      * List of type aliases to register. They can be annotated with {@code Alias}
      *
      * @param typeAliases Type aliases list
-     * @since 1.0.1
      */
     public void setTypeAliases(Class<?>... typeAliases) {
         this.typeAliases = typeAliases;
     }
 
     /**
-     * If true, a final check is done on Configuration to assure that all mapped statements are fully loaded and there is
-     * no one still pending to resolve includes. Defaults to false.
+     * Packages to search for type aliases.
      *
-     * @param failFast enable failFast
-     * @since 1.0.1
-     */
-    public void setFailFast(boolean failFast) {
-        this.failFast = failFast;
-    }
-
-    /**
-     * Set the location of the MyBatis {@code SqlSessionFactory} config file. A typical value is
-     * "WEB-INF/mybatis-configuration.xml".
-     *
-     * @param configLocation a location the MyBatis config file
-     */
-    public void setConfigLocation(Resource configLocation) {
-        this.configLocation = configLocation;
-    }
-
-    /**
-     * Set a customized MyBatis application config.
-     *
-     * @param application MyBatis application config.
-     * @since 1.3.0
-     */
-    public void setApplication(MybatisApplicationOptions application) {
-        this.application = application;
-    }
-
-    /**
-     * Set locations of MyBatis mapper files that are going to be merged into the {@code SqlSessionFactory} configuration
-     * at runtime.
      * <p>
-     * This is an alternative to specifying "&lt;sqlmapper&gt;" entries in an MyBatis config file. This property being
-     * based on Spring's resource abstraction also allows for specifying resource patterns here: e.g.
-     * "classpath*:sqlmap/*-mapper.xml".
+     * Allow to specify a wildcard such as {@code com.example.*.model}.
      *
-     * @param mapperLocations location of MyBatis mapper files
+     * @param typeAliasesPackage package to scan for domain objects
      */
-    public void setMapperLocations(Resource... mapperLocations) {
-        this.mapperLocations = mapperLocations;
-    }
-
-    /**
-     * Set optional properties to be passed into the SqlSession configuration, as alternative to a
-     * {@code &lt;properties&gt;} tag in the configuration xml file. This will be used to resolve placeholders in the
-     * config file.
-     *
-     * @param sqlSessionFactoryProperties optional properties for the SqlSessionFactory
-     */
-    public void setConfigurationProperties(Properties sqlSessionFactoryProperties) {
-        this.configurationProperties = sqlSessionFactoryProperties;
-    }
-
-    /**
-     * Sets the {@code SqlSessionFactoryBuilder} to use when creating the {@code SqlSessionFactory}.
-     * <p>
-     * This is mainly meant for testing so that mock SqlSessionFactory classes can be injected. By default,
-     * {@code SqlSessionFactoryBuilder} creates {@code DefaultSqlSessionFactory} instances.
-     *
-     * @param sqlSessionFactoryBuilder a SqlSessionFactoryBuilder
-     */
-    public void setSqlSessionFactoryBuilder(SqlSessionFactoryBuilder sqlSessionFactoryBuilder) {
-        this.sqlSessionFactoryBuilder = sqlSessionFactoryBuilder;
-    }
-
-    /**
-     * <b>NOTE:</b> This class <em>overrides</em> any {@code Environment} you have set in the MyBatis config file. This is
-     * used only as a placeholder name. The default value is {@code SqlSessionFactoryBean.class.getSimpleName()}.
-     *
-     * @param environment the environment name
-     */
-    public void setEnvironment(String environment) {
-        this.environment = environment;
+    public void setTypeAliasesPackage(String typeAliasesPackage) {
+        this.typeAliasesPackage = typeAliasesPackage;
     }
 
     /**
@@ -300,156 +226,163 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
     }
 
     /**
-     * {@inheritDoc}
+     * Sets the VFS.
+     *
+     * @param vfs a VFS
      */
+    public void setVfs(Class<? extends VFS> vfs) {
+        this.vfs = vfs;
+    }
+
+    /**
+     * Gets the VFS.
+     *
+     * @return a specified VFS
+     */
+    public Class<? extends VFS> getVfs() {
+        return this.vfs;
+    }
+
+    /**
+     * Sets the ObjectFactory.
+     *
+     * @param objectFactory a custom ObjectFactory
+     */
+    public void setObjectFactory(ObjectFactory objectFactory) {
+        this.objectFactory = objectFactory;
+    }
+
+    /**
+     * Sets the ObjectWrapperFactory.
+     *
+     * @param objectWrapperFactory a specified ObjectWrapperFactory
+     */
+    public void setObjectWrapperFactory(ObjectWrapperFactory objectWrapperFactory) {
+        this.objectWrapperFactory = objectWrapperFactory;
+    }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         notNull(sqlSessionFactoryBuilder, "Property 'sqlSessionFactoryBuilder' is required");
-        state((application == null && configLocation == null) || !(application != null && configLocation != null),
-                "Property 'configuration' and 'configLocation' can not specified with together");
+        state((platform == null && metadataLocation == null) || !(platform != null && metadataLocation != null),
+                "Property 'platform' and 'metadataLocation' can not specified with together");
 
         this.sqlSessionFactory = buildSqlSessionFactory();
     }
 
-    /**
-     * Build a {@code SqlSessionFactory} instance.
-     * <p>
-     * The default implementation uses the standard MyBatis {@code XMLConfigBuilder} API to build a
-     * {@code SqlSessionFactory} instance based on a Reader. Since 1.3.0, it can be specified a {@link Configuration}
-     * instance directly(without config file).
-     *
-     * @return SqlSessionFactory
-     * @throws Exception if configuration is failed
-     */
     protected SqlSessionFactory buildSqlSessionFactory() throws Exception {
-
-        final MybatisApplicationOptions targetConfiguration;
-
-        XMLConfigBuilder xmlConfigBuilder = null;
-        if (this.configuration != null) {
-            targetConfiguration = this.configuration;
-            if (targetConfiguration.getVariables() == null) {
-                targetConfiguration.setVariables(this.configurationProperties);
-            } else if (this.configurationProperties != null) {
-                targetConfiguration.getVariables().putAll(this.configurationProperties);
+        final MybatisPlatformOptions targetPlatform;
+        XMLMetadataBuilder xmlMetadataBuilder = null;
+        if (this.platform != null) {
+            targetPlatform = this.platform;
+            if (targetPlatform.getVariables() == null || targetPlatform.getVariables().isEmpty()) {
+                targetPlatform.setVariables(this.platformProperties);
+            } else if (this.platformProperties != null) {
+                targetPlatform.getVariables().putAll(this.platformProperties);
             }
-        } else if (this.configLocation != null) {
-            xmlConfigBuilder = new XMLConfigBuilder(this.configLocation.getInputStream(), null, this.configurationProperties);
-            targetConfiguration = xmlConfigBuilder.getConfiguration();
+        } else if (this.metadataLocation != null) {
+            xmlMetadataBuilder = new XMLMetadataBuilder(this.metadataLocation.getInputStream(), environment, this.platformProperties);
+            targetPlatform = xmlMetadataBuilder.parse();
         } else {
             LOGGER.debug(
-                    () -> "Property 'configuration' or 'configLocation' not specified, using default MyBatis Configuration");
-            targetConfiguration = new Configuration();
-            Optional.ofNullable(this.configurationProperties).ifPresent(targetConfiguration::setVariables);
+                    () -> "Property 'platform' or 'metadataLocation' not specified, using default MyBatis Platform metadata config");
+            targetPlatform = new MybatisPlatformOptions();
+            Optional.ofNullable(this.platformProperties).ifPresent(targetPlatform::setVariables);
         }
 
-        Optional.ofNullable(this.objectFactory).ifPresent(targetConfiguration::setObjectFactory);
-        Optional.ofNullable(this.objectWrapperFactory).ifPresent(targetConfiguration::setObjectWrapperFactory);
-        Optional.ofNullable(this.vfs).ifPresent(targetConfiguration::setVfsImpl);
-
-        if (hasLength(this.typeAliasesPackage)) {
-            scanClasses(this.typeAliasesPackage, this.typeAliasesSuperType).stream()
-                    .filter(clazz -> !clazz.isAnonymousClass()).filter(clazz -> !clazz.isInterface())
-                    .filter(clazz -> !clazz.isMemberClass()).forEach(targetConfiguration.getTypeAliasRegistry()::registerAlias);
+        if (environment != null) {
+            targetPlatform.setEnvironment(environment);
         }
 
-        if (!isEmpty(this.typeAliases)) {
-            Stream.of(this.typeAliases).forEach(typeAlias -> {
-                targetConfiguration.getTypeAliasRegistry().registerAlias(typeAlias);
-                LOGGER.debug(() -> "Registered type alias: '" + typeAlias + "'");
-            });
-        }
-
-        if (!isEmpty(this.plugins)) {
-            Stream.of(this.plugins).forEach(plugin -> {
-                targetConfiguration.addInterceptor(plugin);
-                LOGGER.debug(() -> "Registered plugin: '" + plugin + "'");
+        if (!isEmpty(this.typeHandlers)) {
+            Stream.of(this.typeHandlers).forEach(typeHandler -> {
+                targetPlatform.getTypeHandlerRegistry().register(typeHandler);
+                LOGGER.debug(() -> "Registered type handler: '" + typeHandler + "'");
             });
         }
 
         if (hasLength(this.typeHandlersPackage)) {
             scanClasses(this.typeHandlersPackage, TypeHandler.class).stream().filter(clazz -> !clazz.isAnonymousClass())
                     .filter(clazz -> !clazz.isInterface()).filter(clazz -> !Modifier.isAbstract(clazz.getModifiers()))
-                    .forEach(targetConfiguration.getTypeHandlerRegistry()::register);
+                    .forEach(targetPlatform.getTypeHandlerRegistry()::register);
         }
 
-        if (!isEmpty(this.typeHandlers)) {
-            Stream.of(this.typeHandlers).forEach(typeHandler -> {
-                targetConfiguration.getTypeHandlerRegistry().register(typeHandler);
-                LOGGER.debug(() -> "Registered type handler: '" + typeHandler + "'");
+        if (defaultEnumTypeHandler != null) {
+            targetPlatform.setDefaultEnumTypeHandler(defaultEnumTypeHandler);
+        }
+
+        if (!isEmpty(this.typeAliases)) {
+            Stream.of(this.typeAliases).forEach(typeAlias -> {
+                targetPlatform.getTypeAliasRegistry().registerAlias(typeAlias);
+                LOGGER.debug(() -> "Registered type alias: '" + typeAlias + "'");
             });
         }
 
-        targetConfiguration.setDefaultEnumTypeHandler(defaultEnumTypeHandler);
+        if (hasLength(this.typeAliasesPackage)) {
+            scanClasses(this.typeAliasesPackage, null).stream().filter(clazz -> !clazz.isAnonymousClass())
+                    .filter(clazz -> !clazz.isInterface()).filter(clazz -> !clazz.isMemberClass())
+                    .forEach(targetPlatform.getTypeAliasRegistry()::registerAlias);
+        }
 
         if (!isEmpty(this.scriptingLanguageDrivers)) {
             Stream.of(this.scriptingLanguageDrivers).forEach(languageDriver -> {
-                targetConfiguration.getLanguageRegistry().register(languageDriver);
+                targetPlatform.getLanguageRegistry().register(languageDriver);
                 LOGGER.debug(() -> "Registered scripting language driver: '" + languageDriver + "'");
             });
         }
-        Optional.ofNullable(this.defaultScriptingLanguageDriver)
-                .ifPresent(targetConfiguration::setDefaultScriptingLanguage);
 
-        Optional.ofNullable(this.cache).ifPresent(targetConfiguration::addCache);
+        Optional.ofNullable(this.defaultScriptingLanguageDriver).ifPresent(targetPlatform::setDefaultScriptingLanguage);
+        Optional.ofNullable(this.vfs).ifPresent(targetPlatform::setVfsImpl);
+        Optional.ofNullable(this.objectFactory).ifPresent(targetPlatform::setObjectFactory);
+        Optional.ofNullable(this.objectWrapperFactory).ifPresent(targetPlatform::setObjectWrapperFactory);
 
-        if (xmlConfigBuilder != null) {
+        if (xmlMetadataBuilder != null) {
             try {
-                xmlConfigBuilder.parse();
-                LOGGER.debug(() -> "Parsed configuration file: '" + this.configLocation + "'");
+                xmlMetadataBuilder.parse();
+                LOGGER.debug(() -> "Parsed Mybatis Platform metadata file: '" + this.metadataLocation + "'");
             } catch (Exception ex) {
-                throw new NestedIOException("Failed to parse config resource: " + this.configLocation, ex);
+                throw new NestedIOException("Failed to parse Mybatis Platform metadata config resource: " + this.metadataLocation, ex);
             } finally {
                 ErrorContext.instance().reset();
             }
         }
-        if (environment == null) {
-            targetConfiguration.setDefaultEnv(targetConfiguration.getDefaultEnv());
-        } else {
-            targetConfiguration.setDefaultEnv(targetConfiguration.getEnvironment(environment));
-        }
-        if (this.mapperLocations != null) {
-            if (this.mapperLocations.length == 0) {
-                LOGGER.warn(() -> "Property 'mapperLocations' was specified but matching resources are not found.");
+
+        if (this.applicationLocations != null) {
+            if (this.applicationLocations.length == 0) {
+                LOGGER.warn(() -> "Property 'applicationLocations' was specified but matching resources are not found.");
             } else {
-                for (Resource mapperLocation : this.mapperLocations) {
-                    if (mapperLocation == null) {
+                for (Resource applicationLocation : this.applicationLocations) {
+                    if (applicationLocation == null) {
                         continue;
                     }
                     try {
-                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(mapperLocation.getInputStream(),
-                                targetConfiguration, mapperLocation.toString(), targetConfiguration.getSqlFragments());
-                        xmlMapperBuilder.parse();
+                        XMLApplicationBuilder xmlApplicationBuilder = new XMLApplicationBuilder(applicationLocation.getInputStream(), targetPlatform);
+                        xmlApplicationBuilder.parse();
                     } catch (Exception e) {
-                        throw new NestedIOException("Failed to parse mapping resource: '" + mapperLocation + "'", e);
+                        throw new NestedIOException("Failed to parse Mybatis Platform application resource: '" + applicationLocation + "'", e);
                     } finally {
                         ErrorContext.instance().reset();
                     }
-                    LOGGER.debug(() -> "Parsed mapper file: '" + mapperLocation + "'");
+                    LOGGER.debug(() -> "Parsed Mybatis Platform application file: '" + applicationLocation + "'");
                 }
             }
         } else {
-            LOGGER.debug(() -> "Property 'mapperLocations' was not specified.");
+            LOGGER.debug(() -> "Property 'applicationLocation' was not specified.");
         }
 
-        return this.sqlSessionFactoryBuilder.build(targetConfiguration);
+        return this.sqlSessionFactoryBuilder.build(targetPlatform);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public SqlSessionFactory getObject() throws Exception {
-        if (this.sqlSessionFactory == null) {
-            afterPropertiesSet();
-        }
-
         return this.sqlSessionFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
     @Override
     public Class<? extends SqlSessionFactory> getObjectType() {
         return this.sqlSessionFactory == null ? SqlSessionFactory.class : this.sqlSessionFactory.getClass();
@@ -459,18 +392,10 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
      * {@inheritDoc}
      */
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public void onApplicationEvent(ApplicationEvent event) {
         if (failFast && event instanceof ContextRefreshedEvent) {
             // fail-fast -> check all statements are completed
-            this.sqlSessionFactory.getApplication().getMappedStatementNames();
+            this.sqlSessionFactory.getPlatform().getAllApplicationOptions().forEach(MybatisApplicationOptions::getMappedStatementNames);
         }
     }
 
@@ -495,5 +420,4 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         }
         return classes;
     }
-
 }
