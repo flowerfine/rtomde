@@ -139,6 +139,8 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
     }
 
     private class SqlSessionInterceptor implements InvocationHandler {
+
+
         public SqlSessionInterceptor() {
             // Prevent Synthetic Access
         }
@@ -153,7 +155,7 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
                     throw ExceptionUtil.unwrapThrowable(t);
                 }
             } else {
-                // 方法的第一个参数需要是application
+                // todo 方法的第一个参数需要是application
                 try (SqlSession autoSqlSession = openSession((String) args[0])) {
                     try {
                         return method.invoke(autoSqlSession, args);

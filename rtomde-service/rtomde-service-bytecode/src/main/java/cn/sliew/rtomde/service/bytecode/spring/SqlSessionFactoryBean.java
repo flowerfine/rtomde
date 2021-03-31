@@ -336,17 +336,6 @@ public class SqlSessionFactoryBean implements FactoryBean<SqlSessionFactory>, In
         Optional.ofNullable(this.objectFactory).ifPresent(targetPlatform::setObjectFactory);
         Optional.ofNullable(this.objectWrapperFactory).ifPresent(targetPlatform::setObjectWrapperFactory);
 
-        if (xmlMetadataBuilder != null) {
-            try {
-                xmlMetadataBuilder.parse();
-                LOGGER.debug(() -> "Parsed Mybatis Platform metadata file: '" + this.metadataLocation + "'");
-            } catch (Exception ex) {
-                throw new NestedIOException("Failed to parse Mybatis Platform metadata config resource: " + this.metadataLocation, ex);
-            } finally {
-                ErrorContext.instance().reset();
-            }
-        }
-
         if (this.applicationLocations != null) {
             if (this.applicationLocations.length == 0) {
                 LOGGER.warn(() -> "Property 'applicationLocations' was specified but matching resources are not found.");

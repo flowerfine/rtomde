@@ -33,20 +33,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
-//@Component
+@Component
 public class SpringmvcServiceBootstrap implements ApplicationRunner {
 
     private static ClassLoader classLoader = ClassUtils.getClassLoader(SpringmvcServiceBootstrap.class);
     private static ClassPool classPool = ClassGenerator.getClassPool(classLoader);
 
-//    @Autowired
-//    private GenericWebApplicationContext ac;
-//    @Autowired
-//    private RequestMappingHandlerMapping mappingRegistry;
+    @Autowired
+    private GenericWebApplicationContext ac;
+    @Autowired
+    private RequestMappingHandlerMapping mappingRegistry;
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
-//    @Autowired
-//    private MapperDispatcher dispatcher;
+    @Autowired
+    private MapperDispatcher dispatcher;
 
     static {
         classPool.appendClassPath(new CustomizedLoaderClassPath(Thread.currentThread().getContextClassLoader()));
