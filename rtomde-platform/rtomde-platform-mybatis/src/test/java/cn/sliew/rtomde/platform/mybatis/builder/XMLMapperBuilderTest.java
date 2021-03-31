@@ -37,6 +37,7 @@ public class XMLMapperBuilderTest extends MilkyTestCase {
         try (InputStream inputStream = Resources.getResourceAsStream(resource)) {
             XMLMapperBuilder builder = new XMLMapperBuilder(inputStream, application, resource, application.getSqlFragments());
             builder.parse();
+
         }
     }
 

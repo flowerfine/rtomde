@@ -49,6 +49,9 @@ public class MybatisApplicationOptions extends ApplicationOptions {
     private final ConcurrentMap<String, LettuceOptions> lettuceOptionsRegistry = new ConcurrentHashMap<>(2);
     private final ConcurrentMap<String, MybatisCacheOptions> cacheOptionsRegistry = new ConcurrentHashMap<>(2);
 
+    /**
+     * 因为没有考虑跨 xml 的引用，所以这个东西目前没啥作用。
+     */
     protected final Map<String, XNode> sqlFragments = new HashMap<>();
     protected final Set<String> loadedResources = new HashSet<>();
 
@@ -65,12 +68,104 @@ public class MybatisApplicationOptions extends ApplicationOptions {
         this.props = platform.getVariables();
     }
 
+    public void setProps(Properties props) {
+        this.props = props;
+    }
+
     public Properties getProps() {
         return props;
     }
 
-    public void setProps(Properties props) {
-        this.props = props;
+    public void setLogPrefix(String logPrefix) {
+        this.logPrefix = logPrefix;
+    }
+
+    public String getLogPrefix() {
+        return logPrefix;
+    }
+
+    public void setDefaultStatementTimeout(Integer defaultStatementTimeout) {
+        this.defaultStatementTimeout = defaultStatementTimeout;
+    }
+
+    public Integer getDefaultStatementTimeout() {
+        return defaultStatementTimeout;
+    }
+
+    public void setTypeAliasRegistry(TypeAliasRegistry typeAliasRegistry) {
+        this.typeAliasRegistry = typeAliasRegistry;
+    }
+
+    public TypeAliasRegistry getTypeAliasRegistry() {
+        return typeAliasRegistry;
+    }
+
+    public DataSource getDataSource(String id) {
+        if (datasourceOptionsRegistry.containsKey(id)) {
+            DatasourceOptions datasourceOptions = getDatasourceOptions(id);
+            return dataSourceFactory.getDataSource(datasourceOptions);
+        }
+        throw new DataSourceException(String.format("unknown datasource id for %s", id));
+    }
+
+    public void addDatasourceOptions(DatasourceOptions options) {
+        this.datasourceOptionsRegistry.put(options.getId(), options);
+    }
+
+    public Collection<String> getDatasourceOptionsNames() {
+        return this.datasourceOptionsRegistry.keySet();
+    }
+
+    public Collection<DatasourceOptions> getDatasourceOptionsMaps() {
+        return this.datasourceOptionsRegistry.values();
+    }
+
+    public DatasourceOptions getDatasourceOptions(String id) {
+        return this.datasourceOptionsRegistry.get(id);
+    }
+
+    public boolean hasDatasourceOptions(String id) {
+        return this.datasourceOptionsRegistry.containsKey(id);
+    }
+
+    public void addLettuceOptions(LettuceOptions options) {
+        this.lettuceOptionsRegistry.put(options.getId(), options);
+    }
+
+    public Collection<String> getLettuceOptionsNames() {
+        return this.lettuceOptionsRegistry.keySet();
+    }
+
+    public Collection<LettuceOptions> getLettuceOptionsMaps() {
+        return this.lettuceOptionsRegistry.values();
+    }
+
+    public LettuceOptions getLettuceOptions(String id) {
+        return this.lettuceOptionsRegistry.get(id);
+    }
+
+    public boolean hasLettuceOptions(String id) {
+        return this.lettuceOptionsRegistry.containsKey(id);
+    }
+
+    public void addCacheOptions(MybatisCacheOptions options) {
+        this.cacheOptionsRegistry.put(options.getId(), options);
+    }
+
+    public Collection<String> getCacheOptionsNames() {
+        return this.cacheOptionsRegistry.keySet();
+    }
+
+    public Collection<MybatisCacheOptions> getCacheOptionsMaps() {
+        return this.cacheOptionsRegistry.values();
+    }
+
+    public MybatisCacheOptions getCacheOptions(String id) {
+        return this.cacheOptionsRegistry.get(id);
+    }
+
+    public boolean hasCacheOptions(String id) {
+        return this.cacheOptionsRegistry.containsKey(id);
     }
 
     public Map<String, XNode> getSqlFragments() {
@@ -83,30 +178,6 @@ public class MybatisApplicationOptions extends ApplicationOptions {
 
     public boolean isResourceLoaded(String resource) {
         return loadedResources.contains(resource);
-    }
-
-    public TypeAliasRegistry getTypeAliasRegistry() {
-        return typeAliasRegistry;
-    }
-
-    public void setTypeAliasRegistry(TypeAliasRegistry typeAliasRegistry) {
-        this.typeAliasRegistry = typeAliasRegistry;
-    }
-
-    public Collection<XMLStatementBuilder> getIncompleteStatements() {
-        return incompleteStatements;
-    }
-
-    public void addIncompleteStatement(XMLStatementBuilder incompleteStatement) {
-        incompleteStatements.add(incompleteStatement);
-    }
-
-    public Collection<ResultMapResolver> getIncompleteResultMaps() {
-        return incompleteResultMaps;
-    }
-
-    public void addIncompleteResultMap(ResultMapResolver resultMapResolver) {
-        incompleteResultMaps.add(resultMapResolver);
     }
 
     public void addMappedStatement(MappedStatement ms) {
@@ -134,7 +205,7 @@ public class MybatisApplicationOptions extends ApplicationOptions {
         return mappedStatements.get(id);
     }
 
-    /*
+    /**
      * Parses all the unprocessed statement nodes in the cache. It is recommended
      * to call this method once all the mappers are added as it provides fail-fast
      * statement validation.
@@ -218,88 +289,20 @@ public class MybatisApplicationOptions extends ApplicationOptions {
         return parameterMaps.containsKey(id);
     }
 
-    public DataSource getDataSource(String id) {
-        if (datasourceOptionsRegistry.containsKey(id)) {
-            DatasourceOptions datasourceOptions = getDatasourceOptions(id);
-            return dataSourceFactory.getDataSource(datasourceOptions);
-        }
-        throw new DataSourceException(String.format("unknown datasource id for %s", id));
+    public Collection<XMLStatementBuilder> getIncompleteStatements() {
+        return incompleteStatements;
     }
 
-    public void addDatasourceOptions(DatasourceOptions options) {
-        this.datasourceOptionsRegistry.put(options.getId(), options);
+    public void addIncompleteStatement(XMLStatementBuilder incompleteStatement) {
+        incompleteStatements.add(incompleteStatement);
     }
 
-    public Collection<String> getDatasourceOptionsNames() {
-        return this.datasourceOptionsRegistry.keySet();
+    public Collection<ResultMapResolver> getIncompleteResultMaps() {
+        return incompleteResultMaps;
     }
 
-    public Collection<DatasourceOptions> getDatasourceOptionsMaps() {
-        return this.datasourceOptionsRegistry.values();
-    }
-
-    public DatasourceOptions getDatasourceOptions(String id) {
-        return this.datasourceOptionsRegistry.get(id);
-    }
-
-    public boolean hasDatasourceOptions(String id) {
-        return this.datasourceOptionsRegistry.containsKey(id);
-    }
-
-    public void addLettuceOptions(LettuceOptions options) {
-        this.lettuceOptionsRegistry.put(options.getId(), options);
-    }
-
-    public Collection<String> getLettuceOptionsNames() {
-        return this.lettuceOptionsRegistry.keySet();
-    }
-
-    public Collection<LettuceOptions> getLettuceOptionsMaps() {
-        return this.lettuceOptionsRegistry.values();
-    }
-
-    public LettuceOptions getLettuceOptions(String id) {
-        return this.lettuceOptionsRegistry.get(id);
-    }
-
-    public boolean hasLettuceOptions(String id) {
-        return this.lettuceOptionsRegistry.containsKey(id);
-    }
-
-    public void addCacheOptions(MybatisCacheOptions options) {
-        this.cacheOptionsRegistry.put(options.getId(), options);
-    }
-
-    public Collection<String> getCacheOptionsNames() {
-        return this.cacheOptionsRegistry.keySet();
-    }
-
-    public Collection<MybatisCacheOptions> getCacheOptionsMaps() {
-        return this.cacheOptionsRegistry.values();
-    }
-
-    public MybatisCacheOptions getCacheOptions(String id) {
-        return this.cacheOptionsRegistry.get(id);
-    }
-
-    public boolean hasCacheOptions(String id) {
-        return this.cacheOptionsRegistry.containsKey(id);
-    }
-
-    public String getLogPrefix() {
-        return logPrefix;
-    }
-
-    public void setLogPrefix(String logPrefix) {
-        this.logPrefix = logPrefix;
-    }
-
-    public Integer getDefaultStatementTimeout() {
-        return defaultStatementTimeout;
-    }
-
-    public void setDefaultStatementTimeout(Integer defaultStatementTimeout) {
-        this.defaultStatementTimeout = defaultStatementTimeout;
+    public void addIncompleteResultMap(ResultMapResolver resultMapResolver) {
+        incompleteResultMaps.add(resultMapResolver);
     }
 
     public Executor newExecutor() {
