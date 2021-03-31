@@ -26,7 +26,7 @@
                 <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
                 <profileSQL>true</profileSQL>
             </hikaricp>
-            <lettuce id="dev">
+            <lettuce id="boss_board">
                 <redisURI>redis://123@localhost:6379/0?timeout=1s</redisURI>
             </lettuce>
         </environment>

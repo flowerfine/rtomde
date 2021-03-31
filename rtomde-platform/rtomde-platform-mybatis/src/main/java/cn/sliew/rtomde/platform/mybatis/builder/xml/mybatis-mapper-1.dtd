@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!ELEMENT mapper (cache | resultMap* | parameterMap* | sql* | select* )+>
+<!ELEMENT mapper (cache* | resultMap* | parameterMap* | sql* | select* )+>
 <!ATTLIST mapper
 application CDATA #REQUIRED
 namespace CDATA #REQUIRED
@@ -10,8 +10,8 @@ namespace CDATA #REQUIRED
 id CDATA #REQUIRED
 type (lettuce) #REQUIRED
 refId CDATA #REQUIRED
-expire 30000 #IMPLIED
-size 30000 #IMPLIED
+expire CDATA "30000"
+size CDATA "1000"
 >
 
 <!ELEMENT parameterMap (parameter+)?>

@@ -29,7 +29,9 @@
         update_time, updater, comments
     </sql>
 
-	<select id="selectByPrimaryKey" dataSourceId="rtomde" parameterMap="UserParamMap" resultMap="UserResultMap" cacheRef="selectByPrimaryKey">
+	<cache id="boss_board_redis" type="lettuce" refId="boss_board"/>
+
+	<select id="selectByPrimaryKey" dataSourceId="data_service" parameterMap="UserParamMap" resultMap="UserResultMap" cacheRef="boss_board_redis">
 		select <include refid="Base_Column_List"/>
 		from sys_user
 		where id = #{id}
