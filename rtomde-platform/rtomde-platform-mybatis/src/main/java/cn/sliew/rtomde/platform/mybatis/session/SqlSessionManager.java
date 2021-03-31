@@ -11,6 +11,12 @@ import java.lang.reflect.Proxy;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * 这里的api针对的都是老得mybatis的 config.xml 和 mapper.xml，在 config.xml 中会
+ * 指出 mapper.xml 的地址
+ * 换到了新的平台中，配置文件分为了三级：metadata.xml，config.xml和mapper.xml，三者
+ * 不会同时创建，后面的api需要重新设计。
+ */
 public class SqlSessionManager implements SqlSessionFactory, SqlSession {
 
     private final SqlSessionFactory sqlSessionFactory;
