@@ -27,7 +27,7 @@ alias CDATA #IMPLIED
 id CDATA #REQUIRED
 >
 
-<!ELEMENT hikaricp (jdbcUrl, username, password, driverClassName, profileSQL)>
+<!ELEMENT hikaricp (driverClassName, jdbcUrl, username, password, profileSQL)>
 <!ATTLIST hikaricp
 id CDATA #REQUIRED
 >

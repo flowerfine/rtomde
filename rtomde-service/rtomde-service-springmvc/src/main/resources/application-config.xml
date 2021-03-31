@@ -14,10 +14,10 @@
 	<environments>
 		<environment id="dev">
 			<hikaricp id="data_service">
+				<driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
 				<jdbcUrl>jdbc:mysql://localhost:3306/data_service</jdbcUrl>
 				<username>root</username>
 				<password>123</password>
-				<driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
 				<profileSQL>true</profileSQL>
 			</hikaricp>
 			<lettuce id="boss_board">
