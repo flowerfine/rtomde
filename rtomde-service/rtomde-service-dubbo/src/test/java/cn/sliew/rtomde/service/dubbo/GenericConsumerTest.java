@@ -42,7 +42,7 @@ public class GenericConsumerTest extends MilkyTestCase {
 
     @Test
     public void test_users_selectByPrimaryKey() throws InterruptedException {
-        genericService.$invoke("cn_sliew_datacenter_users_SysUserMapper_selectByPrimaryKey", new String[]{"long"}, new Object[]{1L});
+        genericService.$invoke("cn_sliew_datacenter_users_SysUserMapper_selectByPrimaryKey", new String[]{"cn.sliew.datacenter.users.UserParam"}, new Object[]{new UserParam(1L)});
         CountDownLatch latch = new CountDownLatch(1);
 
         CompletableFuture<String> future = RpcContext.getContext().getCompletableFuture();
