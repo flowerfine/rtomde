@@ -2,7 +2,7 @@
 <!DOCTYPE application
 		PUBLIC "-//sliew.cn//DTD Application 1.0//EN"
 		"http://sliew.cn/dtd/mybatis-application-1.dtd">
-<application name="rtomde">
+<application name="data_center">
 
 	<typeAliases>
 		<typeAlias alias="HashMap" type="java.util.HashMap" />
@@ -20,14 +20,14 @@
 				<password>123</password>
 				<profileSQL>true</profileSQL>
 			</hikaricp>
-			<lettuce id="boss_board">
+			<lettuce id="local">
 				<redisURI>redis://123@localhost:6379/0?timeout=1s</redisURI>
 			</lettuce>
 		</environment>
 	</environments>
 
 	<mappers>
-		<mapper url="file:/Users/wangqi/Documents/xinc/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/SysUserMapper.xml"/>
+		<mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/data_center/SysUserMapper.xml"/>
 	</mappers>
 
 </application>
