@@ -86,19 +86,11 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
         Annotation controller = new Annotation("org.springframework.web.bind.annotation.RestController", constpool);
         classAttr.addAnnotation(controller);
 
-        // @Scope(proxyMode = ScopedProxyMode.TARGET_CLASS)
-        Annotation scope = new Annotation("org.springframework.context.annotation.Scope", constpool);
-        EnumMemberValue enumMemberValue = new EnumMemberValue(constpool);
-        enumMemberValue.setType("org.springframework.context.annotation.ScopedProxyMode");
-        enumMemberValue.setValue("TARGET_CLASS");
-        scope.addMemberValue("proxyMode", enumMemberValue);
-        classAttr.addAnnotation(scope);
-
         // @RequestMapping
         Annotation requestMapping = new Annotation("org.springframework.web.bind.annotation.RequestMapping", constpool);
         // mapper path
         ArrayMemberValue memberValue = new ArrayMemberValue(constpool);
-        memberValue.setValue(new StringMemberValue[]{new StringMemberValue("/{application}", constpool)});
+        memberValue.setValue(new StringMemberValue[]{new StringMemberValue("{application}", constpool)});
         requestMapping.addMemberValue("path", memberValue);
         classAttr.addAnnotation(requestMapping);
 
@@ -202,7 +194,7 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
             Class<?> paramType = mappedStatement.getParameterMap().getType();
             Method method = bean.getClass().getMethod(id.replace(".", "_"), String.class, paramType);
 
-            RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths("/" + application.getId() + "/" + id.replace(".", "/")).build();
+            RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths("/{application}/" + id.replace(".", "/")).build();
 
             mappingRegistry.registerMapping(requestMappingInfo, bean, method);
         } catch (NoSuchMethodException e) {
