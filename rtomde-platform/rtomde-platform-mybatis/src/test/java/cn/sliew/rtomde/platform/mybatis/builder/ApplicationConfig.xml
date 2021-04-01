@@ -20,10 +20,10 @@
     <environments>
         <environment id="dev">
             <hikaricp id="data_service">
+                <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
                 <jdbcUrl>jdbc:mysql://test-xc-dev.mysql.rds.aliyuncs.com:3331/data_service</jdbcUrl>
                 <username>test_xc_dev</username>
                 <password>x!c@_d#ev$xcD_SdeAvM</password>
-                <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
                 <profileSQL>true</profileSQL>
             </hikaricp>
             <lettuce id="boss_board">
