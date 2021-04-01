@@ -7,7 +7,7 @@ import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
 import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
 import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
 import cn.sliew.rtomde.platform.mybatis.session.SqlSessionFactory;
-import cn.sliew.rtomde.service.bytecode.config.dispatcher.MapperDispatcher;
+import cn.sliew.rtomde.service.bytecode.dispatcher.MapperDispatcher;
 import javassist.*;
 import javassist.bytecode.*;
 import javassist.bytecode.annotation.Annotation;

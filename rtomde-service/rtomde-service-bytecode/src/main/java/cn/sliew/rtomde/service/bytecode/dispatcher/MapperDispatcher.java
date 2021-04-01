@@ -1,4 +1,4 @@
-package cn.sliew.rtomde.service.bytecode.config.dispatcher;
+package cn.sliew.rtomde.service.bytecode.dispatcher;
 
 import cn.sliew.milky.common.exception.ThrowableCollector;
 import cn.sliew.milky.log.Logger;
@@ -21,8 +21,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutionException;
 
-@Component
+@Component(MapperDispatcher.BEAN_NAME)
 public class MapperDispatcher {
+
+    public static final String BEAN_NAME = "cn.sliew.rtomde.service.bytecode.dispatcher.MapperDispatcher";
 
     private static final Logger log = LoggerFactory.getLogger(MapperDispatcher.class);
 
