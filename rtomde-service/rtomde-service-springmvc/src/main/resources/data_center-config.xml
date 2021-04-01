@@ -28,6 +28,7 @@
 
 	<mappers>
 		<mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/data_center/SysUserMapper.xml"/>
+		<mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/data_center/CustomUserMapper.xml"/>
 	</mappers>
 
 </application>
