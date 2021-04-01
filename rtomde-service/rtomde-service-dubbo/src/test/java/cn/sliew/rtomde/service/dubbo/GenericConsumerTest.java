@@ -47,7 +47,7 @@ public class GenericConsumerTest extends MilkyTestCase {
     public void test_users_selectByPrimaryKey() throws InterruptedException {
         Map<String , Object> params = new HashMap<>();
         params.put("id", 1L);
-        Object result = genericService.$invoke("cn_sliew_datacenter_users_SysUserMapper_selectByPrimaryKey", new String[]{"cn.sliew.datacenter.users.UserParam"}, new Object[]{params});
+        Object result = genericService.$invoke("selectByPrimaryKey", new String[]{"cn.sliew.datacenter.users.UserParam"}, new Object[]{params});
         System.err.println(result);
 
 //        CountDownLatch latch = new CountDownLatch(1);
