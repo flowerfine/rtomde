@@ -15,17 +15,20 @@ public class SpringmvcControllerExporter implements ServiceExporter {
 
     private final MybatisApplicationOptions application;
     private final Class<?> controllerClazz;
+    private final String namespace;
     private final List<MappedStatement> mappedStatements;
     private final GenericApplicationContext ac;
     private final RequestMappingHandlerMapping mappingRegistry;
 
     public SpringmvcControllerExporter(MybatisApplicationOptions application,
                                        Class<?> controllerClazz,
+                                       String namespace,
                                        List<MappedStatement> mappedStatements,
                                        GenericApplicationContext ac,
                                        RequestMappingHandlerMapping mappingRegistry) {
         this.application = application;
         this.controllerClazz = controllerClazz;
+        this.namespace = namespace;
         this.mappedStatements = mappedStatements;
         this.ac = ac;
         this.mappingRegistry = mappingRegistry;
@@ -34,8 +37,8 @@ public class SpringmvcControllerExporter implements ServiceExporter {
     @Override
     public void export() {
         try {
-            ac.registerBean("", controllerClazz);
-            Object instance = ac.getBean("");
+            ac.registerBean(namespace, controllerClazz);
+            Object instance = ac.getBean(namespace, controllerClazz);
             for (MappedStatement mappedStatement : mappedStatements) {
                 Class<?> paramType = mappedStatement.getParameterMap().getType();
                 Method method = instance.getClass().getMethod(NameUtil.mappedStatementId(mappedStatement.getId()), paramType);

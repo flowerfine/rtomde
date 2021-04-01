@@ -53,7 +53,7 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
             dispatcherControllers.put(entry.getKey(), dispatcherController);
         }
         for (Map.Entry<String, Class<?>> entry : dispatcherControllers.entrySet()) {
-            SpringmvcControllerExporter exporter = new SpringmvcControllerExporter(applicationOptions, entry.getValue(), namespaces.get(entry.getKey()), ac, mappingRegistry);
+            SpringmvcControllerExporter exporter = new SpringmvcControllerExporter(applicationOptions, entry.getValue(), entry.getKey(), namespaces.get(entry.getKey()), ac, mappingRegistry);
             exporter.export();
         }
 

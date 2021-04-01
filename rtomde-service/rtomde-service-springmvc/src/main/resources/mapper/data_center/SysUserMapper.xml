@@ -31,7 +31,7 @@
 
 	<cache id="redis" type="lettuce" refId="local"/>
 
-	<select id="selectByPrimaryKey" dataSourceId="data_service" parameterMap="UserParamMap"
+	<select id="selectByPrimaryKey2" dataSourceId="data_service" parameterMap="UserParamMap"
 			resultMap="UserResultMap" cacheRef="redis"
 	        timeout="1">
 		select <include refid="Base_Column_List"/>
