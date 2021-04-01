@@ -12,7 +12,6 @@ import javassist.*;
 import javassist.bytecode.*;
 import javassist.bytecode.annotation.Annotation;
 import javassist.bytecode.annotation.ArrayMemberValue;
-import javassist.bytecode.annotation.EnumMemberValue;
 import javassist.bytecode.annotation.StringMemberValue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,7 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
                         ms.getId()));
         Map<String, Class<?>> dispatcherControllers = new HashMap<>(namespaces.size());
         for (Map.Entry<String, List<MappedStatement>> entry : namespaces.entrySet()) {
-            Class<?> dispatcherController = doMakeDispatcherController(entry.getKey(), entry.getValue());
+            Class<?> dispatcherController = doMakeDispatcherController(applicationOptions, entry.getKey(), entry.getValue());
             dispatcherControllers.put(entry.getKey(), dispatcherController);
         }
         for (Map.Entry<String, Class<?>> entry : dispatcherControllers.entrySet()) {
@@ -75,7 +74,7 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
 
     }
 
-    private Class<?> doMakeDispatcherController(String namespace, List<MappedStatement> mappedStatements) {
+    private Class<?> doMakeDispatcherController(MybatisApplicationOptions application, String namespace, List<MappedStatement> mappedStatements) {
         CtClass controllerClass = classPool.makeClass(namespace);
         ClassFile ccFile = controllerClass.getClassFile();
 
@@ -90,7 +89,7 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
         Annotation requestMapping = new Annotation("org.springframework.web.bind.annotation.RequestMapping", constpool);
         // mapper path
         ArrayMemberValue memberValue = new ArrayMemberValue(constpool);
-        memberValue.setValue(new StringMemberValue[]{new StringMemberValue("{application}", constpool)});
+        memberValue.setValue(new StringMemberValue[]{new StringMemberValue("/" + application.getId(), constpool)});
         requestMapping.addMemberValue("path", memberValue);
         classAttr.addAnnotation(requestMapping);
 
@@ -98,7 +97,7 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
         try {
             controllerClass.addField(makeAutowiredField(controllerClass, constpool));
             // method
-            CtMethod[] methods = makeRequestMapping(controllerClass, constpool, mappedStatements);
+            CtMethod[] methods = makeRequestMapping(application, controllerClass, constpool, mappedStatements);
             for (CtMethod m : methods) {
                 controllerClass.addMethod(m);
             }
@@ -133,10 +132,10 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
         }
     }
 
-    private CtMethod[] makeRequestMapping(CtClass declaring, ConstPool constpool, List<MappedStatement> mappedStatements) {
+    private CtMethod[] makeRequestMapping(MybatisApplicationOptions application, CtClass declaring, ConstPool constpool, List<MappedStatement> mappedStatements) {
         List<CtMethod> methods = new ArrayList<>(mappedStatements.size());
         for (MappedStatement ms : mappedStatements) {
-            CtMethod method = makeMapperMethod(declaring, ms);
+            CtMethod method = makeMapperMethod(application, declaring, ms);
             // 方法上添加注解
             MethodInfo info = method.getMethodInfo();
             AnnotationsAttribute methodAttr = new AnnotationsAttribute(constpool, AnnotationsAttribute.visibleTag);
@@ -152,14 +151,20 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
 
             // 参数上添加注解
             ParameterAnnotationsAttribute paramAttr = new ParameterAnnotationsAttribute(constpool, ParameterAnnotationsAttribute.visibleTag);
-            Annotation[][] paramAnnos = new Annotation[2][1];
+            //多个参数的写法
+//            Annotation[][] paramAnnos = new Annotation[2][1];
             //@PathVariable
-            Annotation pathVariable = new Annotation("org.springframework.web.bind.annotation.PathVariable", constpool);
-            pathVariable.addMemberValue("name", new StringMemberValue("application", constpool));
-            paramAnnos[0][0] = pathVariable;
+//            Annotation pathVariable = new Annotation("org.springframework.web.bind.annotation.PathVariable", constpool);
+//            pathVariable.addMemberValue("name", new StringMemberValue("application", constpool));
+//            paramAnnos[0][0] = pathVariable;
             //@RequestBody
+//            Annotation requestBody = new Annotation("org.springframework.web.bind.annotation.RequestBody", constpool);
+//            paramAnnos[1][0] = requestBody;
+//            paramAttr.setAnnotations(paramAnnos);
+            //单个参数的写法
+            Annotation[][] paramAnnos = new Annotation[1][1];
             Annotation requestBody = new Annotation("org.springframework.web.bind.annotation.RequestBody", constpool);
-            paramAnnos[1][0] = requestBody;
+            paramAnnos[0][0] = requestBody;
             paramAttr.setAnnotations(paramAnnos);
 
             info.addAttribute(methodAttr);
@@ -169,21 +174,21 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
         return methods.toArray(new CtMethod[0]);
     }
 
-    private CtMethod makeMapperMethod(CtClass declaring, MappedStatement ms) {
+    private CtMethod makeMapperMethod(MybatisApplicationOptions application, CtClass declaring, MappedStatement ms) {
         try {
             Class<?> paramType = ms.getParameterMap().getType();
             Class<?> resultType = ms.getResultMap().getType();
-            return generateMapperMethod(resultType, paramType, ms.getId(), declaring);
+            return generateMapperMethod(application, resultType, paramType, ms.getId(), declaring);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
-    private CtMethod generateMapperMethod(Class<?> resultType, Class<?> paramType, String id, CtClass declaring) throws Exception {
-        CtMethod method = new CtMethod(classPool.get(resultType.getName()), id.replace(".", "_"), new CtClass[]{classPool.get("java.lang.String"), classPool.get(paramType.getName())}, declaring);
+    private CtMethod generateMapperMethod(MybatisApplicationOptions application, Class<?> resultType, Class<?> paramType, String id, CtClass declaring) throws Exception {
+        CtMethod method = new CtMethod(classPool.get(resultType.getName()), id.replace(".", "_"), new CtClass[]{classPool.get(paramType.getName())}, declaring);
         StringBuilder methodBody = new StringBuilder();
         methodBody.append("{");
-        methodBody.append("return mapperDispatcher.execute(\"" + id + "\", $1, new Object[]{$2});");
+        methodBody.append("return mapperDispatcher.execute(\"" + id + "\", \"" + application.getId() + "\", $args);");
         methodBody.append("}");
         method.setBody(methodBody.toString());
         return method;
@@ -192,9 +197,9 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
     private void registerRequestMapper(MybatisApplicationOptions application, String id, Object bean, MappedStatement mappedStatement) {
         try {
             Class<?> paramType = mappedStatement.getParameterMap().getType();
-            Method method = bean.getClass().getMethod(id.replace(".", "_"), String.class, paramType);
+            Method method = bean.getClass().getMethod(id.replace(".", "_"), paramType);
 
-            RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths("/{application}/" + id.replace(".", "/")).build();
+            RequestMappingInfo requestMappingInfo = RequestMappingInfo.paths("/" + application.getId() + "/" + id.replace(".", "/")).build();
 
             mappingRegistry.registerMapping(requestMappingInfo, bean, method);
         } catch (NoSuchMethodException e) {

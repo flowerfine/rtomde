@@ -20,5 +20,5 @@ platform.mybatis:
   environment: dev
   metadata-location: classpath:metadata-config.xml
   checkMetadataLocation: true
-  applicationLocations: classpath:data_center-config.xml, boss_board-config.xml
+  applicationLocations: classpath:data_center-config.xml
 
