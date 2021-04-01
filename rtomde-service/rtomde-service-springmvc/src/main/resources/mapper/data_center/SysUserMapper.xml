@@ -3,7 +3,7 @@
     PUBLIC "-//sliew.cn//DTD Mapper 1.0//EN"
     "http://sliew.cn/dtd/mybatis-mapper-1.dtd">
 
-<mapper application="data_center" namespace="users">
+<mapper application="data_center" namespace="cn.sliew.datacenter.users.SysUserMapper">
 
 	<parameterMap id="UserParamMap" type="cn.sliew.datacenter.users.UserParam">
 		<parameter property="id" javaType="long" />
