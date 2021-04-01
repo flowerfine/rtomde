@@ -14,6 +14,19 @@
     <modules>
         <module>rtomde-service-akka-http</module>
         <module>rtomde-service-airlift</module>
+        <module>rtomde-service-dubbo</module>
+        <module>rtomde-service-springmvc</module>
+        <module>rtomde-service-bytecode</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>cn.sliew</groupId>
+                <artifactId>rtomde-service-bytecode</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

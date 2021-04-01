@@ -1,0 +1,24 @@
+name: Check Code Style
+
+on:
+  push:
+    paths-ignore: [ '**/*.md' ]
+  pull_request:
+    paths-ignore: [ '**/*.md' ]
+
+jobs:
+  Checkstyle:
+    name: Check code style
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Check Code Style
+        uses: nikitasavinov/checkstyle-action@master
+        with:
+          level: warning
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          reporter: github-pr-check
+          tool_name: reviewdog
+          checkstyle_config: ./checkstyle.xml
+          workdir: ./

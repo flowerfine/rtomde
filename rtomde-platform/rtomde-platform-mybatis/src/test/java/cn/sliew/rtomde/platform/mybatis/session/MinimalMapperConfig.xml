@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE application
+    PUBLIC "-//mybatis.org//DTD Config 4.0//EN"
+        "mybatis-application-1.dtd">
+
+<application name="minimal">
+
+    <environments>
+        <environment id="local">
+            <hikaricp id="rtomde">
+                <jdbcUrl>jdbc:mysql://localhost:3306/rtomde</jdbcUrl>
+                <username>root</username>
+                <password>123</password>
+                <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
+                <profileSQL>true</profileSQL>
+            </hikaricp>
+            <lettuce id="11">
+                <redisURI></redisURI>
+            </lettuce>
+        </environment>
+        <environment id="dev">
+            <hikaricp id="rtomde">
+                <jdbcUrl>jdbc:mysql://test-xc-dev.mysql.rds.aliyuncs.com:3331/data_service</jdbcUrl>
+                <username>test_xc_dev</username>
+                <password>x!c@_d#ev$xcD_SdeAvM</password>
+                <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
+                <profileSQL>true</profileSQL>
+            </hikaricp>
+            <lettuce id="11">
+                <redisURI></redisURI>
+            </lettuce>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-jdbc/src/test/java/org/apache/ibatis/session/SysUserMapper.xml"/>
+    </mappers>
+
+</application>
+
+

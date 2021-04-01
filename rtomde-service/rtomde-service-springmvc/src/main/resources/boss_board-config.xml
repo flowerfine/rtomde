@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application
+		PUBLIC "-//sliew.cn//DTD Application 1.0//EN"
+		"http://sliew.cn/dtd/mybatis-application-1.dtd">
+<application name="boss_board">
+
+	<typeAliases>
+		<typeAlias alias="HashMap" type="java.util.HashMap" />
+		<typeAlias alias="LinkedHashMap" type="java.util.LinkedHashMap" />
+		<typeAlias alias="ArrayList" type="java.util.ArrayList" />
+		<typeAlias alias="LinkedList" type="java.util.LinkedList" />
+	</typeAliases>
+
+	<environments>
+		<environment id="dev">
+			<hikaricp id="data_service">
+				<driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
+				<jdbcUrl>jdbc:mysql://localhost:3306/data_service</jdbcUrl>
+				<username>root</username>
+				<password>123</password>
+				<profileSQL>true</profileSQL>
+			</hikaricp>
+			<lettuce id="local">
+				<redisURI>redis://123@localhost:6379/0?timeout=1s</redisURI>
+			</lettuce>
+		</environment>
+	</environments>
+
+	<mappers>
+		<mapper url="file:/Users/wangqi/Documents/git_repository/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/boss_board/SysUserMapper.xml"/>
+	</mappers>
+
+</application>

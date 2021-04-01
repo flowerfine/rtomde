@@ -1,0 +1,24 @@
+spring.profiles.active: local
+#spring.profiles.active: ${ENV:dev}
+
+spring.application.name: rtomde
+spring.main.banner-mode: log
+server:
+  port: 8080
+  servlet.context-path: /
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+platform.mybatis:
+  environment: dev
+  metadata-location: classpath:metadata-config.xml
+  checkMetadataLocation: true
+  applicationLocations: classpath:data_center-config.xml, boss_board-config.xml
+

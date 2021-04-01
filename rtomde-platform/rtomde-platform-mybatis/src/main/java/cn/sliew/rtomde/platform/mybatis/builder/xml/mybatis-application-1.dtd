@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!ELEMENT application (properties?, typeAliases?, environments?, mappers?)>
+<!ATTLIST application
+name CDATA #REQUIRED
+>
+
+<!ELEMENT properties (property*)>
+
+<!ELEMENT property EMPTY>
+<!ATTLIST property
+name CDATA #REQUIRED
+value CDATA #REQUIRED
+>
+
+<!ELEMENT typeAliases (typeAlias*)>
+
+<!ELEMENT typeAlias EMPTY>
+<!ATTLIST typeAlias
+type CDATA #REQUIRED
+alias CDATA #IMPLIED
+>
+
+<!ELEMENT environments (environment+)>
+
+<!ELEMENT environment (hikaricp+, lettuce+)>
+<!ATTLIST environment
+id CDATA #REQUIRED
+>
+
+<!ELEMENT hikaricp (driverClassName, jdbcUrl, username, password, profileSQL)>
+<!ATTLIST hikaricp
+id CDATA #REQUIRED
+>
+
+<!ELEMENT jdbcUrl (#PCDATA)>
+<!ELEMENT username (#PCDATA)>
+<!ELEMENT password (#PCDATA)>
+<!ELEMENT driverClassName (#PCDATA)>
+<!ELEMENT profileSQL (#PCDATA)>
+
+<!ELEMENT lettuce (redisURI|clusterRedisURI)>
+<!ATTLIST lettuce
+id CDATA #REQUIRED
+>
+
+<!ELEMENT redisURI (#PCDATA)>
+<!ELEMENT clusterRedisURI (#PCDATA)>
+
+<!ELEMENT mappers (mapper*)>
+
+<!ELEMENT mapper EMPTY>
+<!ATTLIST mapper
+url CDATA #REQUIRED
+>
