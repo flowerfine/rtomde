@@ -54,7 +54,7 @@ public class MapperDispatcher {
     /**
      * todo application
      */
-    public Object execute(String application, String id, Object... params) {
+    public Object execute(String id, String application, Object... params) {
         ThrowableCollector throwableCollector = throwableCollectorFactory.create();
         CompletableFuture<Object> future = CompletableFuture.supplyAsync(() -> map.get(id).invoke(sqlSessionFactory.openSession(application), id, params));
         throwableCollector.execute(() -> future.get());
