@@ -14,6 +14,8 @@ import org.springframework.context.support.GenericApplicationContext;
 
 import java.util.List;
 
+import static cn.sliew.milky.common.check.Ensures.*;
+
 public class DubboServiceExporter implements ServiceExporter {
 
     private static final Logger log = LoggerFactory.getLogger(DubboServiceExporter.class);
@@ -24,10 +26,10 @@ public class DubboServiceExporter implements ServiceExporter {
     private final GenericApplicationContext ac;
 
     public DubboServiceExporter(String namespace, CtClass interfaceClazz, CtClass interfaceImplClazz, GenericApplicationContext ac) {
-        this.namespace = namespace;
-        this.interfaceClazz = interfaceClazz;
-        this.interfaceImplClazz = interfaceImplClazz;
-        this.ac = ac;
+        this.namespace = notBlank(namespace, "empty namespace");
+        this.interfaceClazz = checkNotNull(interfaceClazz, "null interfaceClazz");
+        this.interfaceImplClazz = checkNotNull(interfaceImplClazz, "null interfaceImplClazz");
+        this.ac = checkNotNull(ac, "null ac");
     }
 
     @Override
