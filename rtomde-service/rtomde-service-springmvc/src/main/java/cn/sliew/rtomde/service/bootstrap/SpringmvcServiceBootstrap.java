@@ -22,7 +22,6 @@ import org.springframework.web.context.support.GenericWebApplicationContext;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,6 +58,7 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
                 ms.getId().lastIndexOf(".") != -1 ?
                         ms.getId().substring(0, ms.getId().lastIndexOf(".")) :
                         ms.getId()));
+
         Map<String, Class<?>> dispatcherControllers = new HashMap<>(namespaces.size());
         for (Map.Entry<String, List<MappedStatement>> entry : namespaces.entrySet()) {
             Class<?> dispatcherController = doMakeDispatcherController(applicationOptions, entry.getKey(), entry.getValue());
@@ -101,15 +101,8 @@ public class SpringmvcServiceBootstrap implements ApplicationRunner {
             for (CtMethod m : methods) {
                 controllerClass.addMethod(m);
             }
-            controllerClass.writeFile();
             return controllerClass.toClass(classLoader, getClass().getProtectionDomain());
         } catch (CannotCompileException e) {
-            log.error("create Controller:[{}] failed", controllerClass.getName(), e);
-            throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
-        } catch (IOException e) {
-            log.error("create Controller:[{}] failed", controllerClass.getName(), e);
-            throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
-        } catch (NotFoundException e) {
             log.error("create Controller:[{}] failed", controllerClass.getName(), e);
             throw new RuntimeException("create Controller:" + controllerClass.getName() + " failed.", e);
         }

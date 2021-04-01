@@ -2,6 +2,10 @@ package cn.sliew.rtomde.service.bootstrap;
 
 import cn.sliew.rtomde.common.bytecode.ClassGenerator;
 import cn.sliew.rtomde.common.utils.ClassUtils;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisApplicationOptions;
+import cn.sliew.rtomde.platform.mybatis.config.MybatisPlatformOptions;
+import cn.sliew.rtomde.platform.mybatis.mapping.MappedStatement;
+import cn.sliew.rtomde.platform.mybatis.session.SqlSessionFactory;
 import cn.sliew.rtomde.service.bytecode.config.dispatcher.MapperDispatcher;
 import javassist.*;
 import javassist.bytecode.AnnotationsAttribute;
@@ -14,9 +18,6 @@ import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ProtocolConfig;
 import org.apache.dubbo.config.RegistryConfig;
 import org.apache.dubbo.config.ServiceConfig;
-import org.apache.ibatis.mapping.MappedStatement;
-import org.apache.ibatis.session.Configuration;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -24,8 +25,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Order(DubboServiceBootstrap.ORDER)
@@ -34,68 +37,66 @@ public class DubboServiceBootstrap implements ApplicationRunner {
 
     static final int ORDER = Integer.MAX_VALUE - 10000;
 
-    private String application;
-
     private ClassLoader classLoader = ClassUtils.getClassLoader(DubboServiceBootstrap.class);
     private ClassPool classPool = ClassGenerator.getClassPool(classLoader);
 
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
     @Autowired
-    private MapperDispatcher dispatcher;
-    @Autowired
     private AnnotationConfigApplicationContext ac;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Configuration configuration = sqlSessionFactory.getConfiguration();
-        this.application = configuration.getApplication();
-
-        CtClass serviceCt = makeDispatcherService();
-        CtClass serviceImplCt = makeDispatcherServiceImpl(serviceCt);
-
-        Class serviceInterface = serviceCt.toClass(classLoader, getClass().getProtectionDomain());
-        Class serviceInterfaceImpl = serviceImplCt.toClass(classLoader, getClass().getProtectionDomain());
-        ac.registerBean("dubbo.MapperService", serviceInterfaceImpl);
-        Object instance = ac.getBean("dubbo.MapperService");
-
-        serviceCt.defrost();
-        serviceImplCt.defrost();
-        dubboInternalClassPoolCascade();
-
-        ApplicationConfig application = new ApplicationConfig();
-        application.setName(this.application);
-        application.setOwner("wangqi");
-        application.setArchitecture("data-center");
-        Map<String, String> parameters = new HashMap<>(2);
-        parameters.put("unicast", "false");
-        application.setParameters(parameters);
-
-        RegistryConfig zookeeper = new RegistryConfig();
-        zookeeper.setProtocol("zookeeper");
-        zookeeper.setAddress("127.0.0.1:2181");
-        RegistryConfig multicast = new RegistryConfig();
-        multicast.setProtocol("multicast");
-        multicast.setAddress("224.5.6.7:1234");
-
-        ProtocolConfig dubbo = new ProtocolConfig();
-        dubbo.setName("dubbo");
-        dubbo.setPort(20880);
-        dubbo.setThreads(20);
-
-        ServiceConfig service = new ServiceConfig();
-        service.setApplication(application);
-        service.setRegistries(Arrays.asList(zookeeper, multicast));
-        service.setProtocols(Arrays.asList(dubbo));
-        service.setInterface(serviceInterface);
-        service.setRef(instance);
-        service.export();
+        MybatisPlatformOptions platform = sqlSessionFactory.getPlatform();
+        platform.getAllApplicationOptions().forEach(this::makeDispatcherService);
     }
 
-    private CtClass makeDispatcherService() {
-        CtClass serviceClass = classPool.makeInterface("cn.sliew.rtomde.executor.MapperService");
+    private void makeDispatcherService(MybatisApplicationOptions applicationOptions) {
+        dubboInternalClassPoolCascade();
+
+        Map<String, List<MappedStatement>> namespaces = applicationOptions.getMappedStatements().stream().collect(Collectors.groupingBy(ms ->
+                ms.getId().lastIndexOf(".") != -1 ?
+                        ms.getId().substring(0, ms.getId().lastIndexOf(".")) :
+                        ms.getId()));
+
+        ApplicationConfig applicationConfig = applicationConfig(sqlSessionFactory.getPlatform());
+        List<RegistryConfig> registryConfigs = registryConfigs();
+        ProtocolConfig protocolConfig = protocolConfig();
+        for (Map.Entry<String, List<MappedStatement>> entry : namespaces.entrySet()) {
+            CtClass serviceCt = doMakeDispatcherService(entry.getKey(), entry.getValue());
+            CtClass serviceImplCt = doMakeDispatcherServiceImpl(applicationOptions, serviceCt, entry.getKey(), entry.getValue());
+            Class serviceInterface = null;
+            Class serviceInterfaceImpl = null;
+            try {
+                serviceCt.writeFile();
+                serviceImplCt.writeFile();
+                serviceInterface = serviceCt.toClass(classLoader, getClass().getProtectionDomain());
+                serviceInterfaceImpl = serviceImplCt.toClass(classLoader, getClass().getProtectionDomain());
+            } catch (CannotCompileException e) {
+                log.error("create Service:[{}] failed", serviceCt.getName(), e);
+                throw new RuntimeException("create Service:" + serviceCt.getName() + " failed.", e);
+            } catch (IOException e) {
+                log.error("create Service:[{}] failed", serviceCt.getName(), e);
+                throw new RuntimeException("create Service:" + serviceCt.getName() + " failed.", e);
+            } catch (NotFoundException e) {
+                log.error("create Service:[{}] failed", serviceCt.getName(), e);
+                throw new RuntimeException("create Service:" + serviceCt.getName() + " failed.", e);
+            }
+            ac.registerBean(entry.getKey(), serviceInterfaceImpl);
+            Object instance = ac.getBean(entry.getKey());
+
+            serviceCt.defrost();
+            serviceImplCt.defrost();
+
+            exportDubboMapper(applicationConfig, registryConfigs, protocolConfig, serviceInterface, instance);
+        }
+
+    }
+
+    private CtClass doMakeDispatcherService(String namespace, List<MappedStatement> mappedStatements) {
+        CtClass serviceClass = classPool.makeInterface(namespace);
         try {
-            CtMethod[] methods = makeServiceMethod(serviceClass);
+            CtMethod[] methods = makeServiceMethod(serviceClass, mappedStatements);
             for (CtMethod m : methods) {
                 serviceClass.addMethod(m);
             }
@@ -106,29 +107,27 @@ public class DubboServiceBootstrap implements ApplicationRunner {
         }
     }
 
-    private CtMethod[] makeServiceMethod(CtClass declaring) {
-        Set<String> invokers = dispatcher.getMapperInvokers().keySet();
-        List<CtMethod> methods = new ArrayList<>(invokers.size());
-        for (String id : invokers) {
-            CtMethod method = makeServiceMethod(declaring, id);
+    private CtMethod[] makeServiceMethod(CtClass declaring, List<MappedStatement> mappedStatements) {
+        List<CtMethod> methods = new ArrayList<>(mappedStatements.size());
+        for (MappedStatement ms : mappedStatements) {
+            CtMethod method = makeServiceMethod(declaring, ms);
             methods.add(method);
         }
         return methods.toArray(new CtMethod[0]);
     }
 
-    private CtMethod makeServiceMethod(CtClass declaring, String id) {
+    private CtMethod makeServiceMethod(CtClass declaring, MappedStatement ms) {
         try {
-            MappedStatement mappedStatement = sqlSessionFactory.getConfiguration().getMappedStatement(id);
-            Class<?> paramType = mappedStatement.getParameterMap().getType();
-            Class<?> resultType = mappedStatement.getResultMap().getType();
-            return new CtMethod(classPool.get(resultType.getName()), id.replace(".", "_"), new CtClass[]{classPool.get(paramType.getName())}, declaring);
+            Class<?> paramType = ms.getParameterMap().getType();
+            Class<?> resultType = ms.getResultMap().getType();
+            return new CtMethod(classPool.get(resultType.getName()), ms.getId().replace(".", "_"), new CtClass[]{classPool.get(paramType.getName())}, declaring);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
-    private CtClass makeDispatcherServiceImpl(CtClass anInterface) {
-        CtClass serviceImplClass = classPool.makeClass("cn.sliew.rtomde.executor.MapperServiceImpl");
+    private CtClass doMakeDispatcherServiceImpl(MybatisApplicationOptions applicationOptions, CtClass anInterface, String namespace, List<MappedStatement> mappedStatements) {
+        CtClass serviceImplClass = classPool.makeClass(namespace + "Impl");
         serviceImplClass.addInterface(anInterface);
         ClassFile ccFile = serviceImplClass.getClassFile();
 
@@ -143,7 +142,7 @@ public class DubboServiceBootstrap implements ApplicationRunner {
         try {
             serviceImplClass.addField(makeAutowiredField(serviceImplClass, constpool));
 
-            CtMethod[] methods = makeServiceMethodImpl(serviceImplClass);
+            CtMethod[] methods = makeServiceMethodImpl(applicationOptions, serviceImplClass, mappedStatements);
             for (CtMethod m : methods) {
                 serviceImplClass.addMethod(m);
             }
@@ -171,32 +170,30 @@ public class DubboServiceBootstrap implements ApplicationRunner {
         }
     }
 
-    private CtMethod[] makeServiceMethodImpl(CtClass declaring) {
-        Set<String> invokers = dispatcher.getMapperInvokers().keySet();
-        List<CtMethod> methods = new ArrayList<>(invokers.size());
-        for (String id : invokers) {
-            CtMethod method = makeServiceMethodImpl(declaring, id);
+    private CtMethod[] makeServiceMethodImpl(MybatisApplicationOptions applicationOptions, CtClass declaring, List<MappedStatement> mappedStatements) {
+        List<CtMethod> methods = new ArrayList<>(mappedStatements.size());
+        for (MappedStatement ms : mappedStatements) {
+            CtMethod method = makeServiceMethodImpl(applicationOptions, declaring, ms);
             methods.add(method);
         }
         return methods.toArray(new CtMethod[0]);
     }
 
-    private CtMethod makeServiceMethodImpl(CtClass declaring, String id) {
+    private CtMethod makeServiceMethodImpl(MybatisApplicationOptions applicationOptions, CtClass declaring, MappedStatement ms) {
         try {
-            MappedStatement mappedStatement = sqlSessionFactory.getConfiguration().getMappedStatement(id);
-            Class<?> paramType = mappedStatement.getParameterMap().getType();
-            Class<?> resultType = mappedStatement.getResultMap().getType();
-            return generateMapperMethod(resultType, paramType, id, declaring);
+            Class<?> paramType = ms.getParameterMap().getType();
+            Class<?> resultType = ms.getResultMap().getType();
+            return generateMapperMethod(applicationOptions, resultType, paramType, ms.getId(), declaring);
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
 
-    private CtMethod generateMapperMethod(Class<?> resultType, Class<?> paramType, String id, CtClass declaring) throws Exception {
+    private CtMethod generateMapperMethod(MybatisApplicationOptions applicationOptions, Class<?> resultType, Class<?> paramType, String id, CtClass declaring) throws Exception {
         CtMethod method = new CtMethod(classPool.get(resultType.getName()), id.replace(".", "_"), new CtClass[]{classPool.get(paramType.getName())}, declaring);
         StringBuilder methodBody = new StringBuilder();
         methodBody.append("{");
-        methodBody.append("return mapperDispatcher.execute(\"" + id + "\", $args);");
+        methodBody.append("return mapperDispatcher.execute(\"" + id + "\", \"" + applicationOptions.getId() + "\", $args);");
         methodBody.append("}");
         method.setBody(methodBody.toString());
         return method;
@@ -211,6 +208,45 @@ public class DubboServiceBootstrap implements ApplicationRunner {
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    private ApplicationConfig applicationConfig(MybatisPlatformOptions platform) {
+        ApplicationConfig application = new ApplicationConfig();
+        application.setName(platform.getName());
+        application.setOwner("wangqi");
+        application.setArchitecture("data-center");
+        Map<String, String> parameters = new HashMap<>(2);
+        parameters.put("unicast", "false");
+        application.setParameters(parameters);
+        return application;
+    }
+
+    private List<RegistryConfig> registryConfigs() {
+        RegistryConfig zookeeper = new RegistryConfig();
+        zookeeper.setProtocol("zookeeper");
+        zookeeper.setAddress("127.0.0.1:2181");
+        RegistryConfig multicast = new RegistryConfig();
+        multicast.setProtocol("multicast");
+        multicast.setAddress("224.5.6.7:1234");
+        return Arrays.asList(zookeeper, multicast);
+    }
+
+    private ProtocolConfig protocolConfig() {
+        ProtocolConfig dubbo = new ProtocolConfig();
+        dubbo.setName("dubbo");
+        dubbo.setPort(20880);
+        dubbo.setThreads(20);
+        return dubbo;
+    }
+
+    private void exportDubboMapper(ApplicationConfig application,List<RegistryConfig> registries,ProtocolConfig protocol,  Class clazz, Object bean) {
+        ServiceConfig service = new ServiceConfig();
+        service.setApplication(application);
+        service.setRegistries(registries);
+        service.setProtocols(Arrays.asList(protocol));
+        service.setInterface(clazz);
+        service.setRef(bean);
+        service.export();
     }
 
 }

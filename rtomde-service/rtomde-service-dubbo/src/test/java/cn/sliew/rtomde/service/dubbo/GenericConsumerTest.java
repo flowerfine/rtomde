@@ -9,6 +9,7 @@ import org.apache.dubbo.rpc.service.GenericService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 
@@ -19,16 +20,20 @@ public class GenericConsumerTest extends MilkyTestCase {
     @BeforeEach
     private void beforeEach() {
         ApplicationConfig application = new ApplicationConfig();
-        application.setName("demo-generic-consumer");
+        application.setName("mybatis_generic_consumer");
 
+        RegistryConfig zookeeper = new RegistryConfig();
+        zookeeper.setProtocol("zookeeper");
+        zookeeper.setAddress("127.0.0.1:2181");
         RegistryConfig multicast = new RegistryConfig();
         multicast.setProtocol("multicast");
         multicast.setAddress("224.5.6.7:1234");
 
         ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
-        reference.setInterface("dubbo.MapperService");
+        reference.setInterface("cn.sliew.datacenter.users.SysUserMapper");
+        application.setRegistries(Arrays.asList(zookeeper, multicast));
         reference.setApplication(application);
-        reference.setRegistry(multicast);
+        reference.setProtocol("dubbo");
         reference.setGeneric(true);
         reference.setAsync(true);
         reference.setTimeout(7000);
@@ -37,16 +42,17 @@ public class GenericConsumerTest extends MilkyTestCase {
 
     @Test
     public void test_users_selectByPrimaryKey() throws InterruptedException {
-        genericService.$invoke("users_selectByPrimaryKey", new String[]{"long"}, new Object[]{1L});
+        genericService.$invoke("cn_sliew_datacenter_users_SysUserMapper_selectByPrimaryKey", new String[]{"long"}, new Object[]{1L});
         CountDownLatch latch = new CountDownLatch(1);
 
         CompletableFuture<String> future = RpcContext.getContext().getCompletableFuture();
         future.whenComplete((value, t) -> {
-            System.err.println("users_selectByPrimaryKey(whenComplete): " + value);
+            System.err.println("cn_sliew_datacenter_users_SysUserMapper_selectByPrimaryKey(whenComplete): " + value);
             latch.countDown();
         });
         latch.await();
     }
+
 
 
 
