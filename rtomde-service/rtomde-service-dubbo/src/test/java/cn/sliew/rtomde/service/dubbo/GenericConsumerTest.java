@@ -1,6 +1,7 @@
 package cn.sliew.rtomde.service.dubbo;
 
 import cn.sliew.milky.test.MilkyTestCase;
+import org.apache.dubbo.common.utils.PojoUtils;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
 import org.apache.dubbo.config.RegistryConfig;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 
@@ -35,22 +38,25 @@ public class GenericConsumerTest extends MilkyTestCase {
         reference.setApplication(application);
         reference.setProtocol("dubbo");
         reference.setGeneric(true);
-        reference.setAsync(true);
+//        reference.setAsync(true);
         reference.setTimeout(7000);
         genericService = reference.get();
     }
 
     @Test
     public void test_users_selectByPrimaryKey() throws InterruptedException {
-        genericService.$invoke("cn_sliew_datacenter_users_SysUserMapper_selectByPrimaryKey", new String[]{"cn.sliew.datacenter.users.UserParam"}, new Object[]{new UserParam(1L)});
-        CountDownLatch latch = new CountDownLatch(1);
+        Map<String , Object> params = new HashMap<>();
+        params.put("id", 1L);
+        Object result = genericService.$invoke("cn_sliew_datacenter_users_SysUserMapper_selectByPrimaryKey", new String[]{"cn.sliew.datacenter.users.UserParam"}, new Object[]{params});
+        System.err.println(result);
 
-        CompletableFuture<String> future = RpcContext.getContext().getCompletableFuture();
-        future.whenComplete((value, t) -> {
-            System.err.println("cn_sliew_datacenter_users_SysUserMapper_selectByPrimaryKey(whenComplete): " + value);
-            latch.countDown();
-        });
-        latch.await();
+//        CountDownLatch latch = new CountDownLatch(1);
+//        CompletableFuture<String> future = RpcContext.getContext().getCompletableFuture();
+//        future.whenComplete((value, t) -> {
+//            System.err.println("cn_sliew_datacenter_users_SysUserMapper_selectByPrimaryKey(whenComplete): " + value);
+//            latch.countDown();
+//        });
+//        latch.await();
     }
 
 
