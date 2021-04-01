@@ -1,7 +1,7 @@
 package cn.sliew.rtomde.spi;
 
-import cn.sliew.milky.common.log.Logger;
-import cn.sliew.milky.common.log.LoggerFactory;
+import cn.sliew.milky.log.Logger;
+import cn.sliew.milky.log.LoggerFactory;
 import cn.sliew.rtomde.common.lang.Prioritized;
 
 import java.util.Arrays;
