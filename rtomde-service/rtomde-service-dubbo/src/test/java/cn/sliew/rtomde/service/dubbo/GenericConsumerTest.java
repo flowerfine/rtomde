@@ -49,14 +49,6 @@ public class GenericConsumerTest extends MilkyTestCase {
         params.put("id", 1L);
         Object result = genericService.$invoke("selectByPrimaryKey", new String[]{"cn.sliew.datacenter.users.UserParam"}, new Object[]{params});
         System.err.println(result);
-
-//        CountDownLatch latch = new CountDownLatch(1);
-//        CompletableFuture<String> future = RpcContext.getContext().getCompletableFuture();
-//        future.whenComplete((value, t) -> {
-//            System.err.println("cn_sliew_datacenter_users_SysUserMapper_selectByPrimaryKey(whenComplete): " + value);
-//            latch.countDown();
-//        });
-//        latch.await();
     }
 
 

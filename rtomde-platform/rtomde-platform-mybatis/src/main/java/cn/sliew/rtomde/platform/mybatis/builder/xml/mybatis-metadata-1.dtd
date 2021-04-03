@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!ELEMENT metadata (properties?, settings?, typeAliases?, typeHandlers?, plugins?)>
+<!ELEMENT metadata (properties?, settings?, typeAliases?, typeHandlers?)>
 <!ATTLIST metadata
 name CDATA #REQUIRED
 >
@@ -39,11 +39,4 @@ alias CDATA #IMPLIED
 javaType CDATA #IMPLIED
 jdbcType CDATA #IMPLIED
 handler CDATA #REQUIRED
->
-
-<!ELEMENT plugins (plugin+)>
-
-<!ELEMENT plugin (property*)>
-<!ATTLIST plugin
-interceptor CDATA #REQUIRED
 >
