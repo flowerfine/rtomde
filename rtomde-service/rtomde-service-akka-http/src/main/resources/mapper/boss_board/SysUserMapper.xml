@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//sliew.cn//DTD Mapper 1.0//EN"
+    "http://sliew.cn/dtd/mybatis-mapper-1.dtd">
+
+<mapper application="boss_board" namespace="cn.sliew.bossboard.users.SysUserMapper">
+
+	<parameterMap id="UserParamMap" type="cn.sliew.bossboard.users.UserParam">
+		<parameter property="id" javaType="long" />
+	</parameterMap>
+
+	<resultMap id="UserResultMap" type="cn.sliew.bossboard.users.UserDTO">
+		<result column="id" property="id" javaType="long"/>
+		<result column="username" property="username" javaType="string"/>
+		<result column="password" property="password" javaType="string"/>
+		<result column="nickname" property="nickname" javaType="string"/>
+		<result column="email" property="email" javaType="string"/>
+		<result column="phone" property="phone" javaType="string"/>
+		<result column="deleted" property="deleted" javaType="integer"/>
+		<result column="create_time" property="createTime" javaType="date"/>
+		<result column="creator" property="creator" javaType="string"/>
+		<result column="update_time" property="updateTime" javaType="date"/>
+		<result column="updater" property="updater" javaType="string"/>
+		<result column="comments" property="comments" javaType="string"/>
+	</resultMap>
+
+	<sql id="Base_Column_List">
+        id, username, `password`, nickname, email, phone, deleted, create_time, creator,
+        update_time, updater, comments
+    </sql>
+
+	<cache id="redis" type="lettuce" refId="local"/>
+
+	<select id="selectByPrimaryKey" dataSourceId="data_service" parameterMap="UserParamMap"
+			resultMap="UserResultMap" cacheRef="redis"
+	        timeout="1">
+		select <include refid="Base_Column_List"/>
+		from sys_user
+		where id = #{id}
+	</select>
+
+</mapper>

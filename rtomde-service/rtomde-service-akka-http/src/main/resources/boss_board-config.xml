@@ -2,7 +2,7 @@
 <!DOCTYPE application
 		PUBLIC "-//sliew.cn//DTD Application 1.0//EN"
 		"http://sliew.cn/dtd/mybatis-application-1.dtd">
-<application name="data_center">
+<application name="boss_board">
 
 	<typeAliases>
 		<typeAlias alias="HashMap" type="java.util.HashMap" />
@@ -27,8 +27,7 @@
 	</environments>
 
 	<mappers>
-		<mapper url="file:/Users/wangqi/Documents/xinc/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/data_center/SysUserMapper.xml"/>
-		<mapper url="file:/Users/wangqi/Documents/xinc/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/data_center/CustomUserMapper.xml"/>
+		<mapper url="file:/Users/wangqi/Documents/xinc/rtomde/rtomde-service/rtomde-service-akka-http/src/main/resources/mapper/boss_board/SysUserMapper.xml"/>
 	</mappers>
 
 </application>
