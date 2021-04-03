@@ -33,7 +33,7 @@ public class GenericConsumerTest extends MilkyTestCase {
         multicast.setAddress("224.5.6.7:1234");
 
         ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
-        reference.setInterface("cn.sliew.datacenter.users.SysUserMapper");
+        reference.setInterface("cn.sliew.bossboard.users.SysUserMapper");
         application.setRegistries(Arrays.asList(zookeeper, multicast));
         reference.setApplication(application);
         reference.setProtocol("dubbo");
@@ -47,7 +47,7 @@ public class GenericConsumerTest extends MilkyTestCase {
     public void test_users_selectByPrimaryKey() throws InterruptedException {
         Map<String , Object> params = new HashMap<>();
         params.put("id", 1L);
-        Object result = genericService.$invoke("selectByPrimaryKey", new String[]{"cn.sliew.datacenter.users.UserParam"}, new Object[]{params});
+        Object result = genericService.$invoke("selectByPrimaryKey", new String[]{"cn.sliew.bossboard.users.UserParam"}, new Object[]{params});
         System.err.println(result);
     }
 
