@@ -19,6 +19,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>cn.sliew</groupId>
+            <artifactId>rtomde-service-bytecode</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor-typed_${scala.binary.version}</artifactId>
             <version>${akka.version}</version>

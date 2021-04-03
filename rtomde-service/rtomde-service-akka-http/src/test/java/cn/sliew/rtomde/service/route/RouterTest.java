@@ -1,4 +1,4 @@
-package cn.sliew.rtomde.service.akka.http.route;
+package cn.sliew.rtomde.service.route;
 
 import akka.http.javadsl.marshallers.jackson.Jackson;
 import akka.http.javadsl.model.StatusCodes;

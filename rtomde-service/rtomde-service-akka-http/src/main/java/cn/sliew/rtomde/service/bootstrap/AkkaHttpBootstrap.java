@@ -1,4 +1,4 @@
-package cn.sliew.rtomde.service.akka.http.bootstrap;
+package cn.sliew.rtomde.service.bootstrap;
 
 import akka.Done;
 import akka.actor.typed.ActorSystem;
@@ -11,9 +11,8 @@ import akka.http.javadsl.server.AllDirectives;
 import akka.http.javadsl.server.Route;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.ApplicationListener;
@@ -36,6 +35,9 @@ public class AkkaHttpBootstrap extends AllDirectives implements CommandLineRunne
 
     private CompletionStage<ServerBinding> serverBinding;
     private ActorSystem<Void> system;
+
+    @Autowired
+    private AkkaHttpRouter router;
 
     @Override
     public void run(String... args) throws Exception {
