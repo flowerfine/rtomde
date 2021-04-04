@@ -33,9 +33,10 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
         <scala.macros.version>2.1.0</scala.macros.version>
-        <akka.version>2.5.21</akka.version>
-        <scala.version>2.12.8</scala.version>
-        <scala.binary.version>2.12</scala.binary.version>
+        <akka.version>2.6.8</akka.version>
+        <akka.http.version>10.2.2</akka.http.version>
+        <scala.version>2.13.0</scala.version>
+        <scala.binary.version>2.13</scala.binary.version>
 
         <milky.version>1.0.0-SNAPSHOT</milky.version>
 
