@@ -1,8 +1,10 @@
-spring.profiles.active: local
-#spring.profiles.active: ${ENV:dev}
+spring:
+  profiles.active: "@profile.active@"
+  application.name: rtomde
+  main.banner-mode: log
 
-spring.application.name: rtomde
-spring.main.banner-mode: log
+logging.config: classpath:log4j2-spring.xml
+
 server:
   port: 8080
   servlet.context-path: /

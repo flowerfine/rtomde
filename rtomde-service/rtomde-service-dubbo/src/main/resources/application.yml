@@ -1,5 +1,5 @@
 spring:
-  profiles.active: "@profile.active@"
+  profiles.active: local
   application.name: rtomde
   main.banner-mode: log
 
