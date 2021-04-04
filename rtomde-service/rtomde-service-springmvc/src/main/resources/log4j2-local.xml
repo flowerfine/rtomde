@@ -4,8 +4,7 @@
     <Properties>
         <Property name="APPLICATION">rtomde</Property>
         <Property name="LOG_PATH">${sys:user.home}/logs</Property>
-        <Property name="FILE_PATTERN">%date{yyyy-MM-dd HH:mm:ss.SSS} %3level [%threadName] %-10logger %-2line 行:
-            %msg%n%exception
+        <Property name="FILE_PATTERN">%date{yyyy-MM-dd HH:mm:ss.SSS} %3level [%threadName] %-10logger %-2line 行: %msg%n%exception
         </Property>
         <Property name="CONSOLE_PATTERN">%highlight{%date{yyyy-MM-dd HH:mm:ss.SSS}}{FATAL=red, ERROR=red, WARN=yellow,
             INFO=default, DEBUG=default, TRACE=default} %highlight{%3level}{FATAL=red, ERROR=red, WARN=yellow,
