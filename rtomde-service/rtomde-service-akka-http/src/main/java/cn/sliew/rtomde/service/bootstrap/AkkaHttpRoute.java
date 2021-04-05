@@ -4,8 +4,11 @@ import akka.http.javadsl.marshallers.jackson.Jackson;
 import akka.http.javadsl.model.StatusCodes;
 import akka.http.javadsl.server.AllDirectives;
 import akka.http.javadsl.server.Route;
+import cn.sliew.rtomde.platform.mybatis.session.SqlSessionFactory;
+import cn.sliew.rtomde.service.bytecode.dispatcher.MapperDispatcher;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -17,6 +20,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AkkaHttpRoute extends AllDirectives {
 
     private final Map<String, Map<JsonNode, JsonNode>> state = new ConcurrentHashMap<>();
+
+    @Autowired
+    private MapperDispatcher mapperDispatcher;
+    @Autowired
+    private SqlSessionFactory sqlSessionFactory;
 
     Route fixedRoute() {
         return complete(StatusCodes.OK, "hhh");
