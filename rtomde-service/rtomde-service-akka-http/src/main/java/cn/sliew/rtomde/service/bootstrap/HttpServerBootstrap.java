@@ -18,7 +18,7 @@ public class HttpServerBootstrap implements ApplicationRunner {
     private ActorSystem<Void> system;
 
     @Autowired
-    private AkkaHttpRoute route;
+    private AkkaHttpDynamicRoute route;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -28,7 +28,7 @@ public class HttpServerBootstrap implements ApplicationRunner {
 
         final Http http = Http.get(system);
         //In order to access all directives we need an instance where the routes are define.
-        http.newServerAt("localhost", 8080).bind(route.fixedRoute())
+        http.newServerAt("localhost", 8080).bind(route.dynamicRoute())
                 .whenComplete(new HttpServerBootstrapHook("http://localhost:8080/", system));
     }
 
