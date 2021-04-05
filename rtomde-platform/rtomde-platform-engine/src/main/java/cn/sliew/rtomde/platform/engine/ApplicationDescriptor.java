@@ -7,4 +7,11 @@ package cn.sliew.rtomde.platform.engine;
 public interface ApplicationDescriptor {
 
 
+    String getId();
+
+    String getVersion();
+
+    String getName();
+
+
 }

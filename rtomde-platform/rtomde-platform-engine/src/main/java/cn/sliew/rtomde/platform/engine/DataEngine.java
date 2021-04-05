@@ -6,6 +6,8 @@ public interface DataEngine {
 
     String getVersion();
 
+    String getName();
+
     /**
      * 注册，查找，配置，下线和删除
      */
