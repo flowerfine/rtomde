@@ -1,5 +1,10 @@
 package cn.sliew.rtomde.platform.engine;
 
+/**
+ * todo 如何启动一个 DataEngine?
+ *
+ *
+ */
 public interface DataEngine {
 
     String getId();
@@ -9,22 +14,31 @@ public interface DataEngine {
     String getName();
 
     /**
-     * 注册，查找，配置，下线和删除
+     * DataEngine将管理应用的工作代理给ApplicationManager
      */
-    DataApplication registerApplication(ApplicationRegistryRequest request);
+    ApplicationManager getApplicationManager();
 
-    DataApplication discoverApplication(ApplicationDiscoveryRequest request);
+    /**
+     * 注册，查找，配置，删除，发布
+     */
+    default DataApplication registerApplication(ApplicationRegistryRequest request) {
+        return getApplicationManager().registerApplication(request);
+    }
 
-    DataApplication configureApplication(ApplicationConfigurationRequest request);
+    default DataApplication discoverApplication(ApplicationDiscoveryRequest request) {
+        return getApplicationManager().discoverApplication(request);
+    }
 
+    default DataApplication configureApplication(ApplicationConfigurationRequest request) {
+        return getApplicationManager().configureApplication(request);
+    }
 
+    default DataApplication deleteApplication(ApplicationDeleteRequest request) {
+        return getApplicationManager().deleteApplication(request);
+    }
 
-    DataResource registerResource(ResourceRegistryRequest request);
-
-    DataResource discoverResource(ResourceDiscoveryRequest request);
-
-    DataResource configureResource(ResourceConfigurationRequest request);
-
-    void execute();
+    default DataApplication publishApplication(ApplicationPublishRequest request) {
+        return getApplicationManager().publishApplication(request);
+    }
 
 }
