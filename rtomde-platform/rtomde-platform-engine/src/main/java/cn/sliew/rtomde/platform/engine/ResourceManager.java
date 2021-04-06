@@ -7,4 +7,8 @@ public interface ResourceManager {
     DataResource discoverResource(ResourceDiscoveryRequest request);
 
     DataResource configureResource(ResourceConfigurationRequest request);
+
+    DataResource deleteResource(ResourceDeleteRequest request);
+
+    DataResource publishResource(ResourcePublishRequest request);
 }

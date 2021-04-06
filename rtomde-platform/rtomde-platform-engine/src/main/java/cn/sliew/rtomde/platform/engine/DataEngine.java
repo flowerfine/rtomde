@@ -7,11 +7,7 @@ package cn.sliew.rtomde.platform.engine;
  */
 public interface DataEngine {
 
-    String getId();
-
-    String getVersion();
-
-    String getName();
+    EngineDescriptor getEngine();
 
     /**
      * DataEngine将管理应用的工作代理给ApplicationManager

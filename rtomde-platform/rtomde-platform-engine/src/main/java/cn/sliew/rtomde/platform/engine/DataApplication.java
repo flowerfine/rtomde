@@ -2,23 +2,35 @@ package cn.sliew.rtomde.platform.engine;
 
 /**
  * 应用包含资源，并将资源的管理代理给 ResourceManager
+ *
+ * 开发调试功能
  */
 public interface DataApplication {
 
-    String getId();
-
-    String getVersion();
-
-    String getName();
+    ApplicationDescriptor getApplication();
 
     ResourceManager getResourceManager();
 
-    DataResource registerResource(ResourceRegistryRequest request);
+    default DataResource registerResource(ResourceRegistryRequest request) {
+        return getResourceManager().registerResource(request);
+    }
 
-    DataResource discoverResource(ResourceDiscoveryRequest request);
+    default DataResource discoverResource(ResourceDiscoveryRequest request) {
+        return getResourceManager().discoverResource(request);
+    }
 
-    DataResource configureResource(ResourceConfigurationRequest request);
+    default DataResource configureResource(ResourceConfigurationRequest request) {
+        return getResourceManager().configureResource(request);
+    }
 
-    void execute();
+    default DataResource deleteResource(ResourceDeleteRequest request) {
+        return getResourceManager().deleteResource(request);
+    }
+
+    default DataResource publishResource(ResourcePublishRequest request) {
+        return getResourceManager().publishResource(request);
+    }
+
+    void export();
 
 }
