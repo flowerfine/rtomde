@@ -31,6 +31,8 @@ public interface DataApplication {
         return getResourceManager().publishResource(request);
     }
 
+    Object execute(ResourceDescriptor resource, Object... params);
+
     void export();
 
 }

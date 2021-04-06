@@ -7,6 +7,4 @@ public interface EngineDescriptor {
     String getVersion();
 
     String getName();
-
-    void export();
 }
