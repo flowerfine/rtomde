@@ -23,6 +23,7 @@
         <module>rtomde-service</module>
 
         <module>rtomde-container</module>
+
     </modules>
 
     <properties>
@@ -195,7 +196,7 @@
         <testSourceDirectory>${project.basedir}/src/test/scala</testSourceDirectory>
         <resources>
             <resource>
-                <directory>${project.basedir}</directory>
+                <directory>${project.basedir}/src/main/resources</directory>
                 <targetPath>META-INF</targetPath>
                 <includes>
                     <include>LICENSE</include>
@@ -211,7 +212,7 @@
         </resources>
         <testResources>
             <testResource>
-                <directory>${project.build.testSourceDirectory}</directory>
+                <directory>${project.build.testSourceDirectory}/src/main/resources</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
                 </excludes>
@@ -440,6 +441,7 @@
                         <configuration>
                             <sources>
                                 <source>src/main/scala</source>
+                                <source>src/main/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -453,6 +455,7 @@
                         <configuration>
                             <sources>
                                 <source>src/test/scala</source>
+                                <source>src/test/java</source>
                             </sources>
                         </configuration>
                     </execution>
