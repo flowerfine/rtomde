@@ -15,6 +15,7 @@
         <module>rtomde-platform-mybatis</module>
         <module>rtomde-platform-engine</module>
         <module>rtomde-platform-function</module>
+        <module>rtomde-platform-jdbc</module>
     </modules>
 
     <dependencyManagement>
