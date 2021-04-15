@@ -13,5 +13,4 @@ public interface ApplicationDescriptor {
 
     String getName();
 
-
 }

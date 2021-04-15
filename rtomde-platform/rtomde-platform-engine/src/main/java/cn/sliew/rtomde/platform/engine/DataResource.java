@@ -2,9 +2,10 @@ package cn.sliew.rtomde.platform.engine;
 
 public interface DataResource {
 
-    String getId();
+    ResourceDescriptor getResource();
 
-    String getVersion();
+    Invoker toInvoker();
 
-    String getName();
+    void export();
+
 }

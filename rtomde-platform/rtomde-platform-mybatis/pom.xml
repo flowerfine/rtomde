@@ -13,11 +13,7 @@
     <dependencies>
         <dependency>
             <groupId>cn.sliew</groupId>
-            <artifactId>rtomde-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.sliew</groupId>
-            <artifactId>rtomde-config</artifactId>
+            <artifactId>rtomde-datasource</artifactId>
         </dependency>
 
         <dependency>
@@ -42,16 +38,6 @@
             <version>1.6.1</version>
         </dependency>
 
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.22</version>
-        </dependency>
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP</artifactId>
-            <version>4.0.1</version>
-        </dependency>
 
         <dependency>
             <groupId>com.typesafe</groupId>

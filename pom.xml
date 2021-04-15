@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.sliew</groupId>
     <artifactId>rtomde</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
     <name>rtomde</name>
     <description>Readable, Testable, Observable, Maintainable Data Engine</description>
@@ -23,7 +23,7 @@
         <module>rtomde-service</module>
 
         <module>rtomde-container</module>
-
+        <module>rtomde-datasource</module>
     </modules>
 
     <properties>
@@ -38,6 +38,7 @@
         <typesafe.config.version>1.4.1</typesafe.config.version>
         <scala.macros.version>2.1.1</scala.macros.version>
 
+        <revision>1.0.0-SNAPSHOT</revision>
         <milky.version>1.0.0-SNAPSHOT</milky.version>
         <spotless.version>2.4.2</spotless.version>
 
@@ -93,17 +94,7 @@
             </dependency>
             <dependency>
                 <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-jdbc</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-jdbc-spring</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-jdbc-spring-boot</artifactId>
+                <artifactId>rtomde-datasource</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -118,12 +109,6 @@
                 <groupId>io.micrometer</groupId>
                 <artifactId>micrometer-registry-prometheus</artifactId>
                 <version>1.6.2</version>
-            </dependency>
-
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>8.0.22</version>
             </dependency>
 
             <dependency>
