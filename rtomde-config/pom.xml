@@ -11,5 +11,13 @@
     </parent>
     <artifactId>rtomde-config</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>cn.sliew</groupId>
+            <artifactId>milky-common</artifactId>
+            <version>${milky.version}</version>
+        </dependency>
+    </dependencies>
+
 
 </project>
