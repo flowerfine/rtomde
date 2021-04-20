@@ -16,6 +16,7 @@
         <module>rtomde-platform-engine</module>
         <module>rtomde-platform-function</module>
         <module>rtomde-platform-jdbc</module>
+        <module>rtomde-platform-config</module>
     </modules>
 
     <dependencyManagement>

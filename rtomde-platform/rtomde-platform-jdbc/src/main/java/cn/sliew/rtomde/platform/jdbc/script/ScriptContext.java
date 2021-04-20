@@ -1,4 +1,8 @@
 package cn.sliew.rtomde.platform.jdbc.script;
 
-public interface ScriptContext {
+import cn.sliew.rtomde.platform.config.env.EnvironmentCapable;
+
+public interface ScriptContext extends EnvironmentCapable {
+
+
 }
