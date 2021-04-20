@@ -1,6 +1,6 @@
 package cn.sliew.rtomde.platform.jdbc.script;
 
-import cn.sliew.rtomde.platform.jdbc.mapping.ParameterMapping;
+import cn.sliew.rtomde.platform.jdbc.parameter.ParameterMapping;
 
 import java.util.List;
 import java.util.Objects;
@@ -48,5 +48,5 @@ public class ScriptBoundResult {
     public int hashCode() {
         return Objects.hash(script, parameterMappings, parameterObject);
     }
-    
+
 }
