@@ -172,8 +172,6 @@
     </repositories>
 
     <build>
-        <sourceDirectory>${project.basedir}/src/main/scala</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/scala</testSourceDirectory>
         <resources>
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
