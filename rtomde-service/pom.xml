@@ -7,6 +7,7 @@
         <groupId>cn.sliew</groupId>
         <artifactId>rtomde</artifactId>
         <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>rtomde-service</artifactId>
     <packaging>pom</packaging>
@@ -44,15 +45,5 @@
             <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-service-bytecode</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
 </project>

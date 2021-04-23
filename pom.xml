@@ -10,7 +10,7 @@
     </parent>
     <groupId>cn.sliew</groupId>
     <artifactId>rtomde</artifactId>
-    <version>${revision}</version>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>rtomde</name>
     <description>Readable, Testable, Observable, Maintainable Data Engine</description>
@@ -37,7 +37,6 @@
         <typesafe.config.version>1.4.1</typesafe.config.version>
         <scala.macros.version>2.1.1</scala.macros.version>
 
-        <revision>1.0.0-SNAPSHOT</revision>
         <milky.version>1.0.0-SNAPSHOT</milky.version>
         <spotless.version>2.4.2</spotless.version>
 
