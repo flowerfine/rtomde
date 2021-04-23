@@ -456,7 +456,10 @@
                             <excludeFilterFile>/buildtools/maven/spotbugs-exclude.xml</excludeFilterFile>
                             <!--                            <includeFilterFile>/buildtools/maven/spotbugs-include.xml</includeFilterFile>-->
                             <failOnError>true</failOnError>
-                            <argLine>-Xms512m -Xmx1024m</argLine>
+                            <jvmArgs>
+                                <jvmArg>-Xms512m</jvmArg>
+                                <jvmArg>-Xmx1024m</jvmArg>
+                            </jvmArgs>
                         </configuration>
                     </plugin>
                 </plugins>
