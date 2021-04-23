@@ -8,10 +8,10 @@
     <environments>
         <environment id="local">
             <hikaricp id="rtomde">
+                <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
                 <jdbcUrl>jdbc:mysql://localhost:3306/rtomde</jdbcUrl>
                 <username>root</username>
                 <password>123</password>
-                <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
                 <profileSQL>true</profileSQL>
             </hikaricp>
             <lettuce id="11">
@@ -20,10 +20,10 @@
         </environment>
         <environment id="dev">
             <hikaricp id="rtomde">
-                <jdbcUrl>jdbc:mysql://test-xc-dev.mysql.rds.aliyuncs.com:3331/data_service</jdbcUrl>
-                <username>test_xc_dev</username>
-                <password>x!c@_d#ev$xcD_SdeAvM</password>
                 <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
+                <jdbcUrl>jdbc:mysql://localhost:3306/rtomde</jdbcUrl>
+                <username>root</username>
+                <password>123</password>
                 <profileSQL>true</profileSQL>
             </hikaricp>
             <lettuce id="11">
