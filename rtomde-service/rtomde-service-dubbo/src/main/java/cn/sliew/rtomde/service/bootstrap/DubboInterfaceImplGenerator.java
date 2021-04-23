@@ -39,10 +39,10 @@ public class DubboInterfaceImplGenerator implements ServiceGenerator {
     private CtClass interfaceImplClazz;
 
     public DubboInterfaceImplGenerator(MybatisApplicationOptions applicationOptions, CtClass interfaceClazz, String namespace, List<MappedStatement> mappedStatements) {
-        this.applicationOptions = checkNotNull(applicationOptions, "null applicationOptions");
-        this.interfaceClazz = checkNotNull(interfaceClazz, "null interfaceClazz");
-        this.namespace = notBlank(namespace, "empty namespace");
-        this.mappedStatements = notEmpty(mappedStatements, "empty mappedStatements");
+        this.applicationOptions = checkNotNull(applicationOptions, () -> "null applicationOptions");
+        this.interfaceClazz = checkNotNull(interfaceClazz, () -> "null interfaceClazz");
+        this.namespace = notBlank(namespace, () -> "empty namespace");
+        this.mappedStatements = notEmpty(mappedStatements, () -> "empty mappedStatements");
     }
 
     public CtClass getInterfaceImplClazz() {

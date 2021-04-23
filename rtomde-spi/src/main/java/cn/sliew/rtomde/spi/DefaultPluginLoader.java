@@ -48,8 +48,8 @@ public class DefaultPluginLoader<T> implements PluginLoader<T> {
     }
 
     public static <T> DefaultPluginLoader<T> getPluginLoader(Class<T> type) {
-        checkArgument(type != null, "Extension type == null");
-        checkArgument(!type.isInterface(), "Extension type (" + type + ") is not an interface!");
+        checkArgument(type != null, () -> "Extension type == null");
+        checkArgument(!type.isInterface(), () -> "Extension type (" + type + ") is not an interface!");
 
         DefaultPluginLoader<T> loader = (DefaultPluginLoader<T>) PLUGIN_LOADERS.get(type);
         if (loader == null) {

@@ -14,7 +14,7 @@ public interface Plugin {
      */
     default ClassLoader getClassLoader() {
         return checkNotNull(this.getClass().getClassLoader(),
-                String.format("%s plugin with null class loader", this.getClass().getName()));
+                () -> String.format("%s plugin with null class loader", this.getClass().getName()));
     }
 
     /**
@@ -22,5 +22,6 @@ public interface Plugin {
      *
      * @param prop The configuration to apply to the plugin.
      */
-    default void configure(Properties prop) {}
+    default void configure(Properties prop) {
+    }
 }

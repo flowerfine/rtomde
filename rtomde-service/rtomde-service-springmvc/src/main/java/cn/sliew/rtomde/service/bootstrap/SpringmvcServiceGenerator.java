@@ -36,9 +36,9 @@ public class SpringmvcServiceGenerator implements ServiceGenerator {
     private CtClass controllerClazz;
 
     public SpringmvcServiceGenerator(MybatisApplicationOptions applicationOptions, String namespace, List<MappedStatement> mappedStatements) {
-        this.applicationOptions = checkNotNull(applicationOptions, "null applicationOptions");
-        this.namespace = notBlank(namespace, "empty namespace");
-        this.mappedStatements = notEmpty(mappedStatements, "empty mappedStatements");
+        this.applicationOptions = checkNotNull(applicationOptions, () -> "null applicationOptions");
+        this.namespace = notBlank(namespace, () -> "empty namespace");
+        this.mappedStatements = notEmpty(mappedStatements, () -> "empty mappedStatements");
     }
 
     public CtClass getControllerClazz() {

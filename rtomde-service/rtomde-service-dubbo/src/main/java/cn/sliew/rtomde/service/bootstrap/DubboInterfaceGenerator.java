@@ -31,8 +31,8 @@ public class DubboInterfaceGenerator implements ServiceGenerator {
     private CtClass interfaceClazz;
 
     public DubboInterfaceGenerator(String namespace, List<MappedStatement> mappedStatements) {
-        this.namespace = notBlank(namespace, "empty namespace");
-        this.mappedStatements = notEmpty(mappedStatements, "empty mappedStatements");
+        this.namespace = notBlank(namespace, () -> "empty namespace");
+        this.mappedStatements = notEmpty(mappedStatements, () -> "empty mappedStatements");
     }
 
     public CtClass getInterfaceClazz() {

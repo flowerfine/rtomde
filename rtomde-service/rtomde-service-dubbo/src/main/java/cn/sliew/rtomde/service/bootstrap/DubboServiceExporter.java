@@ -26,10 +26,10 @@ public class DubboServiceExporter implements ServiceExporter {
     private final GenericApplicationContext ac;
 
     public DubboServiceExporter(String namespace, CtClass interfaceClazz, CtClass interfaceImplClazz, GenericApplicationContext ac) {
-        this.namespace = notBlank(namespace, "empty namespace");
-        this.interfaceClazz = checkNotNull(interfaceClazz, "null interfaceClazz");
-        this.interfaceImplClazz = checkNotNull(interfaceImplClazz, "null interfaceImplClazz");
-        this.ac = checkNotNull(ac, "null ac");
+        this.namespace = notBlank(namespace, () -> "empty namespace");
+        this.interfaceClazz = checkNotNull(interfaceClazz, () -> "null interfaceClazz");
+        this.interfaceImplClazz = checkNotNull(interfaceImplClazz, () -> "null interfaceImplClazz");
+        this.ac = checkNotNull(ac, () -> "null ac");
     }
 
     @Override
