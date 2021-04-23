@@ -2,9 +2,9 @@ name: JDK11 CI
 
 on:
   push:
-    paths-ignore: [ '**/*.md' ]
+    paths-ignore: [ '**/*.md', '**/*.drawio' ]
   pull_request:
-    paths-ignore: [ '**/*.md' ]
+    paths-ignore: [ '**/*.md', '**/*.drawio' ]
 
 jobs:
   Build:
@@ -39,11 +39,11 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       - name: Compile
-        run: ./mvnw -B clean compile install -Dmaven.test.skip=true
+        run: ./mvnw -B clean compile install  -Pjava11 -Dmaven.test.skip=true
       - name: Test
         run: |
           export MAVEN_OPTS='-Dmaven.repo.local=.m2/repository -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit -Xmx2g'
-          ./mvnw -B test -Plocal  -Dmaven.test.skip=false
+          ./mvnw -B test -Plocal,java11,jacoco  -Dmaven.test.skip=false
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
@@ -55,16 +55,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: >
-          ./mvnw -B verify sonar:sonar
+          ./mvnw -B verify sonar:sonar -Pjava11
           -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
           -Dsonar.core.codeCoveragePlugin=jacoco
           -Dmaven.test.skip=true
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.organization=flowerfine
-          -Dsonar.projectKey=flowerfine_indexer
+          -Dsonar.projectKey=flowerfine_rtomde
       - name: Retry On Error
         uses: nick-invision/retry@v1
         with:
           timeout_minutes: 40
           max_attempts: 3
-          command: ./mvnw -B -ntp clean install -DskipTests=false -DskipIntegrationTests=false -Dcheckstyle.skip=false -Drat.skip=false -Dmaven.javadoc.skip=true
+          command: ./mvnw -B -ntp clean install -Pjava11,checkstyle -DskipTests=false -DskipIntegrationTests=false -Drat.skip=false -Dmaven.javadoc.skip=true

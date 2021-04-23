@@ -2,9 +2,9 @@ name: Check Code Style
 
 on:
   push:
-    paths-ignore: [ '**/*.md' ]
+    paths-ignore: [ '**/*.md', '**/*.drawio' ]
   pull_request:
-    paths-ignore: [ '**/*.md' ]
+    paths-ignore: [ '**/*.md', '**/*.drawio' ]
 
 jobs:
   Checkstyle:
@@ -20,5 +20,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-check
           tool_name: reviewdog
-          checkstyle_config: ./checkstyle.xml
+          checkstyle_config: ./buildtools/maven/checkstyle.xml
           workdir: ./
