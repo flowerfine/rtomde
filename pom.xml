@@ -166,7 +166,7 @@
                 </excludes>
             </testResource>
             <testResource>
-                <directory>${project.build.sourceDirectory}</directory>
+                <directory>${project.build.testSourceDirectory}</directory>
                 <excludes>
                     <exclude>**/*.java</exclude>
                 </excludes>

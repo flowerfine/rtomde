@@ -8,17 +8,18 @@ on:
 
 jobs:
   Checkstyle:
-    name: Check code style
+    name: Check style
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Check Code Style
+        with:
+          submodule: true
+      - name: Check Style
         uses: nikitasavinov/checkstyle-action@master
         with:
           level: warning
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-check
-          tool_name: reviewdog
           checkstyle_config: ./buildtools/maven/checkstyle.xml
           workdir: ./

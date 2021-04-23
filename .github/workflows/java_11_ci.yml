@@ -5,6 +5,8 @@ on:
     paths-ignore: [ '**/*.md', '**/*.drawio' ]
   pull_request:
     paths-ignore: [ '**/*.md', '**/*.drawio' ]
+  schedule:
+    - cron: '0 3 * * *'
 
 jobs:
   Build:
