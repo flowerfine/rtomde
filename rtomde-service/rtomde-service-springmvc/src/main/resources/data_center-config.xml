@@ -27,8 +27,8 @@
 	</environments>
 
 	<mappers>
-		<mapper url="file:/Users/wangqi/Documents/xinc/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/data_center/SysUserMapper.xml"/>
-		<mapper url="file:/Users/wangqi/Documents/xinc/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/data_center/CustomUserMapper.xml"/>
+		<mapper url="file:/Users/wangqi/Documents/sliew/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/data_center/SysUserMapper.xml"/>
+		<mapper url="file:/Users/wangqi/Documents/sliew/rtomde/rtomde-service/rtomde-service-springmvc/src/main/resources/mapper/data_center/CustomUserMapper.xml"/>
 	</mappers>
 
 </application>
