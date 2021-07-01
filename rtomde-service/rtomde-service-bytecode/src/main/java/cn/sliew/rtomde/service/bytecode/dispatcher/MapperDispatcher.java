@@ -30,7 +30,7 @@ public class MapperDispatcher {
 
     private final ConcurrentMap<String, MapperInvoker> map = new ConcurrentHashMap<>(4);
 
-    private ThrowableCollector.Factory throwableCollectorFactory = () -> new ThrowableCollector();
+//    private ThrowableCollector.Factory throwableCollectorFactory = () -> new ThrowableCollector();
 
     @Autowired
     private SqlSessionFactory sqlSessionFactory;
@@ -57,25 +57,11 @@ public class MapperDispatcher {
      * todo application
      */
     public Object execute(String id, String application, Object... params) {
-        ThrowableCollector throwableCollector = throwableCollectorFactory.create();
-        CompletableFuture<Object> future = CompletableFuture.supplyAsync(() -> map.get(id).invoke(sqlSessionFactory.openSession(application), id, params));
-        throwableCollector.execute(() -> future.get());
-        if (throwableCollector.isEmpty()) {
-            try {
-                return future.get();
-            } catch (InterruptedException e) {
-                // should never happen
-                log.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                // should never happen
-                log.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
-        } else {
-            Throwable throwable = throwableCollector.getThrowable();
-            log.error(throwable.getMessage(), throwable);
-            throw new RuntimeException(throwable);
+        try {
+            CompletableFuture<Object> future = CompletableFuture.supplyAsync(() -> map.get(id).invoke(sqlSessionFactory.openSession(application), id, params));
+            return future.get();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

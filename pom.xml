@@ -37,7 +37,7 @@
         <typesafe.config.version>1.4.1</typesafe.config.version>
         <scala.macros.version>2.1.1</scala.macros.version>
 
-        <milky.version>1.0.0-SNAPSHOT</milky.version>
+        <milky.version>1.0.0</milky.version>
         <spotless.version>2.4.2</spotless.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -173,20 +173,14 @@
 
     <repositories>
         <repository>
+            <id>repo1</id>
+            <name>repo1</name>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
             <id>sonatype-nexus</id>
             <name>Sonatype Nexus Snapshots</name>
             <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-        <repository>
-            <id>spring-milestones</id>
-            <name>Spring Milestones</name>
-            <url>https://repo.spring.io/milestone</url>
         </repository>
     </repositories>
 
