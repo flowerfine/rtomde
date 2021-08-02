@@ -23,6 +23,7 @@
         <module>rtomde-service</module>
 
         <module>rtomde-container</module>
+        <module>rtomde-mybatis</module>
     </modules>
 
     <properties>
