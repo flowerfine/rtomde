@@ -74,31 +74,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-config</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-jdbc</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-jdbc-spring</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.sliew</groupId>
-                <artifactId>rtomde-jdbc-spring-boot</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>cn.sliew</groupId>
@@ -184,9 +159,8 @@
 
     <repositories>
         <repository>
-            <id>repo1</id>
-            <name>repo1</name>
-            <url>https://repo1.maven.org/maven2/</url>
+            <id>aliyun-maven-central</id>
+            <url>https://maven.aliyun.com/repository/central</url>
         </repository>
         <repository>
             <id>sonatype-nexus</id>
