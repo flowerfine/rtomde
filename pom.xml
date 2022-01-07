@@ -16,13 +16,7 @@
     <description>Readable, Testable, Observable, Maintainable Data Engine</description>
 
     <modules>
-        <module>rtomde-spi</module>
-        <module>rtomde-common</module>
-        <module>rtomde-config</module>
-        <module>rtomde-platform</module>
-        <module>rtomde-service</module>
 
-        <module>rtomde-container</module>
     </modules>
 
     <properties>
