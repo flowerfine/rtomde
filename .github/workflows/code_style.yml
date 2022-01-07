@@ -5,6 +5,8 @@ on:
     paths-ignore: [ '**/*.md' ]
   pull_request:
     paths-ignore: [ '**/*.md' ]
+  schedule:
+    - cron:  '0 3 * * *' # automatic test while every day on 03:00 am
 
 jobs:
   Checkstyle:
