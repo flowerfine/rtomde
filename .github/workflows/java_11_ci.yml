@@ -2,9 +2,9 @@ name: JDK11 CI
 
 on:
   push:
-    paths-ignore: [ '**/*.md' ]
+    paths-ignore: [ '**/*.md', '**/*.drawio', '**/*.svg' ]
   pull_request:
-    paths-ignore: [ '**/*.md' ]
+    paths-ignore: [ '**/*.md', '**/*.drawio', '**/*.svg' ]
   schedule:
     - cron: '0 3 * * *' # automatic test while every day on 03:00 am
 
