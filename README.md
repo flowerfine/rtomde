@@ -6,3 +6,27 @@
 
 Readable, Testable, Observable, Maintainable Data Engine
 
+
+
+## Development
+
+### Requirements
+
+* jdk >= 11
+* maven >= 3.6.3
+
+`rtomde` uses and recommends the `IntelliJ IDEA` to develop the `rtomde` project. Minimal requirements for an IDE are java and maven supports.
+
+### Build
+
+```shell
+./mvnw clean install
+```
+
+## Contributing
+
+The project welcomes everyone to contribute.
+
+## License
+
+`rtomde` is licenced under the Apache License Version 2.0.
