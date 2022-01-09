@@ -4,9 +4,11 @@
 [![codecov](https://codecov.io/gh/flowerfine/rtomde/branch/master/graph/badge.svg)](https://codecov.io/gh/flowerfine/rtomde/branch/master)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=flowerfine_rtomde&metric=alert_status)](https://sonarcloud.io/dashboard?id=flowerfine_rtomde)
 
-`rtomde` converts sql into RESTful, focuses on providing `Readable, Testable, Observable, Maintainable Data Engine`, which is proud for providing automatic pipeline between data warehouse and apps, commonly as data service.
+`rtomde` supports building apis quickly based on data warehouse or lakehouse, which converts sql into RESTful easily, focuses on providing `Readable, Testable, Observable, Maintainable Data Engine`, commonly as data service.
 
-Billons of datas are collected、transformed、loaded by computation engine such as flink or spark, then datas are distributed to analystis、BI and ad-hoc, also apps. All ETL、data warehouse、computation and analystis engine contributes to enterprise data pipeline, `rtomde` gives people strong but clean tools on data delivery approaches for data developers.
+Billons of datas are collected、transformed、loaded by computation engine such as flink or spark, then datas are distributed to analystis、BI and ad-hoc, also apps. All ETL、data warehouse、computation and analystis engine contributes to enterprise data pipeline, `rtomde` gives people strong but clean tools on data delivery approaches for data developers, which is proud for providing automatic pipeline between data warehouse and apps.
+
+
 
 
 
