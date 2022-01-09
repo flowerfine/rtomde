@@ -6,9 +6,9 @@
 
 `rtomde` supports building apis quickly based on data warehouse or lakehouse, which converts sql into RESTful easily, commonly as data service, focusing on providing `Readable, Testable, Observable, Maintainable Data Engine`.
 
-Billons of datas are collected、transformed、loaded by computation engine such as flink or spark, then datas are distributed to analystis、BI and ad-hoc, also apps. All ETL、data warehouse、computation and analystis engine contributes to enterprise data pipeline, `rtomde` gives people strong but clean tools on data delivery approaches for data developers, which is proud for providing automatic pipeline between data warehouse and apps.
+Billons of datas are collected、transformed、loaded by computation engine such as flink or spark, then datas are distributed to analystis、BI and ad-hoc, also apps. All ETL、data warehouse、computation and analystis engine contributes to enterprise data pipeline, `rtomde` gives people strong but clean tools on another data delivery approaches for data developers, which is proud for providing automatic pipeline between data warehouse and apps.
 
-
+[](https://github.com/flowerfine/rtomde/blob/master/doc/readme.svg)
 
 
 
