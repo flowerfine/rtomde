@@ -15,21 +15,19 @@
  */
 package cn.rtomde.template.executor;
 
+import cn.rtomde.template.cursor.Cursor;
+import cn.rtomde.template.executor.log.ConnectionLogger;
+import cn.rtomde.template.executor.parameter.DefaultParameterHandler;
+import cn.rtomde.template.executor.parameter.ParameterHandler;
+import cn.rtomde.template.executor.resultset.DefaultResultSetHandler;
+import cn.rtomde.template.executor.resultset.ResultSetHandler;
+import cn.rtomde.template.executor.statement.RoutingStatementHandler;
+import cn.rtomde.template.executor.statement.StatementHandler;
+import cn.rtomde.template.mapping.BoundSql;
+import cn.rtomde.template.mapping.MappedStatement;
+import cn.rtomde.template.session.RowBounds;
+import cn.rtomde.template.type.TypeHandlerRegistry;
 import cn.sliew.milky.log.Logger;
-import cn.sliew.mybatis.component.service.DataSourceService;
-import cn.sliew.mybatis.component.service.impl.HikaricpDataSourceService;
-import cn.sliew.mybatis.cursor.Cursor;
-import cn.sliew.mybatis.executor.log.ConnectionLogger;
-import cn.sliew.mybatis.executor.parameter.DefaultParameterHandler;
-import cn.sliew.mybatis.executor.parameter.ParameterHandler;
-import cn.sliew.mybatis.executor.resultset.DefaultResultSetHandler;
-import cn.sliew.mybatis.executor.resultset.ResultSetHandler;
-import cn.sliew.mybatis.executor.statement.RoutingStatementHandler;
-import cn.sliew.mybatis.executor.statement.StatementHandler;
-import cn.sliew.mybatis.mapping.BoundSql;
-import cn.sliew.mybatis.mapping.MappedStatement;
-import cn.sliew.mybatis.session.RowBounds;
-import cn.sliew.mybatis.type.TypeHandlerRegistry;
 
 import javax.sql.DataSource;
 import java.sql.Connection;

@@ -1,8 +1,8 @@
 package cn.rtomde.template.executor;
 
-import cn.sliew.mybatis.mapping.BoundSql;
-import cn.sliew.mybatis.mapping.MappedStatement;
-import cn.sliew.mybatis.session.RowBounds;
+import cn.rtomde.template.mapping.BoundSql;
+import cn.rtomde.template.mapping.MappedStatement;
+import cn.rtomde.template.session.RowBounds;
 
 public class ExecuteContext {
 

@@ -15,9 +15,8 @@
  */
 package cn.rtomde.template.executor;
 
-import cn.sliew.mybatis.component.service.DataSourceService;
-import cn.sliew.mybatis.cursor.Cursor;
-import cn.sliew.mybatis.executor.result.ResultHandler;
+import cn.rtomde.template.cursor.Cursor;
+import cn.rtomde.template.executor.result.ResultHandler;
 
 import java.sql.SQLException;
 import java.util.List;

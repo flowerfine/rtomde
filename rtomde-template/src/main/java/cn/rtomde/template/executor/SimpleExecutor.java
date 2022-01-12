@@ -15,13 +15,13 @@
  */
 package cn.rtomde.template.executor;
 
-import cn.sliew.mybatis.cursor.Cursor;
-import cn.sliew.mybatis.executor.resultset.ResultSetHandler;
-import cn.sliew.mybatis.executor.statement.StatementContext;
-import cn.sliew.mybatis.executor.statement.StatementHandler;
-import cn.sliew.mybatis.mapping.BoundSql;
-import cn.sliew.mybatis.mapping.MappedStatement;
-import cn.sliew.mybatis.session.RowBounds;
+import cn.rtomde.template.cursor.Cursor;
+import cn.rtomde.template.executor.resultset.ResultSetHandler;
+import cn.rtomde.template.executor.statement.StatementContext;
+import cn.rtomde.template.executor.statement.StatementHandler;
+import cn.rtomde.template.mapping.BoundSql;
+import cn.rtomde.template.mapping.MappedStatement;
+import cn.rtomde.template.session.RowBounds;
 
 import java.sql.Connection;
 import java.sql.SQLException;
