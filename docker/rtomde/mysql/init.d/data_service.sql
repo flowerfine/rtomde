@@ -1,11 +1,8 @@
-DROP
-database if exists `data_service`;
-CREATE
-database `data_service` default character set utf8mb4 collate utf8mb4_unicode_ci;
-USE
-`data_service`;
+DROP database if exists `data_service`;
+CREATE database if not exists `data_service` default character set utf8mb4 collate utf8mb4_unicode_ci;
+USE `data_service`;
 
-DROP TABLE IF EXISTS sys_user;
+DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user`
 (
     `id`          BIGINT ( 20 ) UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'id',
