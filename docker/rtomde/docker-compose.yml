@@ -20,7 +20,6 @@ services:
 
   mysql:
     image: bitnami/mysql:8.0
-    container_name: rtomde-mysql
     ports:
       - 3306:3306
     environment:
@@ -29,27 +28,10 @@ services:
       MYSQL_ROOT_PASSWORD: 123
       MYSQL_USER: rtomde
       MYSQL_PASSWORD: rtomde
-      MYSQL_DATABASE: rtomde
       MYSQL_AUTHENTICATION_PLUGIN: mysql_native_password
       MARIADB_CHARACTER_SET: utf8mb4
     volumes:
-      - mysql:/bitnami/mysql
       - ./mysql/init.d:/docker-entrypoint-initdb.d
-    restart: unless-stopped
-    networks:
-      - rtomde
-
-  apollo:
-    image: apolloconfig/apollo-configservice:1.8.1
-    container_name: rtomde-apollo
-    ports:
-      - 8080:8080
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/ApolloConfigDB?characterEncoding=utf8
-      SPRING_DATASOURCE_USERNAME: rtomde-apollo
-      SPRING_DATASOURCE_PASSWORD: rtomde-apollo
-    volumes:
-      - apollo:/apolloconfig/apollo-configservice
     restart: unless-stopped
     networks:
       - rtomde
@@ -57,7 +39,3 @@ services:
 networks:
   rtomde:
     driver: bridge
-
-volumes:
-  mysql:
-  apollo:
