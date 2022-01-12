@@ -17,6 +17,8 @@
 
     <modules>
         <module>rtomde-template</module>
+
+        <module>rtomde-service/rtomde-service-spring</module>
     </modules>
 
     <properties>
