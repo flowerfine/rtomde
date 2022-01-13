@@ -8,7 +8,7 @@
         <version>2.4.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>cn.sliew</groupId>
+    <groupId>cn.rtomde</groupId>
     <artifactId>rtomde</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
@@ -33,7 +33,7 @@
         <typesafe.config.version>1.4.1</typesafe.config.version>
         <scala.macros.version>2.1.1</scala.macros.version>
 
-        <milky.version>1.0.2</milky.version>
+        <milky.version>1.0.4-SNAPSHOT</milky.version>
         <spotless.version>2.4.2</spotless.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -76,7 +76,24 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-bom</artifactId>
+                <version>2.17.1</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>rtomde-template</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>cn.sliew</groupId>
+                <artifactId>milky-component</artifactId>
+                <version>${milky.version}</version>
+            </dependency>
             <dependency>
                 <groupId>cn.sliew</groupId>
                 <artifactId>milky-cache-lettuce</artifactId>
