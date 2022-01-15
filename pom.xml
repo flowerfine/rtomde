@@ -262,7 +262,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
 
-            <!-- jenkins plugin jacoco report-->
+            <!-- jacoco report plugin -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
