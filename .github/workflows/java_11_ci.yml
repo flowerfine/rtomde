@@ -20,7 +20,7 @@ jobs:
         ports:
           - 3306:3306
         volumes:
-          - ${{ github.workspace }}/.github/workflows/mysql/init.d:/docker-entrypoint-initdb.d:rw
+          - ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d:rw
         options: >-
           --user root
           --cpus 1
