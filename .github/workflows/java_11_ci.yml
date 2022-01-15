@@ -42,7 +42,7 @@ jobs:
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-maven-m2
+          restore-keys: ${{ runner.os }}-maven-
       - name: Compile
         run: ./mvnw -B clean compile install -Dmaven.test.skip=true
       - name: Test
