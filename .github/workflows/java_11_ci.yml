@@ -11,23 +11,23 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: bitnami/mysql:8.0
-        env:
-          MYSQL_ROOT_USER: root
-          MYSQL_ROOT_PASSWORD: 123
-        ports:
-          - 3306:3306
-        volumes:
-          - ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d:rw
-        options: >-
-          --user root
-          --cpus 1
-          --health-cmd="mysqladmin ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 3
+#    services:
+#      mysql:
+#        image: bitnami/mysql:8.0
+#        env:
+#          MYSQL_ROOT_USER: root
+#          MYSQL_ROOT_PASSWORD: 123
+#        ports:
+#          - 3306:3306
+#        volumes:
+#          - ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d:rw
+#        options: >-
+#          --user root
+#          --cpus 1
+#          --health-cmd="mysqladmin ping"
+#          --health-interval 10s
+#          --health-timeout 5s
+#          --health-retries 3
 
     steps:
       - name: Checkout
@@ -38,6 +38,9 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
+      - name: Docker Compose
+        run: |
+          docker compose -f ./docker/rtomde/docker-compose.yml up -d
       - name: Cache Maven Repository
         uses: actions/cache@v2
         with:
