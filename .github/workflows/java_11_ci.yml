@@ -18,8 +18,8 @@ jobs:
         MYSQL_ROOT_PASSWORD: 123
       ports:
         - 3306:3306
-#      volumes:
-#        - ./docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d
+      volumes:
+        - ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d
       options: >-
         --cpus 1
         --health-cmd="mysqladmin ping"
