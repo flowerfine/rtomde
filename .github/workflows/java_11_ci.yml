@@ -22,6 +22,7 @@ jobs:
 #        - ${{ github.workspace }}:/workspace:rw
         - ${{ github.workspace }}/.github/workflows/mysql/init.d:/docker-entrypoint-initdb.d:rw
       options: >-
+        --user root
         --cpus 1
         --health-cmd="mysqladmin ping"
         --health-interval 10s
