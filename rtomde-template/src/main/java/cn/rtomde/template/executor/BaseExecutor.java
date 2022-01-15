@@ -29,7 +29,6 @@ import cn.rtomde.template.mapping.BoundSql;
 import cn.rtomde.template.mapping.MappedStatement;
 import cn.rtomde.template.session.RowBounds;
 import cn.rtomde.template.type.TypeHandlerRegistry;
-import cn.sliew.milky.component.Component;
 import cn.sliew.milky.log.Logger;
 
 import javax.sql.DataSource;
