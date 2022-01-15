@@ -28,7 +28,7 @@ jobs:
         --health-retries 3
     steps:
       - name: Echo Env
-        run: echo "GITHUB_ACTION_PATH= ${{ github.workspace }}" | pwd
+        run: echo "GITHUB_ACTION_PATH= ${{ github.workspace }}" | pwd | ls ./
       - name: Checkout
         uses: actions/checkout@v2
         with:
