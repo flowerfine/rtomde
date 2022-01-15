@@ -438,6 +438,7 @@
                         <configuration>
                             <sources>
                                 <source>src/main/scala</source>
+                                <source>src/main/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -451,6 +452,7 @@
                         <configuration>
                             <sources>
                                 <source>src/test/scala</source>
+                                <source>src/test/java</source>
                             </sources>
                         </configuration>
                     </execution>
