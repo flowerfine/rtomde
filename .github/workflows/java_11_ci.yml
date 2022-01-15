@@ -11,22 +11,21 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: bitnami/mysql:8.0
-        env:
-          MYSQL_ROOT_USER: root
-          MYSQL_ROOT_PASSWORD: 123
-          MYSQL_DATABASE: rtomde
-        ports:
-          - 3306:3306
-        volumes:
-          - ./mysql/init.d:/docker-entrypoint-initdb.d
-        options: >-
-          --health-cmd="mysqladmin ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 3
+    container:
+      image: bitnami/mysql:8.0
+      env:
+        MYSQL_ROOT_USER: root
+        MYSQL_ROOT_PASSWORD: 123
+      ports:
+        - 3306:3306
+      volumes:
+        - ./mysql/init.d:/docker-entrypoint-initdb.d
+      options: >-
+        --cpus 1
+        --health-cmd="mysqladmin ping"
+        --health-interval 10s
+        --health-timeout 5s
+        --health-retries 3
     steps:
       - name: Checkout
         uses: actions/checkout@v2
