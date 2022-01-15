@@ -13,7 +13,6 @@ import cn.rtomde.template.type.StringTypeHandler;
 import cn.sliew.milky.log.Logger;
 import cn.sliew.milky.log.LoggerFactory;
 import cn.sliew.milky.test.MilkyTestCase;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.cloudevents.CloudEvent;
@@ -25,6 +24,9 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class SimpleTemplateEngineTest extends MilkyTestCase {
 
@@ -88,7 +90,7 @@ class SimpleTemplateEngineTest extends MilkyTestCase {
     }
 
     @Test
-    void testParse() throws SQLException, JsonProcessingException {
+    void testParse() throws SQLException {
         ObjectMapper objectMapper = new ObjectMapper();
         ObjectNode objectNode = objectMapper.createObjectNode();
         objectNode.put("id", 1);
@@ -102,8 +104,8 @@ class SimpleTemplateEngineTest extends MilkyTestCase {
 
         SimpleExecutor executor = new SimpleExecutor();
         ExecuteContext executeContext = new ExecuteContext(ms, boundSql, RowBounds.DEFAULT);
-        List<Object> query = executor.query(executeContext);
-
-        System.out.println(objectMapper.writeValueAsString(query));
+        List<Object> result = executor.query(executeContext);
+        assertNotNull(result);
+        assertEquals(1, result.size());
     }
 }
