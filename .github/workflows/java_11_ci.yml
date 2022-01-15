@@ -19,8 +19,8 @@ jobs:
       ports:
         - 3306:3306
       volumes:
-        - ${{ github.workspace }}:/workspace:rw
-#        - ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d:rw
+#        - ${{ github.workspace }}:/workspace:rw
+        - ${{ github.workspace }}/.github/workflows/mysql/init.d:/docker-entrypoint-initdb.d:rw
       options: >-
         --cpus 1
         --health-cmd="mysqladmin ping"
