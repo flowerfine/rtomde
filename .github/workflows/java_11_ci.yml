@@ -20,6 +20,8 @@ jobs:
           MYSQL_DATABASE: rtomde
         ports:
           - 3306:3306
+        volumes:
+          - ./mysql/init.d:/docker-entrypoint-initdb.d
         options: >-
           --health-cmd="mysqladmin ping"
           --health-interval 10s
