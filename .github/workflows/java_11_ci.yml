@@ -19,7 +19,7 @@ jobs:
       ports:
         - 3306:3306
       volumes:
-        - ${{ runner.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d
+        - ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d
       options: >-
         --cpus 1
         --health-cmd="mysqladmin ping"
@@ -28,7 +28,7 @@ jobs:
         --health-retries 3
     steps:
       - name: Echo Env
-        run: echo "GITHUB_ACTION_PATH= ${{ github.workspace }}"
+        run: echo "GITHUB_ACTION_PATH= ${{ github.workspace }}" | pwd
       - name: Checkout
         uses: actions/checkout@v2
         with:
