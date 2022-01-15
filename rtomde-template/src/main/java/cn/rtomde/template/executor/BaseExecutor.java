@@ -111,7 +111,7 @@ public abstract class BaseExecutor implements Executor {
         DataSourceService dataSourceService = getDataSourceService();
         Optional<DataSourceComponent> optional = dataSourceService.lookup("");
         DataSourceComponent component;
-        if (optional.isEmpty()) {
+        if (optional.isPresent()) {
             component = optional.get();
         } else {
             component = dataSourceService.lookup(DataSourceService.DEFAULT_NAME).get();
