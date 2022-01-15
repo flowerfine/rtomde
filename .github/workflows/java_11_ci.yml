@@ -22,7 +22,7 @@ jobs:
 #      volumes:
 #        - ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d
       options: >-
-        -v ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d
+        -v ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d:rw
         --cpus 1
         --health-cmd="mysqladmin ping"
         --health-interval 10s
