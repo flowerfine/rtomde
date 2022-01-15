@@ -15,6 +15,8 @@
  */
 package cn.rtomde.template.executor;
 
+import cn.rtomde.template.component.DataSourceComponent;
+import cn.rtomde.template.component.impl.DataSourceService;
 import cn.rtomde.template.cursor.Cursor;
 import cn.rtomde.template.executor.log.ConnectionLogger;
 import cn.rtomde.template.executor.parameter.DefaultParameterHandler;
@@ -27,6 +29,7 @@ import cn.rtomde.template.mapping.BoundSql;
 import cn.rtomde.template.mapping.MappedStatement;
 import cn.rtomde.template.session.RowBounds;
 import cn.rtomde.template.type.TypeHandlerRegistry;
+import cn.sliew.milky.component.Component;
 import cn.sliew.milky.log.Logger;
 
 import javax.sql.DataSource;
@@ -34,6 +37,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public abstract class BaseExecutor implements Executor {
@@ -46,7 +50,7 @@ public abstract class BaseExecutor implements Executor {
 
     @Override
     public DataSourceService getDataSourceService() {
-        return new HikaricpDataSourceService();
+        return new DataSourceService();
     }
 
     @Override
@@ -105,8 +109,15 @@ public abstract class BaseExecutor implements Executor {
 
     protected Connection getConnection(Logger statementLog) throws SQLException {
         DataSourceService dataSourceService = getDataSourceService();
+        Optional<DataSourceComponent> optional = dataSourceService.lookup("");
+        DataSourceComponent component;
+        if (optional.isEmpty()) {
+            component = optional.get();
+        } else {
+            component = dataSourceService.lookup(DataSourceService.DEFAULT_NAME).get();
+        }
 
-        DataSource dataSource = dataSourceService.newInstance();
+        DataSource dataSource = component.getInstance();
         Connection connection = dataSource.getConnection();
         if (statementLog.isDebugEnabled()) {
             return ConnectionLogger.newInstance(statementLog, connection);
