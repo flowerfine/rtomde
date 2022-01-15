@@ -19,10 +19,10 @@ jobs:
       ports:
         - 3306:3306
 #      checkout actions would rm /__w/rtomde/rtomde/docker and failed, replaced by options -v
-#      volumes:
-#        - ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d
+      volumes:
+        - ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d:rw
       options: >-
-        -v ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d:rw
+#        -v ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d:rw
         --cpus 1
         --health-cmd="mysqladmin ping"
         --health-interval 10s
