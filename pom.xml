@@ -33,12 +33,12 @@
         <typesafe.config.version>1.4.1</typesafe.config.version>
         <scala.macros.version>2.1.1</scala.macros.version>
 
-        <milky.version>1.0.4-SNAPSHOT</milky.version>
+        <milky.version>1.0.5-SNAPSHOT</milky.version>
         <spotless.version>2.4.2</spotless.version>
 
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven.test.skip>true</maven.test.skip>
+        <maven.test.skip>false</maven.test.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
@@ -262,7 +262,7 @@
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
 
-            <!-- jenkins plugin jacoco report-->
+            <!-- jacoco report plugin -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -438,6 +438,7 @@
                         <configuration>
                             <sources>
                                 <source>src/main/scala</source>
+                                <source>src/main/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -451,6 +452,7 @@
                         <configuration>
                             <sources>
                                 <source>src/test/scala</source>
+                                <source>src/test/java</source>
                             </sources>
                         </configuration>
                     </execution>

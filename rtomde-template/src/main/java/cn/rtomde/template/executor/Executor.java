@@ -15,6 +15,7 @@
  */
 package cn.rtomde.template.executor;
 
+import cn.rtomde.template.component.impl.DataSourceService;
 import cn.rtomde.template.cursor.Cursor;
 import cn.rtomde.template.executor.result.ResultHandler;
 
