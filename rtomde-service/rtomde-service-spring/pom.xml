@@ -24,12 +24,28 @@
 
         <dependency>
             <groupId>io.cloudevents</groupId>
+            <artifactId>cloudevents-http-basic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.cloudevents</groupId>
             <artifactId>cloudevents-spring</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+
+        <!-- openapi3.0的注解 -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-springdoc-ui</artifactId>
+            <version>3.0.2</version>
         </dependency>
     </dependencies>
 </project>
