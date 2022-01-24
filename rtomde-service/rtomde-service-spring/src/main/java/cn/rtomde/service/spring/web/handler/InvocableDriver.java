@@ -1,6 +1,7 @@
 package cn.rtomde.service.spring.web.handler;
 
 import cn.rtomde.service.spring.web.driver.Driver;
+import io.cloudevents.CloudEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.http.HttpHeaders;
@@ -38,7 +39,7 @@ public class InvocableDriver {
         }
 
         try {
-            this.requestResponseProcessor.handleReturnValue(returnValue, driver.getReturnType(), webRequest);
+            this.requestResponseProcessor.handleReturnValue(returnValue, webRequest);
         } catch (Exception ex) {
             if (logger.isTraceEnabled()) {
                 logger.trace(formatErrorForReturnValue(returnValue), ex);
@@ -48,29 +49,29 @@ public class InvocableDriver {
     }
 
     public Object invokeForRequest(NativeWebRequest request) throws Exception {
-        Object arg = getMethodArgumentValues(request);
+        CloudEvent event = getMethodArgumentValues(request);
         if (logger.isTraceEnabled()) {
-            logger.trace("Arguments: " + Arrays.toString(new Object[]{arg}));
+            logger.trace("Arguments: " + Arrays.toString(new Object[]{event}));
         }
-        return doInvoke(arg);
+        return doInvoke(event);
     }
 
-    protected Object getMethodArgumentValues(NativeWebRequest request) throws Exception {
-        return requestResponseProcessor.resolveArgument(driver.getParameterType(), request);
+    protected CloudEvent getMethodArgumentValues(NativeWebRequest request) throws Exception {
+        return (CloudEvent) requestResponseProcessor.resolveArgument(CloudEvent.class, request);
     }
 
     /**
      * Invoke the handler method with the given argument values.
      */
     @Nullable
-    protected Object doInvoke(Object arg) throws Exception {
+    protected Object doInvoke(CloudEvent event) throws Exception {
         try {
-            return driver.invoke(arg);
+            return driver.invoke(event);
         } catch (IllegalArgumentException ex) {
             String text = (ex.getMessage() != null ? ex.getMessage() : "Illegal argument");
-            throw new IllegalStateException(formatInvokeError(text, new Object[]{arg}), ex);
+            throw new IllegalStateException(formatInvokeError(text, new Object[]{event}), ex);
         } catch (Exception targetException) {
-            throw new IllegalStateException(formatInvokeError("Invocation failure", new Object[]{arg}), targetException);
+            throw new IllegalStateException(formatInvokeError("Invocation failure", new Object[]{event}), targetException);
         }
     }
 
@@ -102,7 +103,7 @@ public class InvocableDriver {
                 " in " + toString();
     }
 
-    public void setRequestResponseProcessor(com.vip8.data.engine.platform.service.RequestResponseProcessor requestResponseProcessor) {
+    public void setRequestResponseProcessor(RequestResponseProcessor requestResponseProcessor) {
         this.requestResponseProcessor = requestResponseProcessor;
     }
 }

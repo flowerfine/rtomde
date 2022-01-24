@@ -1,5 +1,6 @@
 package cn.rtomde.service.spring.web.handler;
 
+import io.cloudevents.CloudEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.log.LogFormatUtils;
@@ -67,14 +68,14 @@ public class RequestResponseProcessor {
         return readWithMessageConverters(webRequest, parameterType);
     }
 
-    public void handleReturnValue(@Nullable Object returnValue, Class returnType, NativeWebRequest webRequest)
+    public void handleReturnValue(@Nullable Object returnValue, NativeWebRequest webRequest)
             throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
 
         ServletServerHttpRequest inputMessage = createInputMessage(webRequest);
         ServletServerHttpResponse outputMessage = createOutputMessage(webRequest);
 
         // Try even with null return value. ResponseBodyAdvice could get involved.
-        writeWithMessageConverters(ResultDO.success(returnValue), returnType, inputMessage, outputMessage);
+        writeWithMessageConverters(returnValue, inputMessage, outputMessage);
     }
 
     protected <T> Object readWithMessageConverters(NativeWebRequest webRequest, Type paramType) throws HttpMediaTypeNotSupportedException, HttpMessageNotReadableException {
@@ -114,7 +115,6 @@ public class RequestResponseProcessor {
             message = new EmptyBodyCheckingHttpInputMessage(inputMessage);
 
             for (HttpMessageConverter<?> converter : this.converters) {
-                Class<HttpMessageConverter<?>> converterType = (Class<HttpMessageConverter<?>>) converter.getClass();
                 GenericHttpMessageConverter<?> genericConverter = (converter instanceof GenericHttpMessageConverter ? (GenericHttpMessageConverter<?>) converter : null);
                 if (genericConverter != null ? genericConverter.canRead(targetType, null, contentType) : (targetClass != null && converter.canRead(targetClass, contentType))) {
                     if (message.hasBody()) {
@@ -158,13 +158,12 @@ public class RequestResponseProcessor {
         return new ServletServerHttpResponse(response);
     }
 
-    protected <T> void writeWithMessageConverters(@Nullable T value, Type returnType,
-                                                  ServletServerHttpRequest inputMessage, ServletServerHttpResponse outputMessage)
+    protected <T> void writeWithMessageConverters(@Nullable T value, ServletServerHttpRequest inputMessage, ServletServerHttpResponse outputMessage)
             throws IOException, HttpMediaTypeNotAcceptableException, HttpMessageNotWritableException {
 
         Object body = value;
         Class<?> valueType = value.getClass();
-        Type targetType = returnType;
+        Type targetType = CloudEvent.class;
 
         if (value instanceof CharSequence) {
             body = value.toString();
