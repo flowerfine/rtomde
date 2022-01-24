@@ -17,7 +17,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("cloudevents")
 @Tag(name = "cloudevents 测试", description = "cloudevents-api")
-public class UserController {
+public class CloudEventsController {
 
     @PostMapping("/event")
     @Operation(summary = "注入 event", description = "自动注入 event")
