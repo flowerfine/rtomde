@@ -11,24 +11,6 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-latest
-#    services:
-#      mysql:
-#        image: bitnami/mysql:8.0
-#        env:
-#          MYSQL_ROOT_USER: root
-#          MYSQL_ROOT_PASSWORD: 123
-#        ports:
-#          - 3306:3306
-#        volumes:
-#          - ${{ github.workspace }}/docker/rtomde/mysql/init.d:/docker-entrypoint-initdb.d:rw
-#        options: >-
-#          --user root
-#          --cpus 1
-#          --health-cmd="mysqladmin ping"
-#          --health-interval 10s
-#          --health-timeout 5s
-#          --health-retries 3
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -51,7 +33,7 @@ jobs:
         run: ./mvnw -B clean compile install -Dmaven.test.skip=true
       - name: Test
         run: |
-          export MAVEN_OPTS='-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+CMSClassUnloadingEnabled -XX:+UseConcMarkSweepGC -XX:-UseGCOverheadLimit -Xmx2g'
+          export MAVEN_OPTS='-XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+CMSClassUnloadingEnabled -XX:-UseGCOverheadLimit -Xmx2g'
           ./mvnw -B test  -Dmaven.test.skip=false
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
