@@ -17,9 +17,7 @@
 
     <modules>
         <module>rtomde-template</module>
-
         <module>rtomde-driver</module>
-
         <module>rtomde-service/rtomde-service-spring</module>
     </modules>
 
@@ -106,6 +104,11 @@
             <dependency>
                 <groupId>cn.sliew</groupId>
                 <artifactId>milky-component</artifactId>
+                <version>${milky.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.sliew</groupId>
+                <artifactId>milky-test</artifactId>
                 <version>${milky.version}</version>
             </dependency>
             <dependency>

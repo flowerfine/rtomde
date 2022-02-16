@@ -1,6 +1,11 @@
 server:
   port: 8080
   servlet.context-path: /${spring.application.name}
+
 spring:
-  application:
-    name: service-spring
+  application.name: service-spring
+
+
+management:
+  endpoints.web.exposure.include: "*"
+  metrics.tags.application: ${spring.application.name}
