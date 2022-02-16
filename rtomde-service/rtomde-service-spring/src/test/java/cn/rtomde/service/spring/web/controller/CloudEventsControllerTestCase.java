@@ -3,12 +3,12 @@ package cn.rtomde.service.spring.web.controller;
 import cn.rtomde.service.spring.Application;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -17,14 +17,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(classes = Application.class)
 class CloudEventsControllerTestCase {
 
-    @Autowired
-    private CloudEventsController controller;
-
     private MockMvc mockMvc;
 
     @BeforeEach
-    void setup() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
+    void setup(WebApplicationContext wac) {
+        this.mockMvc = MockMvcBuilders.webAppContextSetup(wac).build();
     }
 
     @Test
@@ -89,7 +86,6 @@ class CloudEventsControllerTestCase {
                 .andExpect(header().exists("ce-source"))
                 .andExpect(header().exists("ce-type"))
                 .andExpect(header().exists("ce-type"))
-                .andExpect(header().string("ce-id", "12345"))
                 .andExpect(header().string("ce-type", "io.spring.event.Foo"))
                 .andExpect(header().string("ce-source", "https://spring.io/foos"))
                 .andDo(print());
