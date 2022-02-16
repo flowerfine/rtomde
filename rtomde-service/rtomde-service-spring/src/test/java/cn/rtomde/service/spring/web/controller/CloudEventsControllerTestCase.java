@@ -19,7 +19,7 @@ class CloudEventsControllerTestCase extends MilkyTestCase {
 
     @LocalServerPort
     private int port;
-    @Value("${server.servlet.context-path}")
+    @Value("${server.servlet.context-path:service-spring}")
     private String contextPath;
 
     @Autowired
