@@ -1,4 +1,4 @@
-package cn.rtomde.service.spring.web.driver;
+package cn.rtomde.service.driver;
 
 import io.cloudevents.CloudEvent;
 

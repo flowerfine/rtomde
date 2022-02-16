@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.parent.groupId}</groupId>
-            <artifactId>rtomde-template</artifactId>
+            <artifactId>rtomde-driver</artifactId>
         </dependency>
 
         <dependency>

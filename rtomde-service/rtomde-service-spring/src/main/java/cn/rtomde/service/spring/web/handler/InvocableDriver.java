@@ -1,6 +1,6 @@
 package cn.rtomde.service.spring.web.handler;
 
-import cn.rtomde.service.spring.web.driver.Driver;
+import cn.rtomde.service.driver.Driver;
 import io.cloudevents.CloudEvent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
