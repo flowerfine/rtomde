@@ -1,5 +1,6 @@
 package cn.rtomde.service.spring.web.controller;
 
+import cn.rtomde.service.spring.Application;
 import cn.sliew.milky.test.MilkyTestCase;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +15,7 @@ import java.net.URI;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = Application.class)
 class CloudEventsControllerTestCase extends MilkyTestCase {
 
     @LocalServerPort
