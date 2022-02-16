@@ -22,7 +22,7 @@ jobs:
         java-version: '11'
         distribution: 'adopt'
     - name: Docker Compose
-        run: |
-          docker compose -f ./docker/rtomde/docker-compose.yml up -d
+      run: |
+        docker compose -f ./docker/rtomde/docker-compose.yml up -d
     - name: Build with Maven
       run: mvn -B package --file pom.xml
