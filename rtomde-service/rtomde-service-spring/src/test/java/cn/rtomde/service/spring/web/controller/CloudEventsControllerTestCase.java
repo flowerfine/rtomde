@@ -42,8 +42,8 @@ class CloudEventsControllerTestCase {
                 .andExpect(header().exists("ce-type"))
                 .andExpect(header().exists("ce-type"))
                 .andExpect(header().string("ce-type", "io.spring.event.Foo"))
-                .andExpect(header().string("ce-source", "https://spring.io/foos"))
-                .andDo(print());
+                .andExpect(header().string("ce-source", "https://spring.io/foos"));
+//                .andDo(print());
     }
 
     @Test
@@ -65,8 +65,8 @@ class CloudEventsControllerTestCase {
                 .andExpect(header().exists("ce-type"))
                 .andExpect(header().exists("ce-type"))
                 .andExpect(header().string("ce-type", "io.spring.event.Foo"))
-                .andExpect(header().string("ce-source", "https://spring.io/foos"))
-                .andDo(print());
+                .andExpect(header().string("ce-source", "https://spring.io/foos"));
+//                .andDo(print());
     }
 
     @Test
@@ -87,8 +87,8 @@ class CloudEventsControllerTestCase {
                 .andExpect(header().exists("ce-type"))
                 .andExpect(header().exists("ce-type"))
                 .andExpect(header().string("ce-type", "io.spring.event.Foo"))
-                .andExpect(header().string("ce-source", "https://spring.io/foos"))
-                .andDo(print());
+                .andExpect(header().string("ce-source", "https://spring.io/foos"));
+//                .andDo(print());
     }
 
 }
