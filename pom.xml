@@ -26,7 +26,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <java.version>11</java.version>
-        <scala.version>2.13.0</scala.version>
+        <scala.version>2.13.9</scala.version>
         <scala.binary.version>2.13</scala.binary.version>
         <akka.version>2.6.8</akka.version>
         <akka.http.version>10.2.2</akka.http.version>
